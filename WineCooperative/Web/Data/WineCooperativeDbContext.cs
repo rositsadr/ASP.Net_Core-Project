@@ -42,13 +42,26 @@ namespace Web.Data
                 .HasOne(u => u.User)
                 .WithOne(u => u.UserData)
                 .HasForeignKey<UserAdditionalInformation>(u => u.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Manufacturer>()
                 .HasOne(m => m.User)
                 .WithOne(u => u.Manufacturer)
                 .HasForeignKey<Manufacturer>(m => m.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<OrderProduct>()
+                .HasKey(op => new { op.OrderId, op.ProductId });
+
+            builder.Entity<Order>()
+                .HasMany(o => o.OrderProducts)
+                .WithOne(op => op.Order)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Product>()
+                .HasMany(p => p.ProductOrders)
+                .WithOne(po => po.Product)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Product>().Property(p => p.Price).HasPrecision(10, 2);
 

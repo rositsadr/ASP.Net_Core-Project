@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Web.Data.Models;
 using static Web.Data.DataConstants;
 
 namespace Web.Models
@@ -9,7 +10,7 @@ namespace Web.Models
     {
         public Product()
         {
-            this.Orders = new HashSet<Order>();
+            this.ProductOrders = new HashSet<OrderProduct>();
             this.GrapeVarieties = new HashSet<GrapeVariety>();
         }
 
@@ -40,7 +41,7 @@ namespace Web.Models
 
         public WineArea WineArea { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<OrderProduct> ProductOrders { get; set; }
         public ICollection<GrapeVariety> GrapeVarieties { get; set; }
     }
 }

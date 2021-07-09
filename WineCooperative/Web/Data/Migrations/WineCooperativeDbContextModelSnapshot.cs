@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Data;
 
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    [Migration("20210709122547_CreateTables")]
-    partial class CreateTables
+    partial class WineCooperativeDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,17 +184,17 @@ namespace Web.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
+            modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
                 {
-                    b.Property<string>("OrdersId")
+                    b.Property<string>("OrderId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProductsId")
+                    b.Property<string>("ProductId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("OrdersId", "ProductsId");
+                    b.HasKey("OrderId", "ProductId");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderProduct");
                 });
@@ -575,7 +573,8 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
@@ -663,19 +662,23 @@ namespace Web.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
+            modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
                 {
-                    b.HasOne("Web.Models.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Web.Models.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Web.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Web.Models.Product", "Product")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Web.Models.Address", b =>
@@ -700,7 +703,7 @@ namespace Web.Data.Migrations
                     b.HasOne("Web.Models.UserAdditionalInformation", "User")
                         .WithOne("Manufacturer")
                         .HasForeignKey("Web.Models.Manufacturer", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Address");
@@ -788,7 +791,7 @@ namespace Web.Data.Migrations
                     b.HasOne("Web.Data.Models.User", "User")
                         .WithOne("UserData")
                         .HasForeignKey("Web.Models.UserAdditionalInformation", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Address");
@@ -818,6 +821,16 @@ namespace Web.Data.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Web.Models.Order", b =>
+                {
+                    b.Navigation("OrderProducts");
+                });
+
+            modelBuilder.Entity("Web.Models.Product", b =>
+                {
+                    b.Navigation("ProductOrders");
                 });
 
             modelBuilder.Entity("Web.Models.Theme", b =>
