@@ -41,5 +41,8 @@
         
         public const int GrapeVarietyMinLength = 3;
         public const int GrapeVarietyMaxLength = 20;
+        
+        public const int WineAreaMinLength = 3;
+        public const int WineAreaMaxLength = 25;
     }
 }

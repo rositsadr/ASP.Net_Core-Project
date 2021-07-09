@@ -9,7 +9,7 @@ using Web.Data;
 
 namespace Web.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(WineCooperativeDbContext))]
     [Migration("20210709122547_CreateTables")]
     partial class CreateTables
     {

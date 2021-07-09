@@ -19,6 +19,7 @@ namespace Web.Models
         public string Id { get; init; } = Guid.NewGuid().ToString();
 
         [Required]
+        [MaxLength(WineAreaMaxLength)]
         public string Name { get; set; }
 
         [Required]
