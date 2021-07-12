@@ -1,0 +1,28 @@
+.timesFont {
+    font-family:'Times New Roman', Times, serif;
+}
+
+.largerSize{
+    font-size:larger;
+}
+
+nav .nav .nav-item .nav-link {
+    color: brown;
+}
+
+div .nav .nav-item .nav-link {
+    color: black;
+    font-weight: 500;
+}
+
+header div img {
+    width: 90px;
+}
+
+.container-fluid .row {
+    background-color: #76543A;
+}
+
+.row .col-12 .text-center p{
+    font-size: x-small;
+}

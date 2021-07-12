@@ -1,4 +1,6 @@
-﻿namespace Web.Data
+﻿using System;
+
+namespace Web.Data
 {
     public class DataConstants
     {
@@ -44,5 +46,7 @@
         
         public const int WineAreaMinLength = 3;
         public const int WineAreaMaxLength = 25;
+
+        public const int ManufactureYearMinValue = 1900;
     }
 }

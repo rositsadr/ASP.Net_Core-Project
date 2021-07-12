@@ -28,6 +28,8 @@ namespace Web
                 .AddEntityFrameworkStores<WineCooperativeDbContext>();
 
             services.AddControllersWithViews();
+
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

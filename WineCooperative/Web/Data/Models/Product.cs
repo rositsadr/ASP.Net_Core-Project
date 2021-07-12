@@ -24,6 +24,8 @@ namespace Web.Models
 
         public decimal Price { get; set; }
 
+        public int ManufactureYear { get; set; }
+
         [Required]
         public string ImageUrl { get; set; }
 
