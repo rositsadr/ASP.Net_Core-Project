@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Product Page";
+﻿@model List<ProductViewModel>
+
+@{
+    ViewData["Title"] = "Products Page";
 }
 
 <div clss="container">
@@ -8,13 +10,13 @@
         <p>Wines selected specially for you!</p>
     </div>
     <div class="col-lg-4 mb-5 col-md-6">
-        <div class="wine_v_1 text-center pb-4">
-            <a href="shop-single.html" class="thumbnail d-block mb-4"><img src="~/Images/113667-sommelier-selections-5-bottles-from-5-different-countries-to-celebrate-with-on-national-wine-day.jpg" alt="Image" class="img-fluid" data-pagespeed-url-hash="789786754"></a>
+        <div class="text-center pb-4">
+            <a class="thumbnail d-block mb-4"><img src="~/Images/113667-sommelier-selections-5-bottles-from-5-different-countries-to-celebrate-with-on-national-wine-day.jpg" alt="Image" class="img-fluid" data-pagespeed-url-hash="789786754" asp-controller="Products" asp-action="ProductDisplay" asp-route-id="productId"></a>
             <div>
                 <h3 class="heading mb-1"><a href="#">Trius Cabernet France 2011</a></h3>
                 <span class="price">$629.00</span>
                 <div>
-                    <a href="cart.html" class="btn">
+                    <a class="btn" asp-area="" asp-controller="User" asp-action="Card">
                         <i class="far fa-shopping-bag"> Add to Cart</i>
                     </a>
                 </div>

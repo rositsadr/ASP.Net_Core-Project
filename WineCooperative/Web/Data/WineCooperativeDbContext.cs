@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Web.Data.Models;
 using Web.Models;
+using Web.Models.Products;
 
 namespace Web.Data
 {
@@ -69,5 +70,7 @@ namespace Web.Data
 
             base.OnModelCreating(builder);
         }
+
+        public DbSet<Web.Models.Products.ProductDisplayModel> ProductDisplayModel { get; set; }
     }
 }

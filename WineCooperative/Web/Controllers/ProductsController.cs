@@ -31,6 +31,19 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult Add(ProductAddingModel wine)
         {
+            if (!this.data.WineAreas.Any(w=>w.Id==wine.WineAreaId))
+            {
+                this.ModelState.AddModelError(nameof(wine.WineAreaId), "This wine area does not exists!");
+            }
+
+            foreach (var grapeId in wine.GrapeVarieties)
+            {
+                if(!this.data.GrapeVarieties.Any(g=>g.Id == grapeId))
+                {
+                    this.ModelState.AddModelError(nameof(wine.GrapeVarieties), "The grape variety you have chosen does not exists!");
+                }
+            }
+
             if(!ModelState.IsValid)
             {
                 wine.WineAreas = this.GetWineAreas();
@@ -45,7 +58,7 @@ namespace Web.Controllers
 
             var user =_userManager.GetUserAsync(HttpContext.User).Result;
 
-            var manifacturer = data.UserAdditionalInformation
+            var manifacturerId = data.UserAdditionalInformation
                 .Where(a => a.Id == user.UserDataId)
                 .Select(a => a.ManufacturerId)
                 .FirstOrDefault();
@@ -60,7 +73,7 @@ namespace Web.Controllers
                 InStock = wine.InStock,
                 WineAreaId = wine.WineAreaId,
                 GrapeVarieties = grapeViraieties,
-                ManufacturerId = manifacturer
+                ManufacturerId = manifacturerId
             };
 
             data.Products.Add(product);
@@ -71,17 +84,40 @@ namespace Web.Controllers
 
         public IActionResult All()
         {
-            /* var products = data.Products
+            var products = data.Products
                  .Where(p => p.InStock)
                  .Select(p => new ProductViewModel
                  {
-
+                     Id = p.Id,
+                     ImageUrl = p.ImageUrl,
+                     Name = p.Name,
+                     Price = p.Price,
                  })
-                 .ToList();*/
+                 .ToList();
 
-            return View();
+            return View(products);
         }
 
+        public IActionResult ProductDisplay(string Id)
+        {
+            var product = data.Products
+                .Where(p => p.Id == Id)
+                .Select(p => new ProductDisplayModel
+                {
+                    Id=p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Description = p.Description,
+                    InStock = p.InStock,
+                    ManufacturerName = p.Manufacturer.Name,
+                    ManufactureYear = p.ManufactureYear,
+                    WineAreaName = p.WineArea.Name
+                })
+                .FirstOrDefault();
+
+            return View(product);
+        }
         private IEnumerable<ProductWineAreaModel> GetWineAreas() => this.data.WineAreas
             .Select(wa => new ProductWineAreaModel
             {

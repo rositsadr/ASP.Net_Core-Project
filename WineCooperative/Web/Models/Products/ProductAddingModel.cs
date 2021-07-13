@@ -9,8 +9,7 @@ namespace Web.Models.Products
     public class ProductAddingModel
     {
         [Required]
-        [MinLength(ProductMinLength)]
-        [MaxLength(ProductMaxLength)]
+        [StringLength(ProductMaxLength,MinimumLength = ProductMinLength)]
         public string Name { get; init; }
 
         public decimal Price { get; init; }
