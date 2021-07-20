@@ -9,8 +9,8 @@ namespace Web.Data
         public const int PasswordMinLength = 6;
         public const int PasswordMaxLength = 25;
 
-        public const int PostcodeMinLength = 3;
-        public const int PostcodeMaxLength = 10;
+        public const int ZipCodeMinLength = 3;
+        public const int ZipCodeMaxLength = 10;
 
         public const int UsernameMinLength = 3;
         public const int UsernameMaxLength = 20;
@@ -33,7 +33,7 @@ namespace Web.Data
         public const int NewsDescriptionMaxLength = 100;
 
         public const int ProductMinLength = 3;
-        public const int ProductMaxLength = 20;
+        public const int ProductMaxLength = 30;
 
         public const int ServiceMinLength = 5;
         public const int ServiceMaxLength = 40;

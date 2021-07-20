@@ -7,10 +7,7 @@ namespace Web.Models
 {
     public class Theme
     {
-        public Theme()
-        {
-            this.News = new HashSet<News>();
-        }
+        public Theme() => this.News = new HashSet<News>();
 
         [Key]
         [Required]

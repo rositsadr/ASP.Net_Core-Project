@@ -9,6 +9,5 @@
         public decimal Price { get; init; }
 
         public string ImageUrl { get; init; }
-
     }
 }

@@ -29,15 +29,26 @@ namespace Web.Models.Products
         public bool InStock { get; init; }
 
         [Display(Name = "Wine Area")]
-        [Required]
         public string WineAreaId { get; init; }
 
         [Display(Name = "Grape varieties:")]
-        [Required]
-        public ICollection<int> GrapeVarieties { get; init; }
+        public IEnumerable<int> GrapeVarieties { get; init; }
+
+        [Display(Name = "Manufacturer")]
+        public string ManufacturerId { get; init; }
+
+        public int ColorId { get; init; }
+
+        public int TasteId { get; init; }
+
+        public IEnumerable<ProductColorViewModel> AllColors { get; set; }
+
+        public IEnumerable<ProductTasteViewModel> AllTastes { get; set; }
 
         public IEnumerable<ProductWineAreaModel> WineAreas { get; set; }
 
-        public IEnumerable<ProductGrapeVarieties> AllGrapeVarieties { get; set; }
+        public IEnumerable<ProductGrapeVarietiesModel> AllGrapeVarieties { get; set; }
+
+        public IEnumerable<ProductManufacturerModel> Manufacturers { get; set; }
     }
 }

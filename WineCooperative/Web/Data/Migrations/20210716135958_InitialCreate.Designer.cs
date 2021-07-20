@@ -10,8 +10,8 @@ using Web.Data;
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    [Migration("20210712125452_AddProductProductionYear")]
-    partial class AddProductProductionYear
+    [Migration("20210716135958_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -198,7 +198,7 @@ namespace Web.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProduct");
+                    b.ToTable("OrdersProducts");
                 });
 
             modelBuilder.Entity("Web.Data.Models.User", b =>
@@ -348,16 +348,9 @@ namespace Web.Data.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Manufacturers");
                 });
@@ -418,6 +411,9 @@ namespace Web.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("ColorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -444,17 +440,56 @@ namespace Web.Data.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("TasteId")
+                        .HasColumnType("int");
+
                     b.Property<string>("WineAreaId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ColorId");
+
                     b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("TasteId");
 
                     b.HasIndex("WineAreaId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Web.Models.ProductColor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductColors");
+                });
+
+            modelBuilder.Entity("Web.Models.ProductTaste", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Taste")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductTastes");
                 });
 
             modelBuilder.Entity("Web.Models.Service", b =>
@@ -519,14 +554,9 @@ namespace Web.Data.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("WineAreaId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
-
-                    b.HasIndex("WineAreaId");
 
                     b.ToTable("Towns");
                 });
@@ -550,9 +580,6 @@ namespace Web.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("ManufacturerId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -573,7 +600,6 @@ namespace Web.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -705,15 +731,7 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Web.Models.UserAdditionalInformation", "User")
-                        .WithOne("Manufacturer")
-                        .HasForeignKey("Web.Models.Manufacturer", "UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Address");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Web.Models.News", b =>
@@ -740,9 +758,21 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Product", b =>
                 {
+                    b.HasOne("Web.Models.ProductColor", "Color")
+                        .WithMany("Products")
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Web.Models.Manufacturer", "Manufacturer")
                         .WithMany("Products")
                         .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Web.Models.ProductTaste", "Taste")
+                        .WithMany("Products")
+                        .HasForeignKey("TasteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -752,7 +782,11 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Color");
+
                     b.Navigation("Manufacturer");
+
+                    b.Navigation("Taste");
 
                     b.Navigation("WineArea");
                 });
@@ -776,13 +810,7 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Web.Models.WineArea", "WineArea")
-                        .WithMany("Towns")
-                        .HasForeignKey("WineAreaId");
-
                     b.Navigation("Country");
-
-                    b.Navigation("WineArea");
                 });
 
             modelBuilder.Entity("Web.Models.UserAdditionalInformation", b =>
@@ -838,6 +866,16 @@ namespace Web.Data.Migrations
                     b.Navigation("ProductOrders");
                 });
 
+            modelBuilder.Entity("Web.Models.ProductColor", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Web.Models.ProductTaste", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("Web.Models.Theme", b =>
                 {
                     b.Navigation("News");
@@ -850,16 +888,12 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.UserAdditionalInformation", b =>
                 {
-                    b.Navigation("Manufacturer");
-
                     b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Web.Models.WineArea", b =>
                 {
                     b.Navigation("Products");
-
-                    b.Navigation("Towns");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,12 +11,10 @@ namespace Web.Controllers
     public class ServicesController : Controller
     {
         private readonly WineCooperativeDbContext data;
-        private readonly UserManager<User> _userManager;
 
-        public ServicesController(WineCooperativeDbContext data, UserManager<User> userManager)
+        public ServicesController(WineCooperativeDbContext data)
         {
             this.data = data;
-            _userManager = userManager;
         }
 
         public IActionResult Add() => View();
@@ -29,20 +27,12 @@ namespace Web.Controllers
                 return View(service);
             }
 
-            var user = _userManager.GetUserAsync(HttpContext.User).Result;
-
-            var manifacturerId = data.UserAdditionalInformation
-                .Where(a => a.Id == user.UserDataId)
-                .Select(a => a.ManufacturerId)
-                .FirstOrDefault();
-
             var serviceToAdd = new Service
             {
                 Name = service.Name,
                 Price = service.Price,
                 ImageUrl = service.ImageUrl,
                 Description = service.Description,
-                ManufacturerId = manifacturerId
             };
 
             data.Services.Add(serviceToAdd);
@@ -53,6 +43,6 @@ namespace Web.Controllers
 
         public IActionResult All() => View();
 
-        public IActionResult ServiceDetails(string Id) => View();
+        public IActionResult Details(string Id) => View();
     }
 }

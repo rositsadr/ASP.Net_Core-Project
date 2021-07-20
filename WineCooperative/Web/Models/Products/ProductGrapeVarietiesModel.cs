@@ -1,7 +1,7 @@
 ﻿
 namespace Web.Models.Products
 {
-    public class ProductGrapeVarieties
+    public class ProductGrapeVarietiesModel
     {
         public int GrapeVarietyId { get; init; }
 

@@ -10,8 +10,8 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult Add(WineAreaAddingModel wineArea) => View(wineArea);
 
-        public IActionResult Map => View();
+        public IActionResult Map() => View();
 
-        public IActionResult WineAreaDisplay() => View();
+        public IActionResult Ditails() => View();
     }
 }

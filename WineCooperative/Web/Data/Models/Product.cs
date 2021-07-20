@@ -33,6 +33,14 @@ namespace Web.Models
 
         public bool InStock { get; set; }
 
+        public int ColorId { get; set; }
+
+        public ProductColor Color { get; set; }
+
+        public int TasteId { get; set; }
+
+        public ProductTaste Taste { get; set; }
+
         [Required]
         public string ManufacturerId { get; set; }
 

@@ -1,27 +1,100 @@
-﻿@model List<ProductViewModel>
+﻿@model ProductSearchPageViewModel
 
 @{
     ViewData["Title"] = "Products Page";
 }
 
 <div clss="container">
-    <div class="col-12 section-title text-center mb-5">
+    <div class="col-12 text-center">
         <h2 class="d-block">Our Products</h2>
         <p>Wines selected specially for you!</p>
     </div>
-    <div class="col-lg-4 mb-5 col-md-6">
-        <div class="text-center pb-4">
-            <a class="thumbnail d-block mb-4"><img src="~/Images/113667-sommelier-selections-5-bottles-from-5-different-countries-to-celebrate-with-on-national-wine-day.jpg" alt="Image" class="img-fluid" data-pagespeed-url-hash="789786754" asp-controller="Products" asp-action="ProductDisplay" asp-route-id="productId"></a>
-            <div>
-                <h3 class="heading mb-1"><a href="#">Trius Cabernet France 2011</a></h3>
-                <span class="price">$629.00</span>
-                <div>
-                    <a class="btn" asp-area="" asp-controller="User" asp-action="Card">
-                        <i class="far fa-shopping-bag"> Add to Cart</i>
-                    </a>
-                </div>
+    <form method="get" class="mb-3">
+        <div class="row">
+            <div class="col-md-3">
+                <label asp-for="SearchTerm">Search</label>
+                <input asp-for="SearchTerm" class="form-control" placeholder="Search in name or description" />
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Color">Search by color</label>
+                <select asp-for="Color" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var color in Model.Colors)
+                    {
+                        <option value="@color">@color</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Manufacturer">Search by Manufacturer</label>
+                <select asp-for="Manufacturer" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var manufacturer in Model.Manufacturers)
+                    {
+                        <option value="@manufacturer">@manufacturer</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Sorting">Sort by:</label>
+                <select asp-for="Sorting" class="form-select">
+                    <option value="0">Name</option>
+                    <option value="1">Year</option>
+                    <option value="2">Manufacturer</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="submit" class="btn btn-primary position-absolute bottom-0 end-0" value="GO" />
             </div>
         </div>
+    </form>
+    @{
+        var previousPage = Model.CurrantPage - 1;
+
+        if (previousPage < 1)
+        {
+            previousPage = 1;
+        }
+
+        var pagesCount = Math.Ceiling((double)Model.TotalProducts / ProductSearchPageViewModel.productsPerPage);
+
+    }
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <a class="btn btn-primary float-left @(Model.CurrantPage == 1 ? "disabled" : string.Empty)" asp-controller="Products" asp-action="All" asp-route-currantPage="@(Model.CurrantPage-1)" asp-route-sorting="@Model.Sorting" asp-route-searchTerm="@Model.SearchTerm" asp-route-manufacturer="@Model.Manufacturer" asp-route-color="@Model.Color">
+                <<
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a class="btn btn-primary float-right @(Model.CurrantPage == pagesCount ? "disabled" : string.Empty)" asp-controller="Products" asp-action="All" asp-route-currantPage="@(Model.CurrantPage+1)"asp-route-sorting="@Model.Sorting" asp-route-searchTerm="@Model.SearchTerm" asp-route-manufacturer="@Model.Manufacturer" asp-route-color="@Model.Color">
+                >>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var wine in Model.Products)
+        {
+            <div class="col-lg-4 mb-5 col-md-6">
+                <div class="text-center pb-4 card">
+                    <a class="thumbnail d-block mb-4"><img src=@wine.ImageUrl alt="Image" class="card-img-top" asp-controller="Products" asp-action="Details" asp-route-id=@wine.Id></a>
+                    <div class="card-body">
+                        <h3 class="card-title">@wine.Name</h3>
+                        <span class="text-center">@wine.Price</span>
+                        <div>
+                            <a class="btn" asp-controller="Cart" asp-action="AddToCart" asp-route-id=@wine.Id>
+                                <i class="far fa-shopping-bag"> Add to Cart</i>
+                            </a>
+                        </div>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <div>
+                                <a class="btn btn-danger" role="button" asp-controller="Products" asp-action="Delete" asp-route-id=@wine.Id>Delete</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
 

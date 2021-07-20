@@ -37,18 +37,18 @@ namespace Web.Data
 
         public DbSet<News> News { get; set; }
 
+        public DbSet<OrderProduct> OrdersProducts { get; set; }
+
+        public DbSet<ProductColor> ProductColors { get; set; }
+
+        public DbSet<ProductTaste> ProductTastes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<UserAdditionalInformation>()
                 .HasOne(u => u.User)
                 .WithOne(u => u.UserData)
                 .HasForeignKey<UserAdditionalInformation>(u => u.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Manufacturer>()
-                .HasOne(m => m.User)
-                .WithOne(u => u.Manufacturer)
-                .HasForeignKey<Manufacturer>(m => m.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<OrderProduct>()
@@ -70,7 +70,5 @@ namespace Web.Data
 
             base.OnModelCreating(builder);
         }
-
-        public DbSet<Web.Models.Products.ProductDisplayModel> ProductDisplayModel { get; set; }
     }
 }

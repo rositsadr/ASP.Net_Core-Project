@@ -6,7 +6,7 @@ namespace Web.Models.Services
     public class ServiceAddingModel
     {
         [Required]
-        [MaxLength(ServiceMaxLength)]
+        [StringLength(ServiceMaxLength,MinimumLength =ServiceMinLength)]
         public string Name { get; set; }
 
         [Required]

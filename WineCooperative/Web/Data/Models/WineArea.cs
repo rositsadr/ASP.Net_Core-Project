@@ -9,7 +9,6 @@ namespace Web.Models
     {
         public WineArea()
         {
-            this.Towns = new HashSet<Town>();
             this.Products = new HashSet<Product>();
             this.GrapeVarieties = new HashSet<GrapeVariety>();
         }
@@ -22,10 +21,7 @@ namespace Web.Models
         [MaxLength(WineAreaMaxLength)]
         public string Name { get; set; }
 
-        [Required]
         public string Description { get; set; }
-
-        public ICollection<Town> Towns { get; set; }
 
         public ICollection<Product> Products { get; set; }
 

@@ -28,11 +28,6 @@ namespace Web.Models
 
         public Address Address { get; set; }
 
-        [Required]
-        public string UserId { get; set; }
-
-        public UserAdditionalInformation User { get; set; }
-
         public ICollection<Product> Products { get; set; }
 
         public ICollection<Service> Services { get; set; }

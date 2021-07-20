@@ -18,7 +18,7 @@ namespace Web.Controllers
 
         public IActionResult AboutUs() => View();
 
-        public IActionResult Contacts() => View();
+        public IActionResult Contacts() => View(); 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() =>

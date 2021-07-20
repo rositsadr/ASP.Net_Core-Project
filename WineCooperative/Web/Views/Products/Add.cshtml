@@ -11,24 +11,26 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" placeholder="Producname" />
+                <input asp-for="Name" class="form-control" placeholder="Produc name" />
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" placeholder="Enter product price in levs" />
-                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ImageUrl" class="control-label"></label>
                 <input asp-for="ImageUrl" class="form-control" placeholder="Place image url" />
                 <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ManufactureYear" class="control-label"></label>
-                <input asp-for="ManufactureYear" class="form-control" placeholder="Wine production year" />
-                <span asp-validation-for="ManufactureYear" class="text-danger"></span>
-            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label asp-for="ManufactureYear" class="control-label"></label>
+                    <input asp-for="ManufactureYear" class="form-control" placeholder="Wine production year" />
+                    <span asp-validation-for="ManufactureYear" class="text-danger"></span>
+                </div>
+                <div class="form-group col">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" placeholder="Enter product price in levs" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>           
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" rows="4" class="form-control" placeholder="Describe product"></textarea>
@@ -39,14 +41,45 @@
                     <input class="form-check-input" asp-for="InStock" /> @Html.DisplayNameFor(model => model.InStock)
                 </label>
             </div>
-            <div class="form-group">
-                <label asp-for="WineAreaId" class="control-label"></label>
-                <select asp-for="WineAreaId" class="form-control">
-                    @foreach (var area in Model.WineAreas)
-                    {
-                        <option value="@area.WineAreaId">@area.WineAreName</option>
-                    }
-                </select>
+            <div class=" = row">
+                <div class="form-group col">
+                    <select class="form-select form-control" asp-for="TasteId">
+                        <option selected>Choose taste</option>
+                        @foreach (var taste in Model.AllTastes)
+                        {
+                            <option value="@taste.Id">@taste.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <select class="form-select form-control" asp-for="ColorId">
+                        <option selected>Choose color</option>
+                        @foreach (var color in Model.AllColors)
+                        {
+                            <option value="@color.Id">@color.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <select class="form-select form-control" asp-for="WineAreaId">
+                        <option selected>Choose wine area</option>
+                        @foreach (var area in Model.WineAreas)
+                        {
+                            <option value="@area.WineAreaId">@area.WineAreName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <select class="form-select form-control" asp-for="ManufacturerId" >
+                        <option selected>Choose manufacturer</option>
+                        @foreach (var manufacturer in Model.Manufacturers)
+                        {
+                            <option value="@manufacturer.Id">@manufacturer.Name</option>
+                        }
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="GrapeVarieties" class="control-label"></label>
@@ -63,10 +96,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-controller="Products" asp-action="All">Back to List</a>
 </div>
 
 @section Scripts {

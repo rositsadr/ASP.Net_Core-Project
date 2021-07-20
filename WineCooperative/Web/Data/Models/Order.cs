@@ -7,10 +7,7 @@ namespace Web.Models
 {
     public class Order
     {
-        public Order()
-        {
-            this.OrderProducts = new HashSet<OrderProduct>();
-        }
+        public Order() => this.OrderProducts = new HashSet<OrderProduct>();
 
         [Key]
         [Required]

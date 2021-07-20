@@ -1,0 +1,29 @@
+﻿@model List<ManufacturerViewModel>
+
+@{
+    ViewData["Title"] = "Members Page";
+}
+
+<div class="container">
+    <div class="col-12 text-center mb-5">
+        <h2 class="d-block">Our Members</h2>
+        <p>You can become one of us or use our help!</p>
+    </div>
+    <div class="row">
+        @foreach (var member in Model)
+        {
+            <div class="card col-lg-4 mb-5 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title">@member.Name</h5>
+                    <div class="card-subtitle mb-2 text-muted">
+                        <p>Address: @member.Address.Street , @member.Address.TownName</p>
+                        <p>@member.Address.ZipCode Bulgaria</p>
+                    </div>
+                    <p class="card-text">@member.Description</p>
+                    <a asp-controller="Members" asp-action="MemberProducts" asp-route-id=@member.Id class="card-link">Products</a>
+                    <a asp-controller="Members" asp-action="MemberServices" asp-route-id=@member.Id class="card-link float-right">Services</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

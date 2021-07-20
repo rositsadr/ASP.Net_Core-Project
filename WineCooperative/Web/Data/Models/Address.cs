@@ -22,7 +22,7 @@ namespace Web.Models
         public string Street { get; set; }
 
         [Required]
-        [MaxLength(PostcodeMaxLength)]
+        [MaxLength(ZipCodeMaxLength)]
         public string ZipCode { get; set; }
 
         public int TownId { get; set; }

@@ -6,10 +6,7 @@ namespace Web.Models
 {
     public class Town
     {
-        public Town()
-        {
-            this.Addresses = new HashSet<Address>();
-        }
+        public Town() => this.Addresses = new HashSet<Address>();
 
         [Key]
         public int Id { get; init; }
@@ -17,10 +14,6 @@ namespace Web.Models
         [Required]
         [MaxLength(TownMaxLength)]
         public string Name { get; set; }
-
-        public string WineAreaId { get; set; }
-
-        public WineArea WineArea { get; set; }
 
         public int CountryId { get; set; }
 

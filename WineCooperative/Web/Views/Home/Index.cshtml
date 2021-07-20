@@ -47,41 +47,41 @@
 
 <div class="container-fluid text-white text-center mt-5 mb-5">
     <div class="row">
-        <article class="col-4 d-inline-block border border-white border-3">
+        <div class="col-4 d-inline-block border border-white border-3">
             <h4 class="timesFont pb-3 pt-3">The shop</h4>
             <p class="ps-5 pe-5">In our shop you can find local products made in Bulgaria. Small winaries make unique wines with great quality, hard to find on the market </p>
             <p>
-                <a class="text-decoration-none text-white timesFont" href="#">
+                <a class="text-decoration-none text-white timesFont" asp-controller="Products" asp-action="All">
                     View all products
                     <span>
                         <i class="fas fa-long-arrow-alt-right"></i>
                     </span>
                 </a>
             </p>
-        </article>
-        <article class="col-4 d-inline-block border border-white border-3">
+        </div>
+        <div class="col-4 d-inline-block border border-white border-3">
             <h4 class="timesFont pb-3 pt-3">Our services</h4>
             <p class="ps-5 pe-5">Our main goal is to help small wine and grape producers. So we offer different services in order to help the in producing wine.</p>
             <p>
-                <a class="text-decoration-none text-white timesFont" href="#">
+                <a class="text-decoration-none text-white timesFont" asp-controller="Services" asp-action="All">
                     View all services
                     <span>
                         <i class="fas fa-long-arrow-alt-right"></i>
                     </span>
                 </a>
             </p>
-        </article>
-        <article class="col-4 d-inline-block border border-white border-3">
+        </div>
+        <div class="col-4 d-inline-block border border-white border-3">
             <h4 class="timesFont pb-3 pt-3">Wine areas map</h4>
             <p class="ps-5 pe-5">Our main goal is to help wine producing in Bulgaria. We are train to distribute tipical Bulgarian varieties of grape and wine, unique for our geographical area</p>
             <p>
-                <a class="text-decoration-none text-white timesFont" href="">
+                <a class="text-decoration-none text-white timesFont" asp-controller="WineAreas" asp-action="Map">
                     Check wine areas in Bulgaria
                     <span>
                         <i class="fas fa-long-arrow-alt-right"></i>
                     </span>
                 </a>
             </p>
-        </article>
+        </div>
     </div>
 </div>
