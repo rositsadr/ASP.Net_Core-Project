@@ -13,19 +13,19 @@ namespace Web.Data
         public const int ZipCodeMaxLength = 10;
 
         public const int UsernameMinLength = 3;
-        public const int UsernameMaxLength = 20;
+        public const int UsernameMaxLength = 40;
 
         public const int NameMinLength = 2;
         public const int NameMaxLength = 20;
 
         public const int TownMinLength = 3;
-        public const int TownMaxLength = 25;
+        public const int TownMaxLength = 30;
 
         public const int CountryMinLength = 3;
         public const int CountryMaxLength = 30;
 
         public const int ManufacturerMinLength = 3;
-        public const int ManufacturerMaxLength = 25;
+        public const int ManufacturerMaxLength = 50;
 
         public const int NewsMinLength = 3;
         public const int NewsMaxLength = 30;
@@ -48,5 +48,8 @@ namespace Web.Data
         public const int WineAreaMaxLength = 25;
 
         public const int ManufactureYearMinValue = 1900;
+
+        public const int ManufacturerPhoneNumberMaxLength = 18;
+        public const int ManufacturerPhoneNumberMinLength = 6;
     }
 }

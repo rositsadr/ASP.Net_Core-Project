@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
-using Web.Data.Models;
+using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Enums;
 using Web.Models.Products;
@@ -15,22 +15,31 @@ namespace Web.Controllers
     {
         private readonly WineCooperativeDbContext data;
 
-        public ProductsController(WineCooperativeDbContext data, UserManager<User> userManager)
+        public ProductsController(WineCooperativeDbContext data)
         {
             this.data = data;
         }
 
-        [HttpGet]
-        public IActionResult Add() => View(new ProductAddingModel
+        [Authorize]
+        public IActionResult Add()
         {
-            WineAreas = this.GetWineAreas(),
-            AllGrapeVarieties = this.GetAllGrapeVarieties(),   
-            Manufacturers = this.GetManufacturers(),
-            AllColors = this.GetAllColors(),
-            AllTastes = this.GetAllTastes(),
-        });
+            if(!(this.UserIsManufacturer() || this.User.IsInRole("Admin")))
+            {
+                return BadRequest();
+            }
+
+            return View(new ProductAddingModel
+            {
+                WineAreas = this.GetWineAreas(),
+                AllGrapeVarieties = this.GetAllGrapeVarieties(),
+                Manufacturers = this.GetManufacturers(),
+                AllColors = this.GetAllColors(),
+                AllTastes = this.GetAllTastes(),
+            });
+        }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(ProductAddingModel wine)
         {
             if(!this.data.ProductTastes.Any(pt=>pt.Id == wine.TasteId))
@@ -203,6 +212,11 @@ namespace Web.Controllers
            return RedirectToAction("All");
         }
 
+        public IActionResult Edit(string id)
+        {
+            return View();
+        }
+
         private IEnumerable<ProductWineAreaModel> GetWineAreas() => this.data.WineAreas
             .Select(wa => new ProductWineAreaModel
             {
@@ -217,13 +231,24 @@ namespace Web.Controllers
                  GrapeVarietyName = gv.Name
             });
 
-        private IEnumerable<ProductManufacturerModel> GetManufacturers() =>
-            this.data.Manufacturers
-            .Select(m => new ProductManufacturerModel
+        private IEnumerable<ProductManufacturerModel> GetManufacturers()
+        {
+            var manufacturers = this.data.Manufacturers
+                .Select(m => new ProductManufacturerModel
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    UserId = m.UserId
+                })
+                .AsQueryable();
+
+            if (User.IsInRole("Admin"))
             {
-                Id = m.Id,
-                Name = m.Name
-            });
+                return manufacturers;
+            }
+
+            return manufacturers.Where(m => m.UserId == User.GetId());
+        }
 
         private IEnumerable<ProductColorViewModel> GetAllColors() =>
             this.data.ProductColors
@@ -232,6 +257,10 @@ namespace Web.Controllers
                 Id = m.Id,
                 Name = m.Name
             });
+
+        private bool UserIsManufacturer()=>
+            data.Manufacturers
+                .Any(m => m.UserId == this.User.GetId());
 
         private IEnumerable<ProductTasteViewModel> GetAllTastes() =>
             this.data.ProductTastes

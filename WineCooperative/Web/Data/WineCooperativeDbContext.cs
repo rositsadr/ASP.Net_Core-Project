@@ -51,6 +51,12 @@ namespace Web.Data
                 .HasForeignKey<UserAdditionalInformation>(u => u.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Manufacturer>()
+                .HasOne(m=>m.User)
+                .WithMany(u=>u.Manufacturers)
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<OrderProduct>()
                 .HasKey(op => new { op.OrderId, op.ProductId });
 

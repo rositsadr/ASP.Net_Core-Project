@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Web.Data.Models;
 using static Web.Data.DataConstants;
 
 namespace Web.Models
@@ -27,6 +28,17 @@ namespace Web.Models
         public string AddressId { get; set; }
 
         public Address Address { get; set; }
+
+        [Required]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+
+        public User User { get; set; }
 
         public ICollection<Product> Products { get; set; }
 

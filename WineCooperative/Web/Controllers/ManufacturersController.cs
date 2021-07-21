@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Data;
+using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Manufacturers;
 using Web.Models.Products;
@@ -23,6 +25,8 @@ namespace Web.Controllers
                 {
                     Id = m.Id,
                     Name = m.Name,
+                    Email = m.Email,
+                    PhoneNumber = m.PhoneNumber,
                     Description = m.Description,
                     Address = new ManufacturerAddressViewModel
                     {
@@ -36,8 +40,10 @@ namespace Web.Controllers
             return View(members);
         }
 
+        [Authorize]
         public IActionResult Add() => View();
 
+        [Authorize]
         [HttpPost]
         public IActionResult Add(ManufacturerAddingModel member)
         {
@@ -93,8 +99,11 @@ namespace Web.Controllers
             var manufacturer = new Manufacturer
             {
                 Name = member.Name,
+                PhoneNumber = member.PhoneNumber,
+                Email = member.Email,
                 Description = member.Description,
                 Address = address,
+                UserId = this.User.GetId(),
             };
 
             data.Manufacturers.Add(manufacturer);

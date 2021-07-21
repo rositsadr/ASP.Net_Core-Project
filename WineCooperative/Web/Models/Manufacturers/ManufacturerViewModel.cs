@@ -8,6 +8,10 @@
 
         public string Description { get; init; }
 
+        public string Email { get; init; }
+
+        public string PhoneNumber { get; init; }
+
         public ManufacturerAddressViewModel Address { get; init; }
     }
 }

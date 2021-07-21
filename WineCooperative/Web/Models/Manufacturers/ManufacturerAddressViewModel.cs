@@ -6,6 +6,7 @@ namespace Web.Models.Manufacturers
     public class ManufacturerAddressViewModel
     {
         [Required]
+        [Display (Name ="Address")]
         public string Street { get; init; }
 
         [Required]
@@ -14,6 +15,7 @@ namespace Web.Models.Manufacturers
 
         [Required]
         [StringLength(TownMaxLength, MinimumLength =TownMinLength)]
+        [Display(Name = "Town")]
         public string TownName { get; init; }
     }
 }

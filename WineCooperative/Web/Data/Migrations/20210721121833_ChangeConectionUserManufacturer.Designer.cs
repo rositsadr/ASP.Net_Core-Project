@@ -10,8 +10,8 @@ using Web.Data;
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    [Migration("20210720121433_ChangeDataConstants")]
-    partial class ChangeDataConstants
+    [Migration("20210721121833_ChangeConectionUserManufacturer")]
+    partial class ChangeConectionUserManufacturer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -343,14 +343,28 @@ namespace Web.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Manufacturers");
                 });
@@ -551,8 +565,8 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -731,7 +745,15 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Web.Data.Models.User", "User")
+                        .WithMany("Manufacturers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Address");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Web.Models.News", b =>
@@ -834,6 +856,8 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Data.Models.User", b =>
                 {
+                    b.Navigation("Manufacturers");
+
                     b.Navigation("UserData");
                 });
 

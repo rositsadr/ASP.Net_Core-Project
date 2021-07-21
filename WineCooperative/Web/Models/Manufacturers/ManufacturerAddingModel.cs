@@ -12,6 +12,15 @@ namespace Web.Models.Manufacturers
         public string Description { get; init; }
 
         [Required]
+        [StringLength(ManufacturerPhoneNumberMaxLength, MinimumLength = ManufacturerPhoneNumberMinLength)]
+        [Display(Name = "Phone number")]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
         public ManufacturerAddressViewModel Address { get; init; }
     }
 }

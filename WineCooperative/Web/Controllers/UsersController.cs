@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Data;
 using Web.Data.Models;
+using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Users;
 
@@ -12,7 +13,7 @@ namespace Web.Controllers
     {
         private readonly WineCooperativeDbContext data;
 
-        public UsersController(UserManager<User> userManager, WineCooperativeDbContext data)
+        public UsersController(WineCooperativeDbContext data)
         {
             this.data = data;
         }
@@ -72,5 +73,32 @@ namespace Web.Controllers
             return RedirectToAction("Index","Home");
         }
 
+        public IActionResult MyProducts()
+        {
+            var products = data.Products
+                .Where(p => p.Manufacturer.UserId == this.User.GetId())
+                .Select(p => new UserProductsViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Color = p.Color.Name,
+                    Taste = p.Taste.Name,
+                    ManufactureYear = p.ManufactureYear,
+                    Manufacturer = p.Manufacturer.Name,
+                    InStock = p.InStock,
+                    WineArea = p.WineArea.Name,
+                })
+                .ToList();
+
+            return View(products);
+        }
+
+        public IActionResult MyServices()
+        {
+            return View();
+        }
     }
 }

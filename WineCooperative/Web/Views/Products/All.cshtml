@@ -44,7 +44,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="submit" class="btn btn-primary position-absolute bottom-0 end-0" value="GO" />
+                <input type="submit" class="btn btn-primary position-absolute bottom-0 end-0 mr-3" value="GO" />
             </div>
         </div>
     </form>
@@ -57,6 +57,11 @@
         }
 
         var pagesCount = Math.Ceiling((double)Model.TotalProducts / ProductSearchPageViewModel.productsPerPage);
+
+        if (pagesCount == 0)
+        {
+            pagesCount = 1;
+        }
 
     }
     <div class="row mb-3">
@@ -72,6 +77,10 @@
         </div>
     </div>
     <div class="row">
+        @if(!Model.Products.Any())
+            {
+                <h2 class="text-center">No products found by the given criteria.</h2>
+            }
         @foreach (var wine in Model.Products)
         {
             <div class="col-lg-4 mb-5 col-md-6">
@@ -85,7 +94,7 @@
                                 <i class="far fa-shopping-bag"> Add to Cart</i>
                             </a>
                         </div>
-                        @if (User.IsInRole("Administrator"))
+                        @if (User.IsInRole("Admin"))
                         {
                             <div>
                                 <a class="btn btn-danger" role="button" asp-controller="Products" asp-action="Delete" asp-route-id=@wine.Id>Delete</a>
