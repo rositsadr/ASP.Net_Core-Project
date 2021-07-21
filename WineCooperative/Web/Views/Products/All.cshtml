@@ -5,10 +5,7 @@
 }
 
 <div clss="container">
-    <div class="col-12 text-center">
-        <h2 class="d-block">Our Products</h2>
-        <p>Wines selected specially for you!</p>
-    </div>
+    <partial name="_ProductViewTitle"/>
     <form method="get" class="mb-3">
         <div class="row">
             <div class="col-md-3">
@@ -88,7 +85,7 @@
                     <a class="thumbnail d-block mb-4"><img src=@wine.ImageUrl alt="Image" class="card-img-top" asp-controller="Products" asp-action="Details" asp-route-id=@wine.Id></a>
                     <div class="card-body">
                         <h3 class="card-title">@wine.Name</h3>
-                        <span class="text-center">@wine.Price</span>
+                        <span class="text-center">@wine.Price lv.</span>
                         <div>
                             <a class="btn" asp-controller="Cart" asp-action="AddToCart" asp-route-id=@wine.Id>
                                 <i class="far fa-shopping-bag"> Add to Cart</i>

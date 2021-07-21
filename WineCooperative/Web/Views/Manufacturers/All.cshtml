@@ -20,8 +20,8 @@
                         <p>@member.Address.ZipCode Bulgaria</p>
                     </div>
                     <p class="card-text">@member.Description</p>
-                    <a asp-controller="Members" asp-action="MemberProducts" asp-route-id=@member.Id class="card-link">Products</a>
-                    <a asp-controller="Members" asp-action="MemberServices" asp-route-id=@member.Id class="card-link float-right">Services</a>
+                    <a asp-controller="Manufacturers" asp-action="Products" asp-route-id=@member.Id class="card-link">Products</a>
+                    <a asp-controller="Manufacturers" asp-action="Services" asp-route-id=@member.Id class="card-link float-right">Services</a>
                 </div>
             </div>
         }

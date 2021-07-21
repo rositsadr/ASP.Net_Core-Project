@@ -114,10 +114,10 @@ namespace Web.Controllers
 
         public IActionResult Details() => View();
 
-        public IActionResult Products(string memberId)
+        public IActionResult Products(string id)
         {
             var products = data.Products
-                .Where(p => p.ManufacturerId == memberId)
+                .Where(p => p.ManufacturerId == id)
                 .Select(p => new ProductViewModel
                 {
                     Id = p.Id,
