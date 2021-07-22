@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
+using Web.Data.Models;
 using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Enums;
@@ -30,7 +31,7 @@ namespace Web.Controllers
 
             return View(new ProductAddingModel
             {
-                WineAreas = this.GetWineAreas(),
+                WineAreas = this.GetAllWineAreas(),
                 AllGrapeVarieties = this.GetAllGrapeVarieties(),
                 Manufacturers = this.GetManufacturers(),
                 AllColors = this.GetAllColors(),
@@ -77,7 +78,7 @@ namespace Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                wine.WineAreas = this.GetWineAreas();
+                wine.WineAreas = this.GetAllWineAreas();
 
                 wine.AllGrapeVarieties = this.GetAllGrapeVarieties();
 
@@ -90,10 +91,6 @@ namespace Web.Controllers
                 return View(wine);
             }
 
-            var grapeViraieties = data.GrapeVarieties
-                    .Where(gv => wine.GrapeVarieties.Contains(gv.Id))
-                    .ToList();
-
             var product = new Product
             {
                 Name = wine.Name,
@@ -103,12 +100,20 @@ namespace Web.Controllers
                 Description = wine.Description,
                 InStock = wine.InStock,
                 WineAreaId = wine.WineAreaId,
-                GrapeVarieties = grapeViraieties,
+                GrapeVarieties = new List<ProductGrapeVariety>(),
                 ManufacturerId = wine.ManufacturerId,
                 TasteId = wine.TasteId,
                 ColorId = wine.ColorId
             };
 
+            foreach (var grapeId in wine.GrapeVarieties)
+            {
+                product.GrapeVarieties.Add(new ProductGrapeVariety
+                {
+                    ProductId = product.Id,
+                    GrapeVarietyId = grapeId
+                });
+            }
             data.Products.Add(product);
             data.SaveChanges();
 
@@ -212,12 +217,124 @@ namespace Web.Controllers
            return RedirectToAction("All");
         }
 
+        [Authorize]
         public IActionResult Edit(string id)
         {
-            return View();
+            var product = data.Products
+                .Where(p => p.Id == id)
+                .Select(p => new ProductAddingModel
+                {
+                    Name = p.Name,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Description = p.Description,
+                    ManufactureYear = p.ManufactureYear,
+                    InStock = p.InStock,
+                    ColorId = p.ColorId,
+                    TasteId = p.TasteId,
+                    ManufacturerId = p.ManufacturerId,
+                    WineAreaId = p.WineAreaId,
+                    GrapeVarieties = p.GrapeVarieties.Select(gv=>gv.GrapeVarietyId)
+                })
+                .FirstOrDefault();
+
+            product.Manufacturers = GetManufacturers();
+
+            product.AllColors = GetAllColors();
+
+            product.AllTastes = GetAllTastes();
+
+            product.AllGrapeVarieties = GetAllGrapeVarieties();
+
+            product.WineAreas = GetAllWineAreas();
+
+            ViewBag.Id = id;
+
+            return View("Add",product);
         }
 
-        private IEnumerable<ProductWineAreaModel> GetWineAreas() => this.data.WineAreas
+        [HttpPost]
+        [Authorize]
+        public IActionResult Edit(ProductAddingModel wine, string id)
+        {
+            var product = data.Products.Where(p => p.Id == id).FirstOrDefault();
+
+            if (product.Name != wine.Name)
+            {
+                product.Name = wine.Name;
+            }
+
+            if (product.Price != wine.Price)
+            {
+                product.Price = wine.Price;
+            }
+
+            if(product.TasteId != wine.TasteId)
+            {
+                product.TasteId = wine.TasteId;
+            }
+
+            if(product.ColorId != wine.ColorId)
+            {
+                product.ColorId = wine.ColorId;
+            }
+
+            if (product.ImageUrl != wine.ImageUrl)
+            {
+                product.ImageUrl = wine.ImageUrl;
+            }
+
+            if (product.Description != wine.Description)
+            {
+                product.Description = wine.Description;
+            }
+
+            if (product.InStock != wine.InStock)
+            {
+                product.InStock = wine.InStock;
+            }
+
+            if (product.ManufacturerId != wine.ManufacturerId)
+            {
+                product.ManufacturerId = wine.ManufacturerId;
+            }
+
+            if (product.ManufactureYear != wine.ManufactureYear)
+            {
+                product.ManufactureYear = wine.ManufactureYear;
+            }
+
+            if (product.WineAreaId != wine.WineAreaId)
+            {
+                product.WineAreaId = wine.WineAreaId;
+            }
+
+            if(product.GrapeVarieties.Any(g=>!wine.GrapeVarieties.Contains(g.GrapeVarietyId)))
+            {
+                var toRemove = data.ProductGrapeVarieties
+                    .Where(p => p.ProductId == id)
+                    .ToList();
+
+                data.ProductGrapeVarieties.RemoveRange(toRemove);
+
+                product.GrapeVarieties = new List<ProductGrapeVariety>();
+
+                foreach (var grapeId in wine.GrapeVarieties)
+                {
+                    product.GrapeVarieties.Add(new ProductGrapeVariety
+                    {
+                        ProductId = id,
+                        GrapeVarietyId = grapeId,
+                    });
+                }
+            }
+
+            data.SaveChanges();
+
+            return RedirectToAction("MyProducts", "Users");
+        }
+
+        private IEnumerable<ProductWineAreaModel> GetAllWineAreas() => this.data.WineAreas
             .Select(wa => new ProductWineAreaModel
             {
                 WineAreaId = wa.Id,

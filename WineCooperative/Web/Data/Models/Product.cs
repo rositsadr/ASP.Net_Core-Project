@@ -11,7 +11,7 @@ namespace Web.Models
         public Product()
         {
             this.ProductOrders = new HashSet<OrderProduct>();
-            this.GrapeVarieties = new HashSet<GrapeVariety>();
+            this.GrapeVarieties = new HashSet<ProductGrapeVariety>();
         }
 
         [Key]
@@ -52,6 +52,6 @@ namespace Web.Models
         public WineArea WineArea { get; set; }
 
         public ICollection<OrderProduct> ProductOrders { get; set; }
-        public ICollection<GrapeVariety> GrapeVarieties { get; set; }
+        public ICollection<ProductGrapeVariety> GrapeVarieties { get; set; }
     }
 }

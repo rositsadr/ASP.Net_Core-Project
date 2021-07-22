@@ -288,13 +288,13 @@ namespace Web.Data.Migrations
                         column: x => x.GrapeVarietiesId,
                         principalTable: "GrapeVarieties",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GrapeVarietyWineArea_WineAreas_WineAreasId",
                         column: x => x.WineAreasId,
                         principalTable: "WineAreas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -465,13 +465,13 @@ namespace Web.Data.Migrations
                         column: x => x.GrapeVarietiesId,
                         principalTable: "GrapeVarieties",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GrapeVarietyProduct_Products_ProductsId",
                         column: x => x.ProductsId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

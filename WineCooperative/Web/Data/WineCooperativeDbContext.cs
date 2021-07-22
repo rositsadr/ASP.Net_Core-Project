@@ -43,6 +43,8 @@ namespace Web.Data
 
         public DbSet<ProductTaste> ProductTastes { get; set; }
 
+        public DbSet<ProductGrapeVariety> ProductGrapeVarieties { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<UserAdditionalInformation>()
@@ -55,7 +57,7 @@ namespace Web.Data
                 .HasOne(m=>m.User)
                 .WithMany(u=>u.Manufacturers)
                 .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict);           
 
             builder.Entity<OrderProduct>()
                 .HasKey(op => new { op.OrderId, op.ProductId });
@@ -70,9 +72,28 @@ namespace Web.Data
                 .WithOne(po => po.Product)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Product>().Property(p => p.Price).HasPrecision(10, 2);
+            builder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasPrecision(10, 2);
 
-            builder.Entity<Service>().Property(p => p.Price).HasPrecision(10, 2);
+            builder.Entity<ProductGrapeVariety>()
+                .HasKey(x => new { x.ProductId, x.GrapeVarietyId });
+
+            builder.Entity<ProductGrapeVariety>()
+                .HasOne(pg => pg.Product)
+                .WithMany(p => p.GrapeVarieties)
+                .HasForeignKey(pg => pg.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ProductGrapeVariety>()
+                .HasOne(pg => pg.GrapeVariety)
+                .WithMany(gv => gv.Products)
+                .HasForeignKey(pg => pg.GrapeVarietyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Service>()
+                .Property(p => p.Price)
+                .HasPrecision(10, 2);
 
             base.OnModelCreating(builder);
         }
