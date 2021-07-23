@@ -6,6 +6,7 @@ using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Manufacturers;
 using Web.Models.Products;
+using Web.Services.Products;
 
 namespace Web.Controllers
 {
@@ -13,10 +14,7 @@ namespace Web.Controllers
     {
         private readonly WineCooperativeDbContext data;
 
-        public ManufacturersController(WineCooperativeDbContext data)
-        {
-            this.data = data;
-        }
+        public ManufacturersController(WineCooperativeDbContext data) => this.data = data;
 
         public IActionResult All()
         {
@@ -114,25 +112,6 @@ namespace Web.Controllers
 
         public IActionResult Details() => View();
 
-        public IActionResult Products(string id)
-        {
-            var products = data.Products
-                .Where(p => p.ManufacturerId == id)
-                .Select(p => new ProductViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price
-                })
-                .ToList();
-
-            return View(products);
-        }
-
-        public IActionResult Services(string memberId)
-        {
-            return View();
-        }
+        public IActionResult Services(string memberId) => View();
     }
 }

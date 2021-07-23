@@ -7,8 +7,8 @@ using Web.Data;
 using Web.Data.Models;
 using Web.Infrastructures;
 using Web.Models;
-using Web.Models.Enums;
 using Web.Models.Products;
+using Web.Services.Products;
 
 namespace Web.Controllers
 {
@@ -16,9 +16,12 @@ namespace Web.Controllers
     {
         private readonly WineCooperativeDbContext data;
 
-        public ProductsController(WineCooperativeDbContext data)
+        private readonly IProductService productService;
+
+        public ProductsController(WineCooperativeDbContext data, IProductService productService)
         {
             this.data = data;
+            this.productService = productService;
         }
 
         [Authorize]
@@ -120,101 +123,55 @@ namespace Web.Controllers
             return RedirectToAction("All","Products");
         }
 
-        public IActionResult All([FromQuery] ProductSearchPageViewModel query)
+        public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id = null)
         {
-            var productsQuery = data.Products.AsQueryable();
+            var productsResult = this.productService.All(query.Manufacturer, query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageViewModel.productsPerPage);
 
-            if (!string.IsNullOrEmpty(query.Manufacturer))
+            if(id!=null)
             {
-                productsQuery = productsQuery
-                    .Where(p => p.Manufacturer.Name == query.Manufacturer);
+                productsResult.Products = productsResult.Products
+                    .Where(p => p.ManufacturerId == id)
+                    .ToList();
             }
-            
-            if (!string.IsNullOrEmpty(query.Color))
+            else
             {
-                productsQuery = productsQuery
-                    .Where(p => p.Color.Name == query.Color);
-            }
-
-            if(!string.IsNullOrEmpty(query.SearchTerm))
-            {
-                productsQuery = productsQuery
-                    .Where(p =>(p.Name.ToLower() + " " + p.Description.ToLower()).Contains(query.SearchTerm));         
+                productsResult.Products = productsResult.Products
+                    .Where(p => p.InStock)
+                    .ToList();
             }
 
-            productsQuery = query.Sorting switch
-            {
-                ProductsSort.ByYear => productsQuery.OrderByDescending(p=>p.ManufactureYear),
-                ProductsSort.ByManufacturer => productsQuery.OrderBy(p=>p.Manufacturer.Name),
-                ProductsSort.ByName or _ => productsQuery.OrderBy(p=>p.Name)
-            };
+            var manufacturers = this.productService.GetAllManufacturers();
 
-            var totalProducts = productsQuery.Count();
+            var colors = this.productService.GetAllColors();
 
-            var products = productsQuery
-                 .Where(p => p.InStock)
-                 .Skip((query.CurrantPage-1) * ProductSearchPageViewModel.productsPerPage)
-                 .Take(ProductSearchPageViewModel.productsPerPage)
-                 .Select(p => new ProductViewModel
-                 {
-                     Id = p.Id,
-                     ImageUrl = p.ImageUrl,
-                     Name = p.Name,
-                     Price = p.Price,
-                 })
-                 .ToList();
+            query.Colors = colors;
 
-            query.TotalProducts = totalProducts;
+            query.Manufacturers = manufacturers;
 
-            query.Colors = data.ProductColors
-                .Select(c=>c.Name);
+            query.TotalProducts = productsResult.TotalProducts;
 
-            query.Manufacturers = data.Manufacturers
-                .Select(m => m.Name);
-
-            query.Products = products;
+            query.Products = productsResult.Products;
 
             return View(query);
         }
 
         public IActionResult Details(string id)
         {
-            if(!ExistingProductCheck(id))
-            {
-                var product = data.Products
-               .Where(p => p.Id == id)
-               .Select(p => new ProductDisplayModel
-               {
-                   Id = p.Id,
-                   Name = p.Name,
-                   Price = p.Price,
-                   ImageUrl = p.ImageUrl,
-                   Description = p.Description,
-                   InStock = p.InStock,
-                   ManufacturerName = p.Manufacturer.Name,
-                   ManufactureYear = p.ManufactureYear,
-                   WineAreaName = p.WineArea.Name
-               })
-               .FirstOrDefault();
+            var product = productService.Details(id);
 
-                return View(product);
+            if(product==null)
+            {
+                return RedirectToAction("All");
             }
 
-            return RedirectToAction("All");
+            return View(product);
         }
 
         public IActionResult Delete(string id)
         {
-            if(ExistingProductCheck(id))
-            {
-                var wine = data.Products
-                    .Find(id);
+            this.productService.Delete(id);
 
-                data.Remove(wine);
-                data.SaveChanges();
-            }
-
-           return RedirectToAction("All");
+            return RedirectToAction("All");
         }
 
         [Authorize]
@@ -367,36 +324,21 @@ namespace Web.Controllers
             return manufacturers.Where(m => m.UserId == User.GetId());
         }
 
-        private IEnumerable<ProductColorViewModel> GetAllColors() =>
-            this.data.ProductColors
+        private IEnumerable<ProductColorViewModel> GetAllColors() => this.data.ProductColors
             .Select(m => new ProductColorViewModel
             {
                 Id = m.Id,
                 Name = m.Name
             });
 
-        private bool UserIsManufacturer()=>
-            data.Manufacturers
-                .Any(m => m.UserId == this.User.GetId());
-
-        private IEnumerable<ProductTasteViewModel> GetAllTastes() =>
-            this.data.ProductTastes
+        private IEnumerable<ProductTasteViewModel> GetAllTastes() => this.data.ProductTastes
             .Select(m => new ProductTasteViewModel
             {
                 Id = m.Id,
                 Name = m.Name
             });
 
-        private bool ExistingProductCheck(string wineId)
-        {
-            bool exists = false;
-
-            if (data.Products.Any(p => p.Id == wineId))
-            {
-                //Todo:
-                exists = true;
-            }
-            return exists;
-        }
+        private bool UserIsManufacturer() => data.Manufacturers
+            .Any(m => m.UserId == this.User.GetId());
     }
 }

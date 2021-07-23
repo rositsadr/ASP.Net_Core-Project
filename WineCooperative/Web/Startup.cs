@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Web.Data;
 using Web.Data.Models;
 using Web.Infrastructures;
+using Web.Services.Products;
 
 namespace Web
 {
@@ -36,6 +37,8 @@ namespace Web
             services.AddControllersWithViews();
 
             services.AddHttpContextAccessor();
+
+            services.AddTransient<IProductService, ProductService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

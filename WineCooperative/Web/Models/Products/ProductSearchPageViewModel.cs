@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Web.Models.Enums;
+using Web.Services.Products;
 
 namespace Web.Models.Products
 {
@@ -23,6 +24,6 @@ namespace Web.Models.Products
 
         public ProductsSort Sorting  { get; init; }
 
-        public List<ProductViewModel> Products { get; set; }
+        public IEnumerable<ProductServiceModel> Products { get; set; }
     }
 }
