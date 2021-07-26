@@ -13,7 +13,9 @@ namespace Web.Services.Products
 
         public ProductSearchPageServiceModel All(string manufacturer, string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
         {
-            var productsQuery = data.Products.AsQueryable();
+            var productsQuery = data.Products
+                .Where(p=>p.InStock == true)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(manufacturer))
             {
@@ -51,7 +53,6 @@ namespace Web.Services.Products
                      ImageUrl = p.ImageUrl,
                      Name = p.Name,
                      Price = p.Price,
-                     InStock = p.InStock,
                      ManufacturerId = p.ManufacturerId,
                  })
                  .ToList();

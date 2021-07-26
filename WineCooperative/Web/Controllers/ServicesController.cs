@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using Web.Data;
-using Web.Data.Models;
 using Web.Models;
 using Web.Models.Services;
 
@@ -17,9 +15,11 @@ namespace Web.Controllers
             this.data = data;
         }
 
+        [Authorize]
         public IActionResult Add() => View();
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(ServiceAddingModel service)
         {
             if (!ModelState.IsValid)

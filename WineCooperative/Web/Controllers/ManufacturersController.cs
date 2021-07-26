@@ -5,8 +5,6 @@ using Web.Data;
 using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Manufacturers;
-using Web.Models.Products;
-using Web.Services.Products;
 
 namespace Web.Controllers
 {
@@ -41,8 +39,8 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Add() => View();
 
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public IActionResult Add(ManufacturerAddingModel member)
         {
             if(data.Manufacturers.Any(m=>m.Name == member.Name))

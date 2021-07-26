@@ -76,7 +76,7 @@ namespace Web.Controllers
 
             if (data.Products.Any(p => p.Name == wine.Name && p.ManufactureYear == wine.ManufactureYear && p.Manufacturer.Id == wine.ManufacturerId && p.ColorId == wine.ColorId && p.TasteId == wine.TasteId))
             {
-                this.ModelState.AddModelError(nameof(wine), "This wine is already in the list. Check your product list.");
+                this.ModelState.AddModelError(string.Empty, "This wine is already in the list. Check your product list.");
             }
 
             if (!ModelState.IsValid)
@@ -123,7 +123,7 @@ namespace Web.Controllers
             return RedirectToAction("All","Products");
         }
 
-        public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id = null)
+        public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id)
         {
             var productsResult = this.productService.All(query.Manufacturer, query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageViewModel.productsPerPage);
 
@@ -133,13 +133,7 @@ namespace Web.Controllers
                     .Where(p => p.ManufacturerId == id)
                     .ToList();
             }
-            else
-            {
-                productsResult.Products = productsResult.Products
-                    .Where(p => p.InStock)
-                    .ToList();
-            }
-
+           
             var manufacturers = this.productService.GetAllManufacturers();
 
             var colors = this.productService.GetAllColors();
