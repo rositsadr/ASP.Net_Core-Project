@@ -1,18 +1,47 @@
 ﻿using System.Collections.Generic;
 using Web.Models.Enums;
+using Web.Services.Products.Models;
 
 namespace Web.Services.Products
 {
     public interface IProductService
     {
-        public ProductSearchPageServiceModel All(string manufacturer, string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage);
+        public string CreateProduct(string name, decimal price, string imageUrl, int manufactureYear, string description, bool inStock, int wineAreaId, string manufacturerId, int tasteId, int colorId, IEnumerable<int> grapeVarieties);
 
-        public IEnumerable<string> GetAllColors();
+        public ProductSearchPageServiceModel All(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage);
 
-        public IEnumerable<string> GetAllManufacturers();
+        public IEnumerable<ProductDetailsServiceModel> ProductsByUser(string userId);
 
         public ProductDetailsServiceModel Details(string id);
 
+        public ProductEditServiceModel Edit(string id);
+
         public void Delete(string id);
+
+        public IEnumerable<string> GetAllColorsName();
+
+        public IEnumerable<ProductWineAreaServiceModel> GetAllWineAreas();
+
+        public IEnumerable<ProductGrapeVarietiesServiceModel> GetAllGrapeVarieties();
+
+        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers();
+
+        public IEnumerable<ProductColorServiceModel> GetAllColors();
+
+        public IEnumerable<ProductTasteServiceModel> GetAllTastes();
+
+        public bool ColorExists(int colorId);
+
+        public bool TasteExists(int tasteId);
+
+        public bool WineAreaExists(int wineAreaId);
+
+        public bool ManufacturerExists(string manufacturerId);
+
+        public bool GrapeVarietiesExists(IEnumerable<int> grapeVarieties);
+
+        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineArea, IEnumerable<int> grapeVarieties);
+
+        public bool UserIsManufacturer(string id);
     }
 }

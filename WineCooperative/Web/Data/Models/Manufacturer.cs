@@ -25,7 +25,7 @@ namespace Web.Models
         public string Description { get; set; }
 
         [Required]
-        public string AddressId { get; set; }
+        public int AddressId { get; set; }
 
         public Address Address { get; set; }
 

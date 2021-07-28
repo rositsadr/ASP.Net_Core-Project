@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Web.Services.Products
+namespace Web.Services.Products.Models
 {
     public class ProductSearchPageServiceModel
     {

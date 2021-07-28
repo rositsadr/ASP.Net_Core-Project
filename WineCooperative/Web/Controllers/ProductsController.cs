@@ -27,105 +27,78 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Add()
         {
-            if(!(this.UserIsManufacturer() || this.User.IsInRole("Admin")))
+            if(!(this.productService.UserIsManufacturer(User.GetId()) || this.User.IsInRole("Admin")))
             {
                 return BadRequest();
             }
 
-            return View(new ProductAddingModel
+            return View(new ProductModel
             {
-                WineAreas = this.GetAllWineAreas(),
-                AllGrapeVarieties = this.GetAllGrapeVarieties(),
-                Manufacturers = this.GetManufacturers(),
-                AllColors = this.GetAllColors(),
-                AllTastes = this.GetAllTastes(),
+                WineAreas = this.productService.GetAllWineAreas(),
+                AllGrapeVarieties = this.productService.GetAllGrapeVarieties(),
+                Manufacturers = this.productService.GetAllManufacturers(),
+                AllColors = this.productService.GetAllColors(),
+                AllTastes = this.productService.GetAllTastes(),
             });
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(ProductAddingModel wine)
+        public IActionResult Add(ProductModel product)
         {
-            if(!this.data.ProductTastes.Any(pt=>pt.Id == wine.TasteId))
+            if(!productService.TasteExists(product.TasteId))
             {
-                this.ModelState.AddModelError(nameof(wine.TasteId), "This is not existing wine taste.");
+                this.ModelState.AddModelError(nameof(product.TasteId), "This is not existing wine taste.");
             }
 
-            if (!this.data.ProductColors.Any(pc=>pc.Id == wine.ColorId))
+            if (!productService.ColorExists(product.ColorId))
             {
-                this.ModelState.AddModelError(nameof(wine.ColorId), "This is not existing wine color.");
+                this.ModelState.AddModelError(nameof(product.ColorId), "This is not existing wine color.");
             }
 
-            if (!this.data.WineAreas.Any(w=>w.Id == wine.WineAreaId))
+            if (!productService.WineAreaExists(product.WineAreaId))
             {
-                this.ModelState.AddModelError(nameof(wine.WineAreaId), "This wine area does not exists!");
+                this.ModelState.AddModelError(nameof(product.WineAreaId), "This wine area does not exists!");
             }
 
-            if(!this.data.Manufacturers.Any(m=>m.Id == wine.ManufacturerId))
+            if(!productService.ManufacturerExists(product.ManufacturerId))
             {
-                this.ModelState.AddModelError(nameof(wine.ManufacturerId), "The Manufacturer does not exists.");
+                this.ModelState.AddModelError(nameof(product.ManufacturerId), "The Manufacturer does not exists.");
             }
 
-            foreach (var grapeId in wine.GrapeVarieties)
+            if (!productService.GrapeVarietiesExists(product.GrapeVarieties))
             {
-                if(!this.data.GrapeVarieties.Any(g=>g.Id == grapeId))
-                {
-                    this.ModelState.AddModelError(nameof(wine.GrapeVarieties), "The grape variety you have chosen does not exists!");
-                }
+                this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
             }
 
-            if (data.Products.Any(p => p.Name == wine.Name && p.ManufactureYear == wine.ManufactureYear && p.Manufacturer.Id == wine.ManufacturerId && p.ColorId == wine.ColorId && p.TasteId == wine.TasteId))
+            if (productService.WineExists(product.Name, product.ManufactureYear,product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
             {
                 this.ModelState.AddModelError(string.Empty, "This wine is already in the list. Check your product list.");
             }
 
             if (!ModelState.IsValid)
             {
-                wine.WineAreas = this.GetAllWineAreas();
+                product.WineAreas = this.productService.GetAllWineAreas();
 
-                wine.AllGrapeVarieties = this.GetAllGrapeVarieties();
+                product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
 
-                wine.Manufacturers = this.GetManufacturers();
+                product.Manufacturers = this.productService.GetAllManufacturers();
 
-                wine.AllColors = this.GetAllColors();
+                product.AllColors = this.productService.GetAllColors();
 
-                wine.AllTastes = this.GetAllTastes();
+                product.AllTastes = this.productService.GetAllTastes();
 
-                return View(wine);
+                return View(product);
             }
 
-            var product = new Product
-            {
-                Name = wine.Name,
-                Price = wine.Price,
-                ImageUrl = wine.ImageUrl,
-                ManufactureYear = wine.ManufactureYear,
-                Description = wine.Description,
-                InStock = wine.InStock,
-                WineAreaId = wine.WineAreaId,
-                GrapeVarieties = new List<ProductGrapeVariety>(),
-                ManufacturerId = wine.ManufacturerId,
-                TasteId = wine.TasteId,
-                ColorId = wine.ColorId
-            };
-
-            foreach (var grapeId in wine.GrapeVarieties)
-            {
-                product.GrapeVarieties.Add(new ProductGrapeVariety
-                {
-                    ProductId = product.Id,
-                    GrapeVarietyId = grapeId
-                });
-            }
-            data.Products.Add(product);
-            data.SaveChanges();
+            this.productService.CreateProduct(product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
             return RedirectToAction("All","Products");
         }
 
-        public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id)
+        public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id = null)
         {
-            var productsResult = this.productService.All(query.Manufacturer, query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageViewModel.productsPerPage);
+            var productsResult = this.productService.All(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageViewModel.productsPerPage);
 
             if(id!=null)
             {
@@ -133,14 +106,10 @@ namespace Web.Controllers
                     .Where(p => p.ManufacturerId == id)
                     .ToList();
             }
-           
-            var manufacturers = this.productService.GetAllManufacturers();
 
-            var colors = this.productService.GetAllColors();
+            var colors = this.productService.GetAllColorsName();
 
             query.Colors = colors;
-
-            query.Manufacturers = manufacturers;
 
             query.TotalProducts = productsResult.TotalProducts;
 
@@ -171,96 +140,113 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Edit(string id)
         {
-            var product = data.Products
-                .Where(p => p.Id == id)
-                .Select(p => new ProductAddingModel
+            var userId = User.GetId();
+
+            if (!(this.productService.UserIsManufacturer(userId) || this.User.IsInRole("Admin")))
+            {
+                return BadRequest();
+            }
+
+            var product = this.productService.Edit(id);
+
+            if (product.UserId != userId)
+            {
+                return Unauthorized();
+            }
+
+            var productToEdit = new ProductModel
                 {
-                    Name = p.Name,
-                    Price = p.Price,
-                    ImageUrl = p.ImageUrl,
-                    Description = p.Description,
-                    ManufactureYear = p.ManufactureYear,
-                    InStock = p.InStock,
-                    ColorId = p.ColorId,
-                    TasteId = p.TasteId,
-                    ManufacturerId = p.ManufacturerId,
-                    WineAreaId = p.WineAreaId,
-                    GrapeVarieties = p.GrapeVarieties.Select(gv=>gv.GrapeVarietyId)
-                })
-                .FirstOrDefault();
+                    Name = product.Name,
+                    Price = product.Price,
+                    ImageUrl = product.ImageUrl,
+                    Description = product.Description,
+                    ManufactureYear = product.ManufactureYear,
+                    InStock = product.InStock,
+                    ColorId = product.ColorId,
+                    TasteId = product.TasteId,
+                    ManufacturerId = product.ManufacturerId,
+                    WineAreaId = product.WineAreaId,
+                    GrapeVarieties = product.GrapeVarieties
+                };
 
-            product.Manufacturers = GetManufacturers();
+            var manufacturers = this.productService.GetAllManufacturers();
 
-            product.AllColors = GetAllColors();
+            if (User.IsInRole("Member"))
+            {
+                manufacturers = manufacturers
+                    .Where(m => m.UserId == userId);
+            }
 
-            product.AllTastes = GetAllTastes();
+            productToEdit.AllColors = this.productService.GetAllColors();
 
-            product.AllGrapeVarieties = GetAllGrapeVarieties();
+            productToEdit.AllTastes = this.productService.GetAllTastes();
 
-            product.WineAreas = GetAllWineAreas();
+            productToEdit.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
 
-            ViewBag.Id = id;
+            productToEdit.WineAreas = this.productService.GetAllWineAreas();
 
-            return View("Add",product);
+            productToEdit.Manufacturers = manufacturers;
+
+            return View(productToEdit);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Edit(ProductAddingModel wine, string id)
+        public IActionResult Edit(ProductModel product, string id)
         {
-            var product = data.Products.Where(p => p.Id == id).FirstOrDefault();
+            var productToEdit = data.Products.Where(p => p.Id == id).FirstOrDefault();
 
-            if (product.Name != wine.Name)
+            if (productToEdit.Name != product.Name)
             {
-                product.Name = wine.Name;
+                productToEdit.Name = product.Name;
             }
 
-            if (product.Price != wine.Price)
+            if (productToEdit.Price != product.Price)
             {
-                product.Price = wine.Price;
+                productToEdit.Price = product.Price;
             }
 
-            if(product.TasteId != wine.TasteId)
+            if(productToEdit.TasteId != product.TasteId)
             {
-                product.TasteId = wine.TasteId;
+                productToEdit.TasteId = product.TasteId;
             }
 
-            if(product.ColorId != wine.ColorId)
+            if(productToEdit.ColorId != product.ColorId)
             {
-                product.ColorId = wine.ColorId;
+                productToEdit.ColorId = product.ColorId;
             }
 
-            if (product.ImageUrl != wine.ImageUrl)
+            if (productToEdit.ImageUrl != product.ImageUrl)
             {
-                product.ImageUrl = wine.ImageUrl;
+                productToEdit.ImageUrl = product.ImageUrl;
             }
 
-            if (product.Description != wine.Description)
+            if (productToEdit.Description != product.Description)
             {
-                product.Description = wine.Description;
+                productToEdit.Description = product.Description;
             }
 
-            if (product.InStock != wine.InStock)
+            if (productToEdit.InStock != product.InStock)
             {
-                product.InStock = wine.InStock;
+                productToEdit.InStock = product.InStock;
             }
 
-            if (product.ManufacturerId != wine.ManufacturerId)
+            if (productToEdit.ManufacturerId != product.ManufacturerId)
             {
-                product.ManufacturerId = wine.ManufacturerId;
+                productToEdit.ManufacturerId = product.ManufacturerId;
             }
 
-            if (product.ManufactureYear != wine.ManufactureYear)
+            if (productToEdit.ManufactureYear != product.ManufactureYear)
             {
-                product.ManufactureYear = wine.ManufactureYear;
+                productToEdit.ManufactureYear = product.ManufactureYear;
             }
 
-            if (product.WineAreaId != wine.WineAreaId)
+            if (productToEdit.WineAreaId != product.WineAreaId)
             {
-                product.WineAreaId = wine.WineAreaId;
+                productToEdit.WineAreaId = product.WineAreaId;
             }
 
-            if(product.GrapeVarieties.Any(g=>!wine.GrapeVarieties.Contains(g.GrapeVarietyId)))
+            if(productToEdit.GrapeVarieties.Any(g=>!product.GrapeVarieties.Contains(g.GrapeVarietyId)))
             {
                 var toRemove = data.ProductGrapeVarieties
                     .Where(p => p.ProductId == id)
@@ -268,11 +254,11 @@ namespace Web.Controllers
 
                 data.ProductGrapeVarieties.RemoveRange(toRemove);
 
-                product.GrapeVarieties = new List<ProductGrapeVariety>();
+                productToEdit.GrapeVarieties = new List<ProductGrapeVariety>();
 
-                foreach (var grapeId in wine.GrapeVarieties)
+                foreach (var grapeId in product.GrapeVarieties)
                 {
-                    product.GrapeVarieties.Add(new ProductGrapeVariety
+                    productToEdit.GrapeVarieties.Add(new ProductGrapeVariety
                     {
                         ProductId = id,
                         GrapeVarietyId = grapeId,
@@ -283,56 +269,6 @@ namespace Web.Controllers
             data.SaveChanges();
 
             return RedirectToAction("MyProducts", "Users");
-        }
-
-        private IEnumerable<ProductWineAreaModel> GetAllWineAreas() => this.data.WineAreas
-            .Select(wa => new ProductWineAreaModel
-            {
-                WineAreaId = wa.Id,
-                WineAreName = wa.Name
-            });
-
-        private IEnumerable<ProductGrapeVarietiesModel> GetAllGrapeVarieties() => this.data.GrapeVarieties
-            .Select(gv => new ProductGrapeVarietiesModel
-            {
-                 GrapeVarietyId = gv.Id,
-                 GrapeVarietyName = gv.Name
-            });
-
-        private IEnumerable<ProductManufacturerModel> GetManufacturers()
-        {
-            var manufacturers = this.data.Manufacturers
-                .Select(m => new ProductManufacturerModel
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    UserId = m.UserId
-                })
-                .AsQueryable();
-
-            if (User.IsInRole("Admin"))
-            {
-                return manufacturers;
-            }
-
-            return manufacturers.Where(m => m.UserId == User.GetId());
-        }
-
-        private IEnumerable<ProductColorViewModel> GetAllColors() => this.data.ProductColors
-            .Select(m => new ProductColorViewModel
-            {
-                Id = m.Id,
-                Name = m.Name
-            });
-
-        private IEnumerable<ProductTasteViewModel> GetAllTastes() => this.data.ProductTastes
-            .Select(m => new ProductTasteViewModel
-            {
-                Id = m.Id,
-                Name = m.Name
-            });
-
-        private bool UserIsManufacturer() => data.Manufacturers
-            .Any(m => m.UserId == this.User.GetId());
+        }      
     }
 }

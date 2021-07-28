@@ -1,4 +1,4 @@
-﻿@model List<UserProductsViewModel>
+﻿@model List<ProductDetailsServiceModel>
 
 @{
     ViewData["Title"] = "My Products";
@@ -27,14 +27,15 @@
                         <p class="card-text mb-0">Price: @wine.Price lv.</p>
                         <p class="card-text mb-0">Color: @wine.Color</p>
                         <p class="card-text mb-0">Taste: @wine.Taste</p>
-                        <p class="card-text mb-0">Manufacturer: @wine.Manufacturer</p>
-                        <p class="card-text mb-0">Wine area: @wine.WineArea</p>
+                        <p class="card-text mb-0">Manufacturer: @wine.ManufacturerName</p>
+                        <p class="card-text mb-0">Wine area: @wine.WineAreaName</p>
                         <p class="card-text mb-0">In Stock: @(wine.InStock?"Yes":"No")</p>
                         <p class="card-text mb-0">@wine.Description</p>
                     </div>
                 </div>
                 <div class="text-center" >
-                    <a asp-controller="Products" asp-action="Edit" asp-route-id=@wine.Id>Edit wine</a>
+                    <a asp-controller="Products" asp-action="Edit" asp-route-id=@wine.Id class="btn btn-warning">Edit</a>
+                    <a asp-controller="Products" asp-action="Delete" asp-route-id=@wine.Id class="btn btn-danger">Delete</a>
                 </div>
             </div>
         </div>

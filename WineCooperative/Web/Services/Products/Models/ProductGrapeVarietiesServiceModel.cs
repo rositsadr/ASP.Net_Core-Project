@@ -1,7 +1,6 @@
-﻿
-namespace Web.Models.Products
+﻿namespace Web.Services.Products.Models
 {
-    public class ProductGrapeVarietiesModel
+    public class ProductGrapeVarietiesServiceModel
     {
         public int GrapeVarietyId { get; init; }
 

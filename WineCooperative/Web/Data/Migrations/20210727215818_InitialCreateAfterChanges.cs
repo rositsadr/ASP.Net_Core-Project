@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Web.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialCreateAfterChanges : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -80,7 +80,7 @@ namespace Web.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,7 +93,7 @@ namespace Web.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Taste = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,7 +104,8 @@ namespace Web.Data.Migrations
                 name: "Themes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(35)", maxLength: 35, nullable: false)
                 },
                 constraints: table =>
@@ -116,7 +117,8 @@ namespace Web.Data.Migrations
                 name: "WineAreas",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -237,7 +239,7 @@ namespace Web.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     CountryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -255,22 +257,24 @@ namespace Web.Data.Migrations
                 name: "News",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ThemeId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ThemeId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ThemeId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_News", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_News_Themes_ThemeId",
-                        column: x => x.ThemeId,
+                        name: "FK_News_Themes_ThemeId1",
+                        column: x => x.ThemeId1,
                         principalTable: "Themes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -278,7 +282,7 @@ namespace Web.Data.Migrations
                 columns: table => new
                 {
                     GrapeVarietiesId = table.Column<int>(type: "int", nullable: false),
-                    WineAreasId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    WineAreasId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -288,20 +292,21 @@ namespace Web.Data.Migrations
                         column: x => x.GrapeVarietiesId,
                         principalTable: "GrapeVarieties",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GrapeVarietyWineArea_WineAreas_WineAreasId",
                         column: x => x.WineAreasId,
                         principalTable: "WineAreas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Addresses",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Street = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     ZipCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     TownId = table.Column<int>(type: "int", nullable: false)
@@ -322,9 +327,12 @@ namespace Web.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AddressId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    AddressId = table.Column<int>(type: "int", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -335,16 +343,23 @@ namespace Web.Data.Migrations
                         principalTable: "Addresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Manufacturers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserAdditionalInformation",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    AddressId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AddressId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -369,7 +384,7 @@ namespace Web.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     ManufactureYear = table.Column<int>(type: "int", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -378,7 +393,7 @@ namespace Web.Data.Migrations
                     ColorId = table.Column<int>(type: "int", nullable: false),
                     TasteId = table.Column<int>(type: "int", nullable: false),
                     ManufacturerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    WineAreaId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    WineAreaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -435,40 +450,42 @@ namespace Web.Data.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_UserAdditionalInformation_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Orders_UserAdditionalInformation_UserId1",
+                        column: x => x.UserId1,
                         principalTable: "UserAdditionalInformation",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "GrapeVarietyProduct",
+                name: "ProductGrapeVarieties",
                 columns: table => new
                 {
-                    GrapeVarietiesId = table.Column<int>(type: "int", nullable: false),
-                    ProductsId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GrapeVarietyId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GrapeVarietyProduct", x => new { x.GrapeVarietiesId, x.ProductsId });
+                    table.PrimaryKey("PK_ProductGrapeVarieties", x => new { x.ProductId, x.GrapeVarietyId });
                     table.ForeignKey(
-                        name: "FK_GrapeVarietyProduct_GrapeVarieties_GrapeVarietiesId",
-                        column: x => x.GrapeVarietiesId,
+                        name: "FK_ProductGrapeVarieties_GrapeVarieties_GrapeVarietyId",
+                        column: x => x.GrapeVarietyId,
                         principalTable: "GrapeVarieties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GrapeVarietyProduct_Products_ProductsId",
-                        column: x => x.ProductsId,
+                        name: "FK_ProductGrapeVarieties_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -479,14 +496,15 @@ namespace Web.Data.Migrations
                 columns: table => new
                 {
                     OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrdersProducts", x => new { x.OrderId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_OrdersProducts_Orders_OrderId",
-                        column: x => x.OrderId,
+                        name: "FK_OrdersProducts_Orders_OrderId1",
+                        column: x => x.OrderId1,
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -543,11 +561,6 @@ namespace Web.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GrapeVarietyProduct_ProductsId",
-                table: "GrapeVarietyProduct",
-                column: "ProductsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GrapeVarietyWineArea_WineAreasId",
                 table: "GrapeVarietyWineArea",
                 column: "WineAreasId");
@@ -558,19 +571,34 @@ namespace Web.Data.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_News_ThemeId",
-                table: "News",
-                column: "ThemeId");
+                name: "IX_Manufacturers_UserId",
+                table: "Manufacturers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId",
+                name: "IX_News_ThemeId1",
+                table: "News",
+                column: "ThemeId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_UserId1",
                 table: "Orders",
-                column: "UserId");
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrdersProducts_OrderId1",
+                table: "OrdersProducts",
+                column: "OrderId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrdersProducts_ProductId",
                 table: "OrdersProducts",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductGrapeVarieties_GrapeVarietyId",
+                table: "ProductGrapeVarieties",
+                column: "GrapeVarietyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_ColorId",
@@ -632,9 +660,6 @@ namespace Web.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "GrapeVarietyProduct");
-
-            migrationBuilder.DropTable(
                 name: "GrapeVarietyWineArea");
 
             migrationBuilder.DropTable(
@@ -644,19 +669,22 @@ namespace Web.Data.Migrations
                 name: "OrdersProducts");
 
             migrationBuilder.DropTable(
+                name: "ProductGrapeVarieties");
+
+            migrationBuilder.DropTable(
                 name: "Services");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "GrapeVarieties");
-
-            migrationBuilder.DropTable(
                 name: "Themes");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "GrapeVarieties");
 
             migrationBuilder.DropTable(
                 name: "Products");
@@ -677,10 +705,10 @@ namespace Web.Data.Migrations
                 name: "WineAreas");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Addresses");
 
             migrationBuilder.DropTable(
-                name: "Addresses");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Towns");

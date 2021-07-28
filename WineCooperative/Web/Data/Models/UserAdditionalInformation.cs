@@ -11,7 +11,7 @@ namespace Web.Models
         public UserAdditionalInformation() => this.Orders = new HashSet<Order>();
 
         [Required]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(NameMaxLength)]
@@ -22,7 +22,7 @@ namespace Web.Models
         public string LastName { get; set; }
 
         [Required]
-        public string AddressId { get; set; }
+        public int AddressId { get; set; }
 
         public Address Address { get; set; }
 

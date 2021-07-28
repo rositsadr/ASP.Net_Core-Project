@@ -11,7 +11,7 @@ namespace Web.Models
 
         [Key]
         [Required]
-        public string Id { get; init; } = Guid.NewGuid().ToString();
+        public int Id { get; init; }
 
         public DateTime OrderDate { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Web.Models.Enums;
-using Web.Services.Products;
+using Web.Services.Products.Models;
 
 namespace Web.Models.Products
 {
@@ -11,10 +11,6 @@ namespace Web.Models.Products
         public int CurrantPage { get; init; } = 1;
 
         public int TotalProducts { get; set; }
-
-        public string Manufacturer { get; init; }
-
-        public IEnumerable<string> Manufacturers { get; set; }
 
         public string Color { get; init; }
 

@@ -1,8 +1,8 @@
-﻿namespace Web.Services.Products
+﻿namespace Web.Services.Products.Models
 {
     public class ProductServiceModel
     {
-        public string Id { get; init; }
+        public string Id { get; set; }
 
         public string Name { get; init; }
 

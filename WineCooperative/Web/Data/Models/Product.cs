@@ -47,7 +47,7 @@ namespace Web.Models
         public Manufacturer Manufacturer { get; set; }
 
         [Required]
-        public string WineAreaId { get; set; }
+        public int WineAreaId { get; set; }
 
         public WineArea WineArea { get; set; }
 

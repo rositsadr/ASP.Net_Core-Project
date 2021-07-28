@@ -8,11 +8,11 @@
     <partial name="_ProductViewTitle"/>
     <form method="get" class="mb-3">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label asp-for="SearchTerm">Search</label>
                 <input asp-for="SearchTerm" class="form-control" placeholder="Search in name or description" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label asp-for="Color">Search by color</label>
                 <select asp-for="Color" class="form-select">
                     <option value="">All</option>
@@ -23,16 +23,6 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label asp-for="Manufacturer">Search by Manufacturer</label>
-                <select asp-for="Manufacturer" class="form-select">
-                    <option value="">All</option>
-                    @foreach (var manufacturer in Model.Manufacturers)
-                    {
-                        <option value="@manufacturer">@manufacturer</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-2">
                 <label asp-for="Sorting">Sort by:</label>
                 <select asp-for="Sorting" class="form-select">
                     <option value="0">Name</option>
@@ -63,12 +53,12 @@
     }
     <div class="row mb-3">
         <div class="col-md-6">
-            <a class="btn btn-primary float-left @(Model.CurrantPage == 1 ? "disabled" : string.Empty)" asp-controller="Products" asp-action="All" asp-route-currantPage="@(Model.CurrantPage-1)" asp-route-sorting="@Model.Sorting" asp-route-searchTerm="@Model.SearchTerm" asp-route-manufacturer="@Model.Manufacturer" asp-route-color="@Model.Color">
+            <a class="btn btn-primary float-left @(Model.CurrantPage == 1 ? "disabled" : string.Empty)" asp-controller="Products" asp-action="All" asp-route-currantPage="@(Model.CurrantPage-1)" asp-route-sorting="@Model.Sorting" asp-route-searchTerm="@Model.SearchTerm" asp-route-color="@Model.Color">
                 <<
             </a>
         </div>
         <div class="col-md-6">
-            <a class="btn btn-primary float-right @(Model.CurrantPage == pagesCount ? "disabled" : string.Empty)" asp-controller="Products" asp-action="All" asp-route-currantPage="@(Model.CurrantPage+1)"asp-route-sorting="@Model.Sorting" asp-route-searchTerm="@Model.SearchTerm" asp-route-manufacturer="@Model.Manufacturer" asp-route-color="@Model.Color">
+            <a class="btn btn-primary float-right @(Model.CurrantPage == pagesCount ? "disabled" : string.Empty)" asp-controller="Products" asp-action="All" asp-route-currantPage="@(Model.CurrantPage+1)"asp-route-sorting="@Model.Sorting" asp-route-searchTerm="@Model.SearchTerm" asp-route-color="@Model.Color">
                 >>
             </a>
         </div>

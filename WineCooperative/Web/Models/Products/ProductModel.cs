@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Web.Attributes;
+using Web.Services.Products.Models;
 using static Web.Data.DataConstants;
 
 namespace Web.Models.Products
 {
-    public class ProductAddingModel
+    public class ProductModel
     {
         [Required]
         [StringLength(ProductMaxLength,MinimumLength = ProductMinLength)]
@@ -29,7 +29,7 @@ namespace Web.Models.Products
         public bool InStock { get; init; }
 
         [Display(Name = "Wine Area")]
-        public string WineAreaId { get; init; }
+        public int WineAreaId { get; init; }
 
         [Display(Name = "Grape varieties:")]
         public IEnumerable<int> GrapeVarieties { get; init; }
@@ -41,14 +41,14 @@ namespace Web.Models.Products
 
         public int TasteId { get; init; }
 
-        public IEnumerable<ProductColorViewModel> AllColors { get; set; }
+        public IEnumerable<ProductColorServiceModel> AllColors { get; set; }
 
-        public IEnumerable<ProductTasteViewModel> AllTastes { get; set; }
+        public IEnumerable<ProductTasteServiceModel> AllTastes { get; set; }
 
-        public IEnumerable<ProductWineAreaModel> WineAreas { get; set; }
+        public IEnumerable<ProductWineAreaServiceModel> WineAreas { get; set; }
 
-        public IEnumerable<ProductGrapeVarietiesModel> AllGrapeVarieties { get; set; }
+        public IEnumerable<ProductGrapeVarietiesServiceModel> AllGrapeVarieties { get; set; }
 
-        public IEnumerable<ProductManufacturerModel> Manufacturers { get; set; }
+        public IEnumerable<ProductManufacturerServiceModel> Manufacturers { get; set; }
     }
 }

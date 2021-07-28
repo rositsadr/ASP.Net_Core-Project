@@ -1,6 +1,6 @@
-﻿namespace Web.Models.Products
+﻿namespace Web.Services.Products.Models
 {
-    public class ProductTasteViewModel
+    public class ProductColorServiceModel
     {
         public int Id { get; init; }
 

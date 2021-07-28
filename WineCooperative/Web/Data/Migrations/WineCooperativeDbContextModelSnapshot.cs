@@ -16,7 +16,7 @@ namespace Web.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("GrapeVarietyWineArea", b =>
@@ -24,8 +24,8 @@ namespace Web.Data.Migrations
                     b.Property<int>("GrapeVarietiesId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WineAreasId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WineAreasId")
+                        .HasColumnType("int");
 
                     b.HasKey("GrapeVarietiesId", "WineAreasId");
 
@@ -177,7 +177,12 @@ namespace Web.Data.Migrations
                     b.Property<string>("ProductId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("OrderId1")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("OrderId1");
 
                     b.HasIndex("ProductId");
 
@@ -269,8 +274,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Address", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -334,9 +341,8 @@ namespace Web.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AddressId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -369,8 +375,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.News", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -390,30 +398,38 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("ThemeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ThemeId1")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ThemeId");
+                    b.HasIndex("ThemeId1");
 
                     b.ToTable("News");
                 });
 
             modelBuilder.Entity("Web.Models.Order", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Orders");
                 });
@@ -455,9 +471,8 @@ namespace Web.Data.Migrations
                     b.Property<int>("TasteId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WineAreaId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WineAreaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -538,8 +553,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Theme", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -575,12 +592,13 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.UserAdditionalInformation", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AddressId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -608,8 +626,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.WineArea", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -694,9 +714,8 @@ namespace Web.Data.Migrations
                 {
                     b.HasOne("Web.Models.Order", "Order")
                         .WithMany("OrderProducts")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("OrderId1")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Web.Models.Product", "Product")
                         .WithMany("ProductOrders")
@@ -762,9 +781,7 @@ namespace Web.Data.Migrations
                 {
                     b.HasOne("Web.Models.Theme", "Theme")
                         .WithMany("News")
-                        .HasForeignKey("ThemeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ThemeId1");
 
                     b.Navigation("Theme");
                 });
@@ -773,9 +790,7 @@ namespace Web.Data.Migrations
                 {
                     b.HasOne("Web.Models.UserAdditionalInformation", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });

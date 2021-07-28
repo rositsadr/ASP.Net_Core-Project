@@ -10,39 +10,24 @@ using Web.Data;
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    [Migration("20210716142235_ChangeTasteToName")]
-    partial class ChangeTasteToName
+    [Migration("20210727215818_InitialCreateAfterChanges")]
+    partial class InitialCreateAfterChanges
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("GrapeVarietyProduct", b =>
-                {
-                    b.Property<int>("GrapeVarietiesId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("GrapeVarietiesId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("GrapeVarietyProduct");
-                });
 
             modelBuilder.Entity("GrapeVarietyWineArea", b =>
                 {
                     b.Property<int>("GrapeVarietiesId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WineAreasId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WineAreasId")
+                        .HasColumnType("int");
 
                     b.HasKey("GrapeVarietiesId", "WineAreasId");
 
@@ -194,11 +179,31 @@ namespace Web.Data.Migrations
                     b.Property<string>("ProductId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("OrderId1")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("OrderId1");
 
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrdersProducts");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.ProductGrapeVariety", b =>
+                {
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GrapeVarietyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "GrapeVarietyId");
+
+                    b.HasIndex("GrapeVarietyId");
+
+                    b.ToTable("ProductGrapeVarieties");
                 });
 
             modelBuilder.Entity("Web.Data.Models.User", b =>
@@ -271,8 +276,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Address", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -336,29 +343,44 @@ namespace Web.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AddressId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Manufacturers");
                 });
 
             modelBuilder.Entity("Web.Models.News", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -378,30 +400,38 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("ThemeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ThemeId1")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ThemeId");
+                    b.HasIndex("ThemeId1");
 
                     b.ToTable("News");
                 });
 
             modelBuilder.Entity("Web.Models.Order", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Orders");
                 });
@@ -433,8 +463,8 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
@@ -443,9 +473,8 @@ namespace Web.Data.Migrations
                     b.Property<int>("TasteId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WineAreaId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WineAreaId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -526,8 +555,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Theme", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -551,8 +582,8 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -563,12 +594,13 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.UserAdditionalInformation", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AddressId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -596,8 +628,10 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.WineArea", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -610,21 +644,6 @@ namespace Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WineAreas");
-                });
-
-            modelBuilder.Entity("GrapeVarietyProduct", b =>
-                {
-                    b.HasOne("Web.Models.GrapeVariety", null)
-                        .WithMany()
-                        .HasForeignKey("GrapeVarietiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Web.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("GrapeVarietyWineArea", b =>
@@ -697,9 +716,8 @@ namespace Web.Data.Migrations
                 {
                     b.HasOne("Web.Models.Order", "Order")
                         .WithMany("OrderProducts")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("OrderId1")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Web.Models.Product", "Product")
                         .WithMany("ProductOrders")
@@ -708,6 +726,25 @@ namespace Web.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.ProductGrapeVariety", b =>
+                {
+                    b.HasOne("Web.Models.GrapeVariety", "GrapeVariety")
+                        .WithMany("Products")
+                        .HasForeignKey("GrapeVarietyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Web.Models.Product", "Product")
+                        .WithMany("GrapeVarieties")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GrapeVariety");
 
                     b.Navigation("Product");
                 });
@@ -731,16 +768,22 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Web.Data.Models.User", "User")
+                        .WithMany("Manufacturers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Address");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Web.Models.News", b =>
                 {
                     b.HasOne("Web.Models.Theme", "Theme")
                         .WithMany("News")
-                        .HasForeignKey("ThemeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ThemeId1");
 
                     b.Navigation("Theme");
                 });
@@ -749,9 +792,7 @@ namespace Web.Data.Migrations
                 {
                     b.HasOne("Web.Models.UserAdditionalInformation", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });
@@ -834,6 +875,8 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Data.Models.User", b =>
                 {
+                    b.Navigation("Manufacturers");
+
                     b.Navigation("UserData");
                 });
 
@@ -847,6 +890,11 @@ namespace Web.Data.Migrations
             modelBuilder.Entity("Web.Models.Country", b =>
                 {
                     b.Navigation("Towns");
+                });
+
+            modelBuilder.Entity("Web.Models.GrapeVariety", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Web.Models.Manufacturer", b =>
@@ -863,6 +911,8 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Product", b =>
                 {
+                    b.Navigation("GrapeVarieties");
+
                     b.Navigation("ProductOrders");
                 });
 

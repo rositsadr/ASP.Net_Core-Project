@@ -28,6 +28,7 @@ namespace Web
 
             services.AddDefaultIdentity<User>(options =>
             {
+                options.SignIn.RequireConfirmedEmail = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
