@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using Web.Data;
 using Web.Data.Models;
 using Web.Infrastructures;
 using Web.Services.Products;
+using Web.Services.Users;
 
 namespace Web
 {
@@ -34,6 +36,7 @@ namespace Web
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<WineCooperativeDbContext>();
 
             services.AddControllersWithViews(options=>
@@ -44,7 +47,8 @@ namespace Web
 
             services.AddHttpContextAccessor();
 
-            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IProductService, ProductService>(); 
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

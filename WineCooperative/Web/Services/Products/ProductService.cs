@@ -99,10 +99,10 @@ namespace Web.Services.Products
         public IEnumerable<ProductDetailsServiceModel> ProductsByUser(string userId) => this.GetProducts(data.Products
             .Where(p => p.Manufacturer.UserId == userId));
 
-        public ProductEditServiceModel Edit(string id)
+        public ProductEditServiceModel Edit(string productId)
         {
             return data.Products
-                 .Where(p => p.Id == id)
+                 .Where(p => p.Id == productId)
                  .Select(p => new ProductEditServiceModel
                  {
                      Id = p.Id,
@@ -123,18 +123,76 @@ namespace Web.Services.Products
                  .FirstOrDefault();
         }
 
-        public ProductDetailsServiceModel Details(string id) => this.GetProducts(data.Products
-            .Where(p => p.Id == id))
+        public bool ApplyChanges(string productId, string name, decimal price, string imageUrl, int manufactureYear, string description, bool inStock, int wineAreaId, string manufacturerId, int tasteId, int colorId, IEnumerable<int> grapeVarieties)
+        {
+            var product = data.Products.Where(p => p.Id == productId).FirstOrDefault();
+
+            if(product == null)
+            {
+                return false;
+            }
+
+            product.Name = name;
+
+            product.Price = price;
+
+            product.ImageUrl = imageUrl;
+
+            product.ManufactureYear = manufactureYear;
+
+            product.Description = description;
+
+            product.InStock = inStock;
+
+            product.WineAreaId = wineAreaId;
+
+            product.ManufacturerId = manufacturerId;
+
+            product.TasteId = tasteId;
+
+            product.ColorId = colorId;
+
+            if (product.GrapeVarieties.Any(g => !grapeVarieties.Contains(g.GrapeVarietyId)))
+            {
+                var toRemove = data.ProductGrapeVarieties
+                    .Where(p => p.ProductId == productId)
+                    .ToList();
+
+                data.ProductGrapeVarieties.RemoveRange(toRemove);
+
+                product.GrapeVarieties = new List<ProductGrapeVariety>();
+
+                foreach (var grapeId in grapeVarieties)
+                {
+                    product.GrapeVarieties.Add(new ProductGrapeVariety
+                    {
+                        ProductId = productId,
+                        GrapeVarietyId = grapeId,
+                    });
+                }
+            }
+
+            data.SaveChanges();
+
+            return true;
+        }
+
+        public ProductDetailsServiceModel Details(string productId) => this.GetProducts(data.Products
+            .Where(p => p.Id == productId))
             .FirstOrDefault();
 
-        public void Delete(string id)
+        public void Delete(string productId)
         {
             var product = data.Products
-                .Find(id);
+                .Find(productId);
 
             if (product != null)
             {
-                data.Remove(product);
+                var productGrapeVarieties = data.ProductGrapeVarieties.Where(p => p.ProductId == productId).ToList();
+
+                data.ProductGrapeVarieties.RemoveRange(productGrapeVarieties);
+
+                data.Products.Remove(product);
                 data.SaveChanges();
             }
         }
@@ -233,10 +291,10 @@ namespace Web.Services.Products
             }
 
             return exists;
-        }
+        }       
 
-        public bool UserIsManufacturer(string id) => data.Manufacturers
-            .Any(m => m.UserId == id);
+        public bool IsItUsersProduct(string userId, string productId) => data.Products
+            .Any(p => p.Id == productId && p.Manufacturer.UserId == userId);
 
         private IEnumerable<ProductDetailsServiceModel> GetProducts(IQueryable<Product> productQuery) => productQuery
             .Select(p => new ProductDetailsServiceModel

@@ -12,11 +12,13 @@ namespace Web.Services.Products
 
         public IEnumerable<ProductDetailsServiceModel> ProductsByUser(string userId);
 
-        public ProductDetailsServiceModel Details(string id);
+        public ProductEditServiceModel Edit(string productid);
 
-        public ProductEditServiceModel Edit(string id);
+        public bool ApplyChanges(string productId, string name, decimal price, string imageUrl, int manufactureYear, string description, bool inStock, int wineAreaId, string manufacturerId, int tasteId, int colorId, IEnumerable<int> grapeVarieties);
 
-        public void Delete(string id);
+        public ProductDetailsServiceModel Details(string productId);
+
+        public void Delete(string productId);
 
         public IEnumerable<string> GetAllColorsName();
 
@@ -40,8 +42,8 @@ namespace Web.Services.Products
 
         public bool GrapeVarietiesExists(IEnumerable<int> grapeVarieties);
 
-        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineArea, IEnumerable<int> grapeVarieties);
+        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties);
 
-        public bool UserIsManufacturer(string id);
+        public bool IsItUsersProduct(string userId, string productId);
     }
 }

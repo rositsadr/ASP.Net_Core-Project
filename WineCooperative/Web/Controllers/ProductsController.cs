@@ -1,35 +1,32 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using Web.Data;
-using Web.Data.Models;
 using Web.Infrastructures;
-using Web.Models;
 using Web.Models.Products;
 using Web.Services.Products;
+using Web.Services.Users;
+using static Web.WebConstants;
 
 namespace Web.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly WineCooperativeDbContext data;
-
         private readonly IProductService productService;
 
-        public ProductsController(WineCooperativeDbContext data, IProductService productService)
+        private readonly IUserService userService;
+
+        public ProductsController(IProductService productService, IUserService userService)
         {
-            this.data = data;
             this.productService = productService;
+            this.userService = userService;
         }
 
         [Authorize]
         public IActionResult Add()
         {
-            if(!(this.productService.UserIsManufacturer(User.GetId()) || this.User.IsInRole("Admin")))
+            if(!(this.userService.UserIsManufacturer(User.GetId()) || this.User.IsInRole(AdministratorRole)))
             {
-                return BadRequest();
+                return RedirectToAction("BecomeMember", "Users");
             }
 
             return View(new ProductModel
@@ -46,6 +43,11 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Add(ProductModel product)
         {
+            if (!(this.userService.UserIsManufacturer(User.GetId()) || User.IsInRole(AdministratorRole)))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
             if(!productService.TasteExists(product.TasteId))
             {
                 this.ModelState.AddModelError(nameof(product.TasteId), "This is not existing wine taste.");
@@ -130,8 +132,21 @@ namespace Web.Controllers
             return View(product);
         }
 
+        [Authorize]
         public IActionResult Delete(string id)
         {
+            var userId = User.GetId();
+
+            if (!(this.userService.UserIsManufacturer(userId) || this.User.IsInRole(AdministratorRole)))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsInRole(AdministratorRole)))
+            {
+                return Unauthorized();
+            }
+
             this.productService.Delete(id);
 
             return RedirectToAction("All");
@@ -142,14 +157,14 @@ namespace Web.Controllers
         {
             var userId = User.GetId();
 
-            if (!(this.productService.UserIsManufacturer(userId) || this.User.IsInRole("Admin")))
+            if (!(this.userService.UserIsManufacturer(userId) || this.User.IsInRole(AdministratorRole)))
             {
-                return BadRequest();
+                return RedirectToAction("BecomeMember", "Users");
             }
 
             var product = this.productService.Edit(id);
 
-            if (product.UserId != userId)
+            if (product.UserId != userId && !this.User.IsInRole(AdministratorRole))
             {
                 return Unauthorized();
             }
@@ -194,79 +209,64 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Edit(ProductModel product, string id)
         {
-            var productToEdit = data.Products.Where(p => p.Id == id).FirstOrDefault();
+            var userId = User.GetId();
 
-            if (productToEdit.Name != product.Name)
+            if (!(this.userService.UserIsManufacturer(userId) || User.IsInRole(AdministratorRole)))
             {
-                productToEdit.Name = product.Name;
+                return RedirectToAction("BecomeMember", "Users");
             }
 
-            if (productToEdit.Price != product.Price)
+            if (!productService.TasteExists(product.TasteId))
             {
-                productToEdit.Price = product.Price;
+                this.ModelState.AddModelError(nameof(product.TasteId), "This is not existing wine taste.");
             }
 
-            if(productToEdit.TasteId != product.TasteId)
+            if (!productService.ColorExists(product.ColorId))
             {
-                productToEdit.TasteId = product.TasteId;
+                this.ModelState.AddModelError(nameof(product.ColorId), "This is not existing wine color.");
             }
 
-            if(productToEdit.ColorId != product.ColorId)
+            if (!productService.WineAreaExists(product.WineAreaId))
             {
-                productToEdit.ColorId = product.ColorId;
+                this.ModelState.AddModelError(nameof(product.WineAreaId), "This wine area does not exists!");
             }
 
-            if (productToEdit.ImageUrl != product.ImageUrl)
+            if (!productService.ManufacturerExists(product.ManufacturerId))
             {
-                productToEdit.ImageUrl = product.ImageUrl;
+                this.ModelState.AddModelError(nameof(product.ManufacturerId), "The Manufacturer does not exists.");
             }
 
-            if (productToEdit.Description != product.Description)
+            if (!productService.GrapeVarietiesExists(product.GrapeVarieties))
             {
-                productToEdit.Description = product.Description;
+                this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
             }
 
-            if (productToEdit.InStock != product.InStock)
+            if (!productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
             {
-                productToEdit.InStock = product.InStock;
+                this.ModelState.AddModelError(string.Empty, "This wine is not in the list. Add it first.");
             }
 
-            if (productToEdit.ManufacturerId != product.ManufacturerId)
+            if (!ModelState.IsValid)
             {
-                productToEdit.ManufacturerId = product.ManufacturerId;
+                product.WineAreas = this.productService.GetAllWineAreas();
+
+                product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
+
+                product.Manufacturers = this.productService.GetAllManufacturers();
+
+                product.AllColors = this.productService.GetAllColors();
+
+                product.AllTastes = this.productService.GetAllTastes();
+
+                return View(product);
             }
 
-            if (productToEdit.ManufactureYear != product.ManufactureYear)
+            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsInRole(AdministratorRole)))
             {
-                productToEdit.ManufactureYear = product.ManufactureYear;
+                return BadRequest();
             }
 
-            if (productToEdit.WineAreaId != product.WineAreaId)
-            {
-                productToEdit.WineAreaId = product.WineAreaId;
-            }
-
-            if(productToEdit.GrapeVarieties.Any(g=>!product.GrapeVarieties.Contains(g.GrapeVarietyId)))
-            {
-                var toRemove = data.ProductGrapeVarieties
-                    .Where(p => p.ProductId == id)
-                    .ToList();
-
-                data.ProductGrapeVarieties.RemoveRange(toRemove);
-
-                productToEdit.GrapeVarieties = new List<ProductGrapeVariety>();
-
-                foreach (var grapeId in product.GrapeVarieties)
-                {
-                    productToEdit.GrapeVarieties.Add(new ProductGrapeVariety
-                    {
-                        ProductId = id,
-                        GrapeVarietyId = grapeId,
-                    });
-                }
-            }
-
-            data.SaveChanges();
+            this.productService.ApplyChanges(id, product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
             return RedirectToAction("MyProducts", "Users");
         }      

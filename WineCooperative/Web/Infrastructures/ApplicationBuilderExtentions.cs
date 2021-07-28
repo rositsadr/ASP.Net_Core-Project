@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Web.Data;
+using Web.Data.Models;
 using Web.Models;
+using static Web.WebConstants;
 
 namespace Web.Infrastructures
 {
@@ -11,9 +16,13 @@ namespace Web.Infrastructures
     {
         public static IApplicationBuilder PrepareDatabase(this IApplicationBuilder app)
         {
-            using var scopedServices = app.ApplicationServices.CreateScope();
+            using var scopedServices = app.ApplicationServices
+                .CreateScope();
 
-            var data = scopedServices.ServiceProvider.GetRequiredService<WineCooperativeDbContext>();
+            var serviceProvider = scopedServices.ServiceProvider;
+
+            var data = serviceProvider
+                .GetRequiredService<WineCooperativeDbContext>();
 
             data.Database.Migrate();
 
@@ -21,6 +30,7 @@ namespace Web.Infrastructures
             SeedProductColor(data);
             SeedProductTaste(data);
             SeedGrapeVarieties(data);
+            SeedAdministrator(serviceProvider);
 
             return app;
         }
@@ -102,6 +112,7 @@ namespace Web.Infrastructures
                 new GrapeVariety {Name = "Sangiovese"},
                 new GrapeVariety {Name = "Pinot Noir"},
                 new GrapeVariety {Name = "Rubin"},
+                new GrapeVariety {Name = "Ruen"},
                 new GrapeVariety {Name = "Mavrud"},
                 new GrapeVariety {Name = "Gumza"},
                 new GrapeVariety {Name = "Melnishka Loza"},
@@ -114,6 +125,41 @@ namespace Web.Infrastructures
 
                 data.SaveChanges();
             }
+        }
+
+        private static void SeedAdministrator(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            Task.Run(async () =>
+            {
+                if (await roleManager.RoleExistsAsync(AdministratorRole))
+                {
+                    return;
+                }
+
+                var role = new IdentityRole { Name = AdministratorRole };
+
+                await roleManager.CreateAsync(role);
+
+                const string adminUserName = "Administrator";
+                const string adminEmail = "administrator@winec.bg";
+                const string adminPassword = "admin132";
+
+                var user = new User
+                {
+                    UserName = adminUserName,
+                    Email = adminEmail
+                };
+
+                await userManager.CreateAsync(user, adminPassword);
+
+                await userManager.AddToRoleAsync(user, AdministratorRole);
+            })
+                .GetAwaiter()
+                .GetResult();
         }
     }
 }
