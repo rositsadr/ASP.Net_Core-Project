@@ -31,6 +31,7 @@ namespace Web.Infrastructures
             SeedProductTaste(data);
             SeedGrapeVarieties(data);
             SeedAdministrator(serviceProvider);
+            SeedRole(serviceProvider, MemberRole);
 
             return app;
         }
@@ -131,35 +132,51 @@ namespace Web.Infrastructures
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var created = SeedRole(serviceProvider, AdministratorRole);
 
             Task.Run(async () =>
             {
-                if (await roleManager.RoleExistsAsync(AdministratorRole))
+                if (created)
                 {
-                    return;
+                    const string adminUserName = "Administrator";
+                    const string adminEmail = "administrator@winec.bg";
+                    const string adminPassword = "admin132";
+
+                    var user = new User
+                    {
+                        UserName = adminUserName,
+                        Email = adminEmail
+                    };
+
+                    await userManager.CreateAsync(user, adminPassword);
+
+                    await userManager.AddToRoleAsync(user, AdministratorRole);
                 }
-
-                var role = new IdentityRole { Name = AdministratorRole };
-
-                await roleManager.CreateAsync(role);
-
-                const string adminUserName = "Administrator";
-                const string adminEmail = "administrator@winec.bg";
-                const string adminPassword = "admin132";
-
-                var user = new User
-                {
-                    UserName = adminUserName,
-                    Email = adminEmail
-                };
-
-                await userManager.CreateAsync(user, adminPassword);
-
-                await userManager.AddToRoleAsync(user, AdministratorRole);
             })
                 .GetAwaiter()
                 .GetResult();
+        }
+
+        private static bool SeedRole(IServiceProvider serviceProvider,string roleName)
+        {
+            var created = false;
+
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            Task.Run(async () =>
+            {
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    var newRole = new IdentityRole { Name = roleName };
+
+                    await roleManager.CreateAsync(newRole);
+
+                    created = true;
+                }
+            })
+                .GetAwaiter()
+                .GetResult();
+
+            return created;
         }
     }
 }

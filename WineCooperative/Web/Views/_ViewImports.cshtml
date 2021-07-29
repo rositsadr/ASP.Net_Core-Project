@@ -1,9 +1,17 @@
-﻿@using Web
+﻿@using Microsoft.AspNetCore.Identity
+@using Web
+@using Web.Data.Models
 @using Web.Models
 @using Web.Models.Users
 @using Web.Models.Products
 @using Web.Models.Manufacturers
 @using Web.Services.Products.Models
+@using Web.Services.Manufacturers.Models 
+@using Web.Infrastructures
+@using Web.Services.Users
+@inject IUserService Users
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

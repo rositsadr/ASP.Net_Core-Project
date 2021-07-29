@@ -5,52 +5,51 @@ using Web.Data;
 using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Manufacturers;
+using Web.Services.Manufacturers;
 
 namespace Web.Controllers
 {
     public class ManufacturersController : Controller
     {
         private readonly WineCooperativeDbContext data;
+        private readonly IManufacturerService manufacturerService;
 
-        public ManufacturersController(WineCooperativeDbContext data) => this.data = data;
-
-        public IActionResult All()
+        public ManufacturersController(WineCooperativeDbContext data, IManufacturerService manufacturerService)
         {
-            var members = data.Manufacturers
-                .Select(m => new ManufacturerViewModel
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Email = m.Email,
-                    PhoneNumber = m.PhoneNumber,
-                    Description = m.Description,
-                    Address = new ManufacturerAddressViewModel
-                    {
-                        Street = m.Address.Street,
-                        ZipCode = m.Address.ZipCode,
-                        TownName = m.Address.Town.Name
-                    }
-                })
-                .ToList();
-
-            return View(members);
+            this.data = data;
+            this.manufacturerService = manufacturerService;
         }
 
+        public IActionResult All() => View(this.manufacturerService.All());
+
         [Authorize]
-        public IActionResult Add() => View();
+        public IActionResult Add()
+        {
+            if (User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            if (User.IsMember())
+            {
+                return View();
+            };
+
+            return RedirectToAction("BecomeMember", "Users");
+        }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(ManufacturerAddingModel member)
+        public IActionResult Add(ManufacturerAddingModel manufacturer)
         {
-            if(data.Manufacturers.Any(m=>m.Name == member.Name))
+            if(data.Manufacturers.Any(m=>m.Name == manufacturer.Name))
             {
-                this.ModelState.AddModelError(nameof(member.Name), "This member/manufacturer is already in the list.");
+                this.ModelState.AddModelError(nameof(manufacturer.Name), "This member/manufacturer is already in the list.");
             }
 
             if (!this.ModelState.IsValid)
             {
-                return View(member);
+                return View(manufacturer);
             }
 
             var country = data.Countries
@@ -68,11 +67,11 @@ namespace Web.Controllers
                 data.SaveChanges();
             }
 
-            var currantTown = data.Towns.Where(t => t.Name == member.Address.TownName).FirstOrDefault();
+            var currantTown = data.Towns.Where(t => t.Name == manufacturer.Address.TownName).FirstOrDefault();
 
             if (currantTown == null)
             {
-                currantTown = new Town { Name = member.Address.TownName, Country = country};
+                currantTown = new Town { Name = manufacturer.Address.TownName, Country = country};
 
                 data.Towns.Add(currantTown);
                 data.SaveChanges();
@@ -80,29 +79,29 @@ namespace Web.Controllers
 
             var address = new Address
             {
-                Street = member.Address.Street,
+                Street = manufacturer.Address.Street,
                 Town = currantTown,
-                ZipCode = member.Address.ZipCode                
+                ZipCode = manufacturer.Address.ZipCode                
             };
 
-            if (!(data.Addresses.Any(a=>a.Street == member.Address.Street
+            if (!(data.Addresses.Any(a=>a.Street == manufacturer.Address.Street
                          && a.Town.Id==currantTown.Id 
-                         && a.ZipCode == member.Address.ZipCode)))
+                         && a.ZipCode == manufacturer.Address.ZipCode)))
             {
                 data.Addresses.Add(address);
             }
 
-            var manufacturer = new Manufacturer
+            var manufacturerToAdd = new Manufacturer
             {
-                Name = member.Name,
-                PhoneNumber = member.PhoneNumber,
-                Email = member.Email,
-                Description = member.Description,
+                Name = manufacturer.Name,
+                PhoneNumber = manufacturer.PhoneNumber,
+                Email = manufacturer.Email,
+                Description = manufacturer.Description,
                 Address = address,
                 UserId = this.User.GetId(),
             };
 
-            data.Manufacturers.Add(manufacturer);
+            data.Manufacturers.Add(manufacturerToAdd);
             data.SaveChanges();
 
             return RedirectToAction("All");

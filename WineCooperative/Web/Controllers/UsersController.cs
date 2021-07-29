@@ -6,19 +6,21 @@ using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Users;
 using Web.Services.Products;
+using Web.Services.Services;
 
 namespace Web.Controllers
 {
     public class UsersController : Controller
     {
         private readonly WineCooperativeDbContext data;
-
         private readonly IProductService productService;
+        private readonly IServiceService serviceService;
 
-        public UsersController(WineCooperativeDbContext data, IProductService productService)
+        public UsersController(WineCooperativeDbContext data, IProductService productService, IServiceService serviceService)
         {
             this.data = data;
             this.productService = productService;
+            this.serviceService = serviceService;
         }
 
         [Authorize]
@@ -89,9 +91,15 @@ namespace Web.Controllers
 
         public IActionResult MyServices()
         {
-            return View();
+            var userId = this.User.GetId();
+
+            var services = serviceService.ServicesByUser(userId); 
+
+            return View(services);
         }
 
-        public IActionResult BecomeMember() => View();
+        public IActionResult MyManufecturers() => View();
+
+        public IActionResult BecomeMember(string id) => View();
     }
 }

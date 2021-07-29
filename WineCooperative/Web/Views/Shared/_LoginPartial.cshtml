@@ -1,17 +1,31 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Web.Data.Models
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
-
+﻿
 <ul class="navbar-nav timesFont">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Users" asp-action="MyProducts">My Products</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Users" asp-action="MyServices">My Services</a>
-        </li>
+        var userId = User.GetId();
+        var IsMember = User.IsMember();
+        var IsAdmin = User.IsAdmin();
+
+        if (IsAdmin)
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Admin" asp-action="Pannel">Admin Pannel</a>
+            </li>
+        }
+        if (!(IsAdmin || IsMember))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Users" asp-action="BecomeMember" asp-route-id="@userId">Become Member</a>
+            </li>
+        }
+        if (!IsAdmin)
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Cart" asp-action="MyCart" asp-route-id="@userId">
+                    <i class="fas fa-shopping-cart">  My Cart</i>
+                </a>
+            </li>
+        }
         <li class="nav-item">
             <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
         </li>

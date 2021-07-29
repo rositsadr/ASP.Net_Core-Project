@@ -214,9 +214,10 @@ namespace Web.Services.Products
                 GrapeVarietyName = gv.Name
             });
 
-        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers()
+        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers(string userId)
         {
             var manufacturers = this.data.Manufacturers
+                .Where(m=>m.UserId == userId)
                 .Select(m => new ProductManufacturerServiceModel
                 {
                     Id = m.Id,
@@ -269,7 +270,7 @@ namespace Web.Services.Products
 
         public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties)
         {
-            var exists = true;
+            var exists = false;
 
            if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId))
             {
@@ -282,12 +283,12 @@ namespace Web.Services.Products
                 {
                     foreach (var grape in grapeVarietiesToCompare)
                     {
-                        if (!grapeVarieties.Contains(grape.GrapeVarietyId))
+                        if (grapeVarieties.Contains(grape.GrapeVarietyId))
                         {
-                            exists = false;
+                            exists = true;
                         }
                     }
-                }               
+                }
             }
 
             return exists;

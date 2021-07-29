@@ -9,7 +9,9 @@ using Microsoft.Extensions.Hosting;
 using Web.Data;
 using Web.Data.Models;
 using Web.Infrastructures;
+using Web.Services.Manufacturers;
 using Web.Services.Products;
+using Web.Services.Services;
 using Web.Services.Users;
 
 namespace Web
@@ -49,6 +51,8 @@ namespace Web
 
             services.AddTransient<IProductService, ProductService>(); 
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IServiceService, ServiceService>();
+            services.AddTransient<IManufacturerService, ManufacturerService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

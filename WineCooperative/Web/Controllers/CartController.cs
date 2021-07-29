@@ -5,7 +5,8 @@ namespace Web.Controllers
 {
     public class CartController : Controller
     {
-        public IActionResult MyCart() => View();
+        public IActionResult MyCart(string id) => View();
+
         public IActionResult AddToCart(string id) => RedirectToAction("MyCart");
 
         public IActionResult Delete(string id) => RedirectToAction("MyCart");

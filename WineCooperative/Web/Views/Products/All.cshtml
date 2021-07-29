@@ -75,13 +75,22 @@
                     <a class="thumbnail d-block mb-4"><img src=@wine.ImageUrl alt="Image" class="card-img-top" asp-controller="Products" asp-action="Details" asp-route-id=@wine.Id></a>
                     <div class="card-body">
                         <h3 class="card-title">@wine.Name</h3>
-                        <span class="text-center">@wine.Price lv.</span>
-                        <div>
-                            <a class="btn" asp-controller="Cart" asp-action="AddToCart" asp-route-id=@wine.Id>
-                                <i class="far fa-shopping-bag"> Add to Cart</i>
-                            </a>
-                        </div>
-                        @if (User.IsInRole("Admin"))
+                        <span class="text-center">@wine.Price lv.</span>                        
+                        <div class="text-center">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <a class="btn btn-danger" asp-controller="Cart" asp-action="AddToCart" asp-route-id=@wine.Id>
+                                    <i class="fas fa-shopping-cart">  Add to Cart</i></a>
+                            }
+                            else
+                            {
+                        <a class="nav-link text-primary" style="font-family: 'Times New Roman', Times, serif" asp-area="Identity" asp-page="/Account/Login">
+                            Sign in to shop
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                            }
+                            </div>
+                        @if (User.IsAdmin())
                         {
                             <div>
                                 <a class="btn btn-danger" role="button" asp-controller="Products" asp-action="Delete" asp-route-id=@wine.Id>Delete</a>

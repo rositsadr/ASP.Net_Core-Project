@@ -26,7 +26,7 @@ namespace Web.Services.Products
 
         public IEnumerable<ProductGrapeVarietiesServiceModel> GetAllGrapeVarieties();
 
-        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers();
+        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers(string userId);
 
         public IEnumerable<ProductColorServiceModel> GetAllColors();
 

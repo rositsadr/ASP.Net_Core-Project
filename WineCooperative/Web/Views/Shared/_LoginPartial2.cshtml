@@ -5,16 +5,52 @@
     <li class="nav-item">
         <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Home" asp-action="AboutUs">About Us</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Products" asp-action="All">Products</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Services" asp-action="All">Services</a>
-    </li>
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole(WebConstants.MemberRole))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Products
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="dropdown-item" asp-controller="Products" asp-action="All">All</a></li>
+                <li><a class="dropdown-item" asp-controller="Products" asp-action="Add">Add</a></li>
+                <li><a class="dropdown-item" asp-controller="Users" asp-action="MyProducts">My Products</a></li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Services
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="dropdown-item" asp-controller="Services" asp-action="All">All</a></li>
+                <li><a class="dropdown-item" asp-controller="Services" asp-action="Add">Add</a></li>
+                <li><a class="dropdown-item" asp-controller="Users" asp-action="MyServices">My Services</a></li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Manufacturers
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">All</a></li>
+                <li><a class="dropdown-item" href="#">Add</a></li>
+                <li><a class="dropdown-item" href="#">My Manufacturers</a></li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Products" asp-action="All">Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Services" asp-action="All">Services</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Manufacturers" asp-action="All">Manufactures</a>
+        </li>
+    }
     <li class="nav-item">
         <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Home" asp-action="Contacts">Contacts</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Manufacturers" asp-action="All">Our Members</a>
     </li>
 </ul>

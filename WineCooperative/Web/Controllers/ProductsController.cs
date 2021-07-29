@@ -24,7 +24,7 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Add()
         {
-            if(!(this.userService.UserIsManufacturer(User.GetId()) || this.User.IsInRole(AdministratorRole)))
+            if(!(User.IsMember() || this.User.IsAdmin()))
             {
                 return RedirectToAction("BecomeMember", "Users");
             }
@@ -33,7 +33,7 @@ namespace Web.Controllers
             {
                 WineAreas = this.productService.GetAllWineAreas(),
                 AllGrapeVarieties = this.productService.GetAllGrapeVarieties(),
-                Manufacturers = this.productService.GetAllManufacturers(),
+                Manufacturers = this.productService.GetAllManufacturers(User.GetId()),
                 AllColors = this.productService.GetAllColors(),
                 AllTastes = this.productService.GetAllTastes(),
             });
@@ -43,57 +43,64 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Add(ProductModel product)
         {
-            if (!(this.userService.UserIsManufacturer(User.GetId()) || User.IsInRole(AdministratorRole)))
+            if (!(User.IsMember() || User.IsAdmin()))
             {
                 return RedirectToAction("BecomeMember", "Users");
             }
-
-            if(!productService.TasteExists(product.TasteId))
+           
+            if(User.IsMember())
             {
-                this.ModelState.AddModelError(nameof(product.TasteId), "This is not existing wine taste.");
+                if (!productService.TasteExists(product.TasteId))
+                {
+                    this.ModelState.AddModelError(nameof(product.TasteId), "This is not existing wine taste.");
+                }
+
+                if (!productService.ColorExists(product.ColorId))
+                {
+                    this.ModelState.AddModelError(nameof(product.ColorId), "This is not existing wine color.");
+                }
+
+                if (!productService.WineAreaExists(product.WineAreaId))
+                {
+                    this.ModelState.AddModelError(nameof(product.WineAreaId), "This wine area does not exists!");
+                }
+
+                if (!productService.ManufacturerExists(product.ManufacturerId))
+                {
+                    this.ModelState.AddModelError(string.Empty, "The Manufacturer does not exists.");
+                }
+
+                if (!productService.GetAllManufacturers(User.GetId()).Any(m => m.Id == product.ManufacturerId))
+                {
+                    this.ModelState.AddModelError(string.Empty, "The Manufacturer you have choosen is not allowed. Choose one of yours.");
+                }
+
+                if (!productService.GrapeVarietiesExists(product.GrapeVarieties))
+                {
+                    this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
+                }
+
+                if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
+                {
+                    this.ModelState.AddModelError(string.Empty, "This wine is already in the list. Check your product list.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    product.WineAreas = this.productService.GetAllWineAreas();
+
+                    product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
+
+                    product.Manufacturers = this.productService.GetAllManufacturers(User.GetId());
+
+                    product.AllColors = this.productService.GetAllColors();
+
+                    product.AllTastes = this.productService.GetAllTastes();
+
+                    return View(product);
+                }
+                this.productService.CreateProduct(product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
             }
-
-            if (!productService.ColorExists(product.ColorId))
-            {
-                this.ModelState.AddModelError(nameof(product.ColorId), "This is not existing wine color.");
-            }
-
-            if (!productService.WineAreaExists(product.WineAreaId))
-            {
-                this.ModelState.AddModelError(nameof(product.WineAreaId), "This wine area does not exists!");
-            }
-
-            if(!productService.ManufacturerExists(product.ManufacturerId))
-            {
-                this.ModelState.AddModelError(nameof(product.ManufacturerId), "The Manufacturer does not exists.");
-            }
-
-            if (!productService.GrapeVarietiesExists(product.GrapeVarieties))
-            {
-                this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
-            }
-
-            if (productService.WineExists(product.Name, product.ManufactureYear,product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
-            {
-                this.ModelState.AddModelError(string.Empty, "This wine is already in the list. Check your product list.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                product.WineAreas = this.productService.GetAllWineAreas();
-
-                product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
-
-                product.Manufacturers = this.productService.GetAllManufacturers();
-
-                product.AllColors = this.productService.GetAllColors();
-
-                product.AllTastes = this.productService.GetAllTastes();
-
-                return View(product);
-            }
-
-            this.productService.CreateProduct(product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
             return RedirectToAction("All","Products");
         }
@@ -137,12 +144,12 @@ namespace Web.Controllers
         {
             var userId = User.GetId();
 
-            if (!(this.userService.UserIsManufacturer(userId) || this.User.IsInRole(AdministratorRole)))
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
                 return RedirectToAction("BecomeMember", "Users");
             }
 
-            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsInRole(AdministratorRole)))
+            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsAdmin()))
             {
                 return Unauthorized();
             }
@@ -157,7 +164,7 @@ namespace Web.Controllers
         {
             var userId = User.GetId();
 
-            if (!(this.userService.UserIsManufacturer(userId) || this.User.IsInRole(AdministratorRole)))
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
                 return RedirectToAction("BecomeMember", "Users");
             }
@@ -184,7 +191,7 @@ namespace Web.Controllers
                     GrapeVarieties = product.GrapeVarieties
                 };
 
-            var manufacturers = this.productService.GetAllManufacturers();
+            var manufacturers = this.productService.GetAllManufacturers(userId);
 
             if (User.IsInRole("Member"))
             {
@@ -252,7 +259,7 @@ namespace Web.Controllers
 
                 product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
 
-                product.Manufacturers = this.productService.GetAllManufacturers();
+                product.Manufacturers = this.productService.GetAllManufacturers(userId);
 
                 product.AllColors = this.productService.GetAllColors();
 
