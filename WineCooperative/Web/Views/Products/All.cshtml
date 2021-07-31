@@ -72,12 +72,12 @@
         {
             <div class="col-lg-4 mb-5 col-md-6">
                 <div class="text-center pb-4 card">
-                    <a class="thumbnail d-block mb-4"><img src=@wine.ImageUrl alt="Image" class="card-img-top" asp-controller="Products" asp-action="Details" asp-route-id=@wine.Id></a>
+                    <a class="thumbnail d-block mb-4"asp-controller="Products" asp-action="Details" asp-route-id=@wine.Id><img src=@wine.ImageUrl alt="Image" class="card-img-top" ></a>
                     <div class="card-body">
                         <h3 class="card-title">@wine.Name</h3>
                         <span class="text-center">@wine.Price lv.</span>                        
                         <div class="text-center">
-                            @if (SignInManager.IsSignedIn(User))
+                            @if (SignInManager.IsSignedIn(User) && !User.IsAdmin())
                             {
                                 <a class="btn btn-danger" asp-controller="Cart" asp-action="AddToCart" asp-route-id=@wine.Id>
                                     <i class="fas fa-shopping-cart">  Add to Cart</i></a>

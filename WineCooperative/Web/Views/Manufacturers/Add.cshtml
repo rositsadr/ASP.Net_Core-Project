@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Add Manufacturer";
 }
-<h4 class="text-center">Manufacturer details</h4>
+<h4 class="text-center">@ViewData["Title"]</h4>
 <hr />
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
@@ -56,7 +56,7 @@
 </div>
 
 <div>
-    <a asp-controller="Membres" asp-action="All">Back to List</a>
+    <a asp-controller="Manufacturers" asp-action="All">Back to List</a>
 </div>
 
 @section Scripts {

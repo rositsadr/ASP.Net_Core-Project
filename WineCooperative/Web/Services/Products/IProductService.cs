@@ -26,8 +26,6 @@ namespace Web.Services.Products
 
         public IEnumerable<ProductGrapeVarietiesServiceModel> GetAllGrapeVarieties();
 
-        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers(string userId);
-
         public IEnumerable<ProductColorServiceModel> GetAllColors();
 
         public IEnumerable<ProductTasteServiceModel> GetAllTastes();
@@ -37,8 +35,6 @@ namespace Web.Services.Products
         public bool TasteExists(int tasteId);
 
         public bool WineAreaExists(int wineAreaId);
-
-        public bool ManufacturerExists(string manufacturerId);
 
         public bool GrapeVarietiesExists(IEnumerable<int> grapeVarieties);
 

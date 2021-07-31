@@ -94,6 +94,14 @@ namespace Web.Data
                 .Property(p => p.Price)
                 .HasPrecision(10, 2);
 
+            builder.Entity<Manufacturer>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
+
+            builder.Entity<Country>()
+                .HasIndex(c => c.CountryName)
+                .IsUnique();
+
             base.OnModelCreating(builder);
         }
     }

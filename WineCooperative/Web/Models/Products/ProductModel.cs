@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Web.Attributes;
+using Web.Services.Manufacturers.Models;
 using Web.Services.Products.Models;
 using static Web.Data.DataConstants;
 
@@ -35,6 +36,7 @@ namespace Web.Models.Products
         public IEnumerable<int> GrapeVarieties { get; init; }
 
         [Display(Name = "Manufacturer")]
+        [Required]
         public string ManufacturerId { get; init; }
 
         public int ColorId { get; init; }
@@ -49,6 +51,6 @@ namespace Web.Models.Products
 
         public IEnumerable<ProductGrapeVarietiesServiceModel> AllGrapeVarieties { get; set; }
 
-        public IEnumerable<ProductManufacturerServiceModel> Manufacturers { get; set; }
+        public IEnumerable<ManufacturerByUserServiceModel> Manufacturers { get; set; }
     }
 }

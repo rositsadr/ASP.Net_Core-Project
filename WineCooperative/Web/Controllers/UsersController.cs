@@ -100,6 +100,6 @@ namespace Web.Controllers
 
         public IActionResult MyManufecturers() => View();
 
-        public IActionResult BecomeMember(string id) => View();
+        public IActionResult BecomeMember() => View();
     }
 }

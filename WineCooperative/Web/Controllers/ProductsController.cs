@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Infrastructures;
 using Web.Models.Products;
+using Web.Services.Manufacturers;
 using Web.Services.Products;
 using Web.Services.Users;
 using static Web.WebConstants;
@@ -12,40 +13,46 @@ namespace Web.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductService productService;
+        private readonly IUserService userService; 
+        private readonly IManufacturerService manufacturerService;
 
-        private readonly IUserService userService;
-
-        public ProductsController(IProductService productService, IUserService userService)
+        public ProductsController(IProductService productService, IUserService userService, IManufacturerService manufacturerService)
         {
             this.productService = productService;
             this.userService = userService;
+            this.manufacturerService = manufacturerService;
         }
 
         [Authorize]
         public IActionResult Add()
         {
-            if(!(User.IsMember() || this.User.IsAdmin()))
+            if (User.IsAdmin())
             {
-                return RedirectToAction("BecomeMember", "Users");
+                return Unauthorized();
             }
 
-            return View(new ProductModel
+            if (User.IsMember())
             {
-                WineAreas = this.productService.GetAllWineAreas(),
-                AllGrapeVarieties = this.productService.GetAllGrapeVarieties(),
-                Manufacturers = this.productService.GetAllManufacturers(User.GetId()),
-                AllColors = this.productService.GetAllColors(),
-                AllTastes = this.productService.GetAllTastes(),
-            });
+                return View(new ProductModel
+                {
+                    WineAreas = this.productService.GetAllWineAreas(),
+                    AllGrapeVarieties = this.productService.GetAllGrapeVarieties(),
+                    Manufacturers = this.manufacturerService.ManufacturersByUser(User.GetId()),
+                    AllColors = this.productService.GetAllColors(),
+                    AllTastes = this.productService.GetAllTastes(),
+                });
+            }
+
+            return RedirectToAction("BecomeMember", "Users");
         }
 
         [HttpPost]
         [Authorize]
         public IActionResult Add(ProductModel product)
         {
-            if (!(User.IsMember() || User.IsAdmin()))
+            if (User.IsAdmin())
             {
-                return RedirectToAction("BecomeMember", "Users");
+                return Unauthorized();
             }
            
             if(User.IsMember())
@@ -65,12 +72,12 @@ namespace Web.Controllers
                     this.ModelState.AddModelError(nameof(product.WineAreaId), "This wine area does not exists!");
                 }
 
-                if (!productService.ManufacturerExists(product.ManufacturerId))
+                if (!manufacturerService.ManufacturerExistsById(product.ManufacturerId))
                 {
                     this.ModelState.AddModelError(string.Empty, "The Manufacturer does not exists.");
                 }
 
-                if (!productService.GetAllManufacturers(User.GetId()).Any(m => m.Id == product.ManufacturerId))
+                if (!manufacturerService.ManufacturersByUser(User.GetId()).Any(m => m.Id == product.ManufacturerId))
                 {
                     this.ModelState.AddModelError(string.Empty, "The Manufacturer you have choosen is not allowed. Choose one of yours.");
                 }
@@ -88,21 +95,20 @@ namespace Web.Controllers
                 if (!ModelState.IsValid)
                 {
                     product.WineAreas = this.productService.GetAllWineAreas();
-
                     product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
-
-                    product.Manufacturers = this.productService.GetAllManufacturers(User.GetId());
-
+                    product.Manufacturers = this.manufacturerService.ManufacturersByUser(User.GetId());
                     product.AllColors = this.productService.GetAllColors();
-
                     product.AllTastes = this.productService.GetAllTastes();
 
                     return View(product);
                 }
+
                 this.productService.CreateProduct(product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
+
+                return RedirectToAction("All", "Products");
             }
 
-            return RedirectToAction("All","Products");
+            return RedirectToAction("BecomeMember", "Users");
         }
 
         public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id = null)
@@ -117,11 +123,8 @@ namespace Web.Controllers
             }
 
             var colors = this.productService.GetAllColorsName();
-
             query.Colors = colors;
-
             query.TotalProducts = productsResult.TotalProducts;
-
             query.Products = productsResult.Products;
 
             return View(query);
@@ -191,7 +194,7 @@ namespace Web.Controllers
                     GrapeVarieties = product.GrapeVarieties
                 };
 
-            var manufacturers = this.productService.GetAllManufacturers(userId);
+            var manufacturers = this.manufacturerService.ManufacturersByUser(userId);
 
             if (User.IsInRole("Member"))
             {
@@ -200,13 +203,9 @@ namespace Web.Controllers
             }
 
             productToEdit.AllColors = this.productService.GetAllColors();
-
             productToEdit.AllTastes = this.productService.GetAllTastes();
-
             productToEdit.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
-
             productToEdit.WineAreas = this.productService.GetAllWineAreas();
-
             productToEdit.Manufacturers = manufacturers;
 
             return View(productToEdit);
@@ -238,7 +237,7 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(product.WineAreaId), "This wine area does not exists!");
             }
 
-            if (!productService.ManufacturerExists(product.ManufacturerId))
+            if (!manufacturerService.ManufacturerExistsById(product.ManufacturerId))
             {
                 this.ModelState.AddModelError(nameof(product.ManufacturerId), "The Manufacturer does not exists.");
             }
@@ -256,13 +255,9 @@ namespace Web.Controllers
             if (!ModelState.IsValid)
             {
                 product.WineAreas = this.productService.GetAllWineAreas();
-
                 product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
-
-                product.Manufacturers = this.productService.GetAllManufacturers(userId);
-
+                product.Manufacturers = this.manufacturerService.ManufacturersByUser(userId);
                 product.AllColors = this.productService.GetAllColors();
-
                 product.AllTastes = this.productService.GetAllTastes();
 
                 return View(product);

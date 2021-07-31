@@ -5,22 +5,18 @@ using Web.Data;
 using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Manufacturers;
+using Web.Services.Addresses;
 using Web.Services.Manufacturers;
+using Web.Services.Products;
+using static Web.Services.Constants;
 
 namespace Web.Controllers
 {
     public class ManufacturersController : Controller
     {
-        private readonly WineCooperativeDbContext data;
         private readonly IManufacturerService manufacturerService;
 
-        public ManufacturersController(WineCooperativeDbContext data, IManufacturerService manufacturerService)
-        {
-            this.data = data;
-            this.manufacturerService = manufacturerService;
-        }
-
-        public IActionResult All() => View(this.manufacturerService.All());
+        public ManufacturersController(IManufacturerService manufacturerService) => this.manufacturerService = manufacturerService;
 
         [Authorize]
         public IActionResult Add()
@@ -42,72 +38,33 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult Add(ManufacturerAddingModel manufacturer)
         {
-            if(data.Manufacturers.Any(m=>m.Name == manufacturer.Name))
+            if (User.IsAdmin())
             {
-                this.ModelState.AddModelError(nameof(manufacturer.Name), "This member/manufacturer is already in the list.");
+                return Unauthorized();
             }
 
-            if (!this.ModelState.IsValid)
+            if (User.IsMember())
             {
-                return View(manufacturer);
-            }
-
-            var country = data.Countries
-                .Where(c => c.CountryName == "Bulgaria")
-                .FirstOrDefault();
-
-            if(country == null)
-            {
-                country = new Country
+                if (manufacturerService.ManufacturerExistsByName(manufacturer.Name))
                 {
-                   CountryName = "Bulgaria",
-                };
+                    this.ModelState.AddModelError(nameof(manufacturer.Name), "Manufacturer with this name already exists");
+                }
 
-                data.Countries.Add(country);
-                data.SaveChanges();
+                if (!this.ModelState.IsValid)
+                {
+                    return View(manufacturer);
+                }
+
+                manufacturerService.Create(manufacturer.Name, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Description,manufacturer.Address.Street, manufacturer.Address.ZipCode, manufacturer.Address.TownName, CountryOfManufacturing, User.GetId());
+
+                return RedirectToAction("All");
             }
 
-            var currantTown = data.Towns.Where(t => t.Name == manufacturer.Address.TownName).FirstOrDefault();
+            return RedirectToAction("BecomeMember", "Users");
 
-            if (currantTown == null)
-            {
-                currantTown = new Town { Name = manufacturer.Address.TownName, Country = country};
-
-                data.Towns.Add(currantTown);
-                data.SaveChanges();
-            }
-
-            var address = new Address
-            {
-                Street = manufacturer.Address.Street,
-                Town = currantTown,
-                ZipCode = manufacturer.Address.ZipCode                
-            };
-
-            if (!(data.Addresses.Any(a=>a.Street == manufacturer.Address.Street
-                         && a.Town.Id==currantTown.Id 
-                         && a.ZipCode == manufacturer.Address.ZipCode)))
-            {
-                data.Addresses.Add(address);
-            }
-
-            var manufacturerToAdd = new Manufacturer
-            {
-                Name = manufacturer.Name,
-                PhoneNumber = manufacturer.PhoneNumber,
-                Email = manufacturer.Email,
-                Description = manufacturer.Description,
-                Address = address,
-                UserId = this.User.GetId(),
-            };
-
-            data.Manufacturers.Add(manufacturerToAdd);
-            data.SaveChanges();
-
-            return RedirectToAction("All");
         }
 
-        public IActionResult Details() => View();
+        public IActionResult All() => View(this.manufacturerService.All());
 
         public IActionResult Services(string memberId) => View();
     }

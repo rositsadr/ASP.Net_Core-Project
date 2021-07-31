@@ -41,7 +41,6 @@ namespace Web.Services.Products
             }
 
             data.Products.Add(productToImport);
-
             data.SaveChanges();
 
             return productToImport.Id;
@@ -133,23 +132,14 @@ namespace Web.Services.Products
             }
 
             product.Name = name;
-
             product.Price = price;
-
             product.ImageUrl = imageUrl;
-
             product.ManufactureYear = manufactureYear;
-
             product.Description = description;
-
             product.InStock = inStock;
-
             product.WineAreaId = wineAreaId;
-
             product.ManufacturerId = manufacturerId;
-
             product.TasteId = tasteId;
-
             product.ColorId = colorId;
 
             if (product.GrapeVarieties.Any(g => !grapeVarieties.Contains(g.GrapeVarietyId)))
@@ -191,7 +181,6 @@ namespace Web.Services.Products
                 var productGrapeVarieties = data.ProductGrapeVarieties.Where(p => p.ProductId == productId).ToList();
 
                 data.ProductGrapeVarieties.RemoveRange(productGrapeVarieties);
-
                 data.Products.Remove(product);
                 data.SaveChanges();
             }
@@ -213,21 +202,6 @@ namespace Web.Services.Products
                 GrapeVarietyId = gv.Id,
                 GrapeVarietyName = gv.Name
             });
-
-        public IEnumerable<ProductManufacturerServiceModel> GetAllManufacturers(string userId)
-        {
-            var manufacturers = this.data.Manufacturers
-                .Where(m=>m.UserId == userId)
-                .Select(m => new ProductManufacturerServiceModel
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    UserId = m.UserId                     
-                })
-                .ToList();
-
-            return manufacturers;
-        }
 
         public IEnumerable<ProductColorServiceModel> GetAllColors() => this.data.ProductColors
             .Select(m => new ProductColorServiceModel
@@ -252,9 +226,6 @@ namespace Web.Services.Products
         public bool WineAreaExists(int wineAreaId) => this.data.WineAreas
             .Any(w => w.Id == wineAreaId);
 
-        public bool ManufacturerExists(string manufacturerId) => this.data.Manufacturers
-            .Any(m => m.Id == manufacturerId);
-
         public bool GrapeVarietiesExists(IEnumerable<int> grapeVarieties)
         {
             foreach (var grapeId in grapeVarieties)
@@ -270,29 +241,31 @@ namespace Web.Services.Products
 
         public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties)
         {
-            var exists = false;
-
-           if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId))
+            if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId && p.GrapeVarieties.Count() == grapeVarieties.Count()))
             {
                 var grapeVarietiesToCompare = data.Products
                     .Where(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId)
                     .Select(p => p.GrapeVarieties)
                     .FirstOrDefault();
 
-                if(grapeVarietiesToCompare.Count() == grapeVarieties.Count())
+                var countSameGrape = 0;
+
+                foreach (var grape in grapeVarietiesToCompare)
                 {
-                    foreach (var grape in grapeVarietiesToCompare)
+                    if (grapeVarieties.Contains(grape.GrapeVarietyId))
                     {
-                        if (grapeVarieties.Contains(grape.GrapeVarietyId))
-                        {
-                            exists = true;
-                        }
+                        countSameGrape++;
                     }
+                }
+
+                if (countSameGrape == grapeVarieties.Count())
+                {
+                    return true;
                 }
             }
 
-            return exists;
-        }       
+            return false;
+        }
 
         public bool IsItUsersProduct(string userId, string productId) => data.Products
             .Any(p => p.Id == productId && p.Manufacturer.UserId == userId);

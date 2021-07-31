@@ -1,6 +1,6 @@
-﻿namespace Web.Services.Products.Models
+﻿namespace Web.Services.Manufacturers.Models
 {
-    public class ProductManufacturerServiceModel
+    public class ManufacturerByUserServiceModel
     {
         public string Id { get; init; }
 

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Web.Data;
 using Web.Data.Models;
 using Web.Infrastructures;
+using Web.Services.Addresses;
 using Web.Services.Manufacturers;
 using Web.Services.Products;
 using Web.Services.Services;
@@ -53,6 +54,7 @@ namespace Web
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IServiceService, ServiceService>();
             services.AddTransient<IManufacturerService, ManufacturerService>();
+            services.AddTransient<IAddressService, AddressService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
