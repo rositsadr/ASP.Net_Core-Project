@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
 using Web.Data.Models;
 using Web.Models;
-using Web.Models.Enums;
+using Web.Models.Products.Enums;
 using Web.Services.Products.Models;
 
 namespace Web.Services.Products
@@ -11,8 +13,13 @@ namespace Web.Services.Products
     public class ProductService : IProductService
     {
         private readonly WineCooperativeDbContext data;
+        private readonly IConfigurationProvider config;
 
-        public ProductService(WineCooperativeDbContext data) => this.data = data;
+        public ProductService(WineCooperativeDbContext data, IMapper mapper)
+        {
+            this.data = data;
+            this.config = mapper.ConfigurationProvider;
+        }
 
         public string CreateProduct(string name, decimal price, string imageUrl, int manufactureYear, string description, bool inStock, int wineAreaId, string manufacturerId, int tasteId, int colorId, IEnumerable<int> grapeVarieties)
         {
@@ -76,14 +83,7 @@ namespace Web.Services.Products
             var products = productsQuery
                  .Skip((currantPage - 1) * productsPerRage)
                  .Take(productsPerRage)
-                 .Select(p => new ProductServiceModel
-                 {
-                     Id = p.Id,
-                     ImageUrl = p.ImageUrl,
-                     Name = p.Name,
-                     Price = p.Price,
-                     ManufacturerId = p.ManufacturerId,
-                 })
+                 .ProjectTo<ProductServiceModel>(config)
                  .ToList();
 
             return new ProductSearchPageServiceModel
@@ -102,23 +102,7 @@ namespace Web.Services.Products
         {
             return data.Products
                  .Where(p => p.Id == productId)
-                 .Select(p => new ProductEditServiceModel
-                 {
-                     Id = p.Id,
-                     Name = p.Name,
-                     Price = p.Price,
-                     ManufacturerId = p.ManufacturerId,
-                     ManufactureYear = p.ManufactureYear,
-                     Description = p.Description,
-                     InStock = p .InStock,
-                     ImageUrl = p.ImageUrl,
-                     ColorId = p.ColorId,
-                     TasteId = p.TasteId,
-                     WineAreaId = p.WineAreaId,
-                     UserId = p.Manufacturer.UserId,
-                     GrapeVarieties = p.GrapeVarieties
-                                        .Select(gv=>gv.GrapeVarietyId),                     
-                 })
+                 .ProjectTo<ProductEditServiceModel>(config)
                  .FirstOrDefault();
         }
 
@@ -190,32 +174,16 @@ namespace Web.Services.Products
                 .Select(c => c.Name);
 
         public IEnumerable<ProductWineAreaServiceModel> GetAllWineAreas() => this.data.WineAreas
-          .Select(wa => new ProductWineAreaServiceModel
-          {
-              WineAreaId = wa.Id,
-              WineAreName = wa.Name
-          });
+          .ProjectTo<ProductWineAreaServiceModel>(config);
 
         public IEnumerable<ProductGrapeVarietiesServiceModel> GetAllGrapeVarieties() => this.data.GrapeVarieties
-            .Select(gv => new ProductGrapeVarietiesServiceModel
-            {
-                GrapeVarietyId = gv.Id,
-                GrapeVarietyName = gv.Name
-            });
+            .ProjectTo<ProductGrapeVarietiesServiceModel>(config);
 
         public IEnumerable<ProductColorServiceModel> GetAllColors() => this.data.ProductColors
-            .Select(m => new ProductColorServiceModel
-            {
-                Id = m.Id,
-                Name = m.Name
-            });
+            .ProjectTo<ProductColorServiceModel>(config);
 
         public IEnumerable<ProductTasteServiceModel> GetAllTastes() => this.data.ProductTastes
-            .Select(m => new ProductTasteServiceModel
-            {
-                Id = m.Id,
-                Name = m.Name
-            });
+            .ProjectTo<ProductTasteServiceModel>(config);
 
         public bool ColorExists(int colorId) => this.data.ProductColors
             .Any(pc => pc.Id == colorId);
@@ -271,21 +239,7 @@ namespace Web.Services.Products
             .Any(p => p.Id == productId && p.Manufacturer.UserId == userId);
 
         private IEnumerable<ProductDetailsServiceModel> GetProducts(IQueryable<Product> productQuery) => productQuery
-            .Select(p => new ProductDetailsServiceModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                ImageUrl = p.ImageUrl,
-                Description = p.Description,
-                Price = p.Price,
-                Color = p.Color.Name,
-                Taste = p.Taste.Name,
-                ManufactureYear = p.ManufactureYear,
-                ManufacturerName = p.Manufacturer.Name,
-                InStock = p.InStock,
-                WineAreaName = p.WineArea.Name,
-                ManufacturerId = p.ManufacturerId,                 
-            })
+            .ProjectTo<ProductDetailsServiceModel>(config)
             .ToList();
     }
 }

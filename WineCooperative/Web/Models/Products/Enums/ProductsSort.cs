@@ -1,4 +1,4 @@
-﻿namespace Web.Models.Enums
+﻿namespace Web.Models.Products.Enums
 {
     public enum ProductsSort
     {

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
 using Web.Models;
@@ -12,31 +14,20 @@ namespace Web.Services.Manufacturers
     {
         private readonly WineCooperativeDbContext data;
         private readonly IAddressService addressService;
+        private readonly IConfigurationProvider config;
 
-        public ManufacturerService(WineCooperativeDbContext data, IAddressService addressService)
+        public ManufacturerService(WineCooperativeDbContext data, IAddressService addressService, IMapper mapper)
         {
             this.data = data;
             this.addressService = addressService;
+            this.config = mapper.ConfigurationProvider;
         }
 
         public IEnumerable<ManufacturerServiceModel> All() => data.Manufacturers
-                .Select(m => new ManufacturerServiceModel
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Email = m.Email,
-                    PhoneNumber = m.PhoneNumber,
-                    Description = m.Description,
-                    Address = new ManufacturerAddressServiceModel
-                    {
-                        Street = m.Address.Street,
-                        ZipCode = m.Address.ZipCode,
-                        TownName = m.Address.Town.Name
-                    }
-                })
-                .ToList();
+            .ProjectTo<ManufacturerServiceModel>(config)
+            .ToList();
 
-        public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId )
+        public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId)
         {
             var addressId = addressService.Address(street, townName, zipCode, countryName);
 
@@ -61,20 +52,13 @@ namespace Web.Services.Manufacturers
         public bool ManufacturerExistsById(string manufacturerId) => this.data.Manufacturers
 .Any(m => m.Id == manufacturerId);
 
-        public IEnumerable<ManufacturerByUserServiceModel> ManufacturersByUser(string userId)
-        {
-            var manufacturers = this.data.Manufacturers
-                .Where(m => m.UserId == userId)
-                .Select(m => new ManufacturerByUserServiceModel
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    UserId = m.UserId
-                })
-                .ToList();
+        public IEnumerable<ManufacturerNameServiceModel> AllManufacturers() => this.GetManufacturers(data.Manufacturers);
 
-            return manufacturers;
-        }
+        public IEnumerable<ManufacturerNameServiceModel> ManufacturersByUser(string userId) => this.GetManufacturers(data.Manufacturers.Where(m => m.UserId == userId));
+
+        private IEnumerable<ManufacturerNameServiceModel> GetManufacturers(IQueryable<Manufacturer> productQuery) => productQuery
+            .ProjectTo<ManufacturerNameServiceModel>(config)
+            .ToList();
 
     }
 }

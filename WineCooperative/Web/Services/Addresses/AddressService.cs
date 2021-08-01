@@ -8,10 +8,7 @@ namespace Web.Services.Addresses
     {
         private readonly WineCooperativeDbContext data;
 
-        public AddressService(WineCooperativeDbContext data)
-        {
-            this.data = data;
-        }
+        public AddressService(WineCooperativeDbContext data) => this.data = data;
 
         public int Address(string street, string townName, string zipCode, string countryName)
         {

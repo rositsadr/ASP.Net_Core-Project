@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Infrastructures;
@@ -15,12 +16,14 @@ namespace Web.Controllers
         private readonly IProductService productService;
         private readonly IUserService userService; 
         private readonly IManufacturerService manufacturerService;
+        private readonly IMapper mapper;
 
-        public ProductsController(IProductService productService, IUserService userService, IManufacturerService manufacturerService)
+        public ProductsController(IProductService productService, IUserService userService, IManufacturerService manufacturerService, IMapper mapper)
         {
             this.productService = productService;
             this.userService = userService;
             this.manufacturerService = manufacturerService;
+            this.mapper = mapper;
         }
 
         [Authorize]
@@ -179,27 +182,13 @@ namespace Web.Controllers
                 return Unauthorized();
             }
 
-            var productToEdit = new ProductModel
-                {
-                    Name = product.Name,
-                    Price = product.Price,
-                    ImageUrl = product.ImageUrl,
-                    Description = product.Description,
-                    ManufactureYear = product.ManufactureYear,
-                    InStock = product.InStock,
-                    ColorId = product.ColorId,
-                    TasteId = product.TasteId,
-                    ManufacturerId = product.ManufacturerId,
-                    WineAreaId = product.WineAreaId,
-                    GrapeVarieties = product.GrapeVarieties
-                };
+            var productToEdit = mapper.Map<ProductModel>(product);
 
-            var manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+            var manufacturers = this.manufacturerService.AllManufacturers();
 
-            if (User.IsInRole("Member"))
+            if (User.IsMember())
             {
-                manufacturers = manufacturers
-                    .Where(m => m.UserId == userId);
+                manufacturers = this.manufacturerService.ManufacturersByUser(userId);
             }
 
             productToEdit.AllColors = this.productService.GetAllColors();

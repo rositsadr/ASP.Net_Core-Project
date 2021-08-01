@@ -51,6 +51,6 @@ namespace Web.Models.Products
 
         public IEnumerable<ProductGrapeVarietiesServiceModel> AllGrapeVarieties { get; set; }
 
-        public IEnumerable<ManufacturerByUserServiceModel> Manufacturers { get; set; }
+        public IEnumerable<ManufacturerNameServiceModel> Manufacturers { get; set; }
     }
 }

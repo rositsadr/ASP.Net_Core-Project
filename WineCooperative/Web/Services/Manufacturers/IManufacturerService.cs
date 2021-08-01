@@ -13,6 +13,8 @@ namespace Web.Services.Manufacturers
 
         public bool ManufacturerExistsById(string manufacturerId);
 
-        public IEnumerable<ManufacturerByUserServiceModel> ManufacturersByUser(string userId);
+        public IEnumerable<ManufacturerNameServiceModel> AllManufacturers();
+
+        public IEnumerable<ManufacturerNameServiceModel> ManufacturersByUser(string userId);
     }
 }

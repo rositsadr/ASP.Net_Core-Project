@@ -42,6 +42,8 @@ namespace Web
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<WineCooperativeDbContext>();
 
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddControllersWithViews(options=>
             {
                 options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();

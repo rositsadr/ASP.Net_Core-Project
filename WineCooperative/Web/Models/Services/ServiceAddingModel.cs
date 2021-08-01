@@ -24,6 +24,6 @@ namespace Web.Models.Services
         [Required]
         public string ManufacturerId { get; init; }
 
-        public IEnumerable<ManufacturerByUserServiceModel> Manufacturers { get; set; }
+        public IEnumerable<ManufacturerNameServiceModel> Manufacturers { get; set; }
     }
 }
