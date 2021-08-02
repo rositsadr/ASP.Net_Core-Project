@@ -9,10 +9,17 @@ namespace Web.Services.Services
     {
         public void Create(string name, decimal price, string imageUrl, string description, string manufacturerId, bool available);
 
-        public bool ServiceExists(string userId, string name);
+        public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
+
+        public ServiceDetailsIdServiceModel Edit(string serviceId);
+
+        public bool ApplyChanges(string serviceId, string name, string description, string imageUrl, decimal price, bool available, string manufacturerId);
+
+        public bool ServiceExists(string manufacturerId, string name);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId);
 
-        public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
+        public bool IsItUsersService(string userId, string productId);
+
     }
 }

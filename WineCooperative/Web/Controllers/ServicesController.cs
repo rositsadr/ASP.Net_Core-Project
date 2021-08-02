@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Infrastructures;
 using Web.Models.Services;
 using Web.Services.Manufacturers;
 using Web.Services.Services;
+using static Web.WebConstants;
 
 namespace Web.Controllers
 {
@@ -12,12 +14,14 @@ namespace Web.Controllers
     {
         private readonly IManufacturerService manufacturerService;
         private readonly IServiceService serviceService;
+        private readonly IMapper mapper;
 
 
-        public ServicesController(IManufacturerService manufacturerService, IServiceService serviceService)
+        public ServicesController(IManufacturerService manufacturerService, IServiceService serviceService, IMapper mapper)
         {
             this.manufacturerService = manufacturerService;
             this.serviceService = serviceService;
+            this.mapper = mapper;
         }
 
         [Authorize]
@@ -30,7 +34,7 @@ namespace Web.Controllers
 
             if (User.IsMember())
             {
-                return View(new ServiceAddingModel
+                return View(new ServiceModel
                 {
                     Manufacturers = this.manufacturerService.ManufacturersByUser(User.GetId())
                 });
@@ -41,7 +45,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(ServiceAddingModel service)
+        public IActionResult Add(ServiceModel service)
         {
             if (User.IsAdmin())
             {
@@ -55,7 +59,7 @@ namespace Web.Controllers
                     this.ModelState.AddModelError(string.Empty, "The Manufacturer does not exists.");
                 }
 
-                if(serviceService.ServiceExists(User.GetId(),service.Name))
+                if(serviceService.ServiceExists(service.ManufacturerId,service.Name))
                 {
                     this.ModelState.AddModelError(string.Empty, "The service already exists. Check your Services.");
                 }
@@ -79,6 +83,11 @@ namespace Web.Controllers
         {
             var servicesResult = this.serviceService.All(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
 
+            if(!User.IsAdmin())
+            {
+                servicesResult.Services = servicesResult.Services
+                    .Where(s => s.Available);
+            }
             if (id != null)
             {
                 servicesResult.Services = servicesResult.Services
@@ -91,5 +100,80 @@ namespace Web.Controllers
 
             return View(query);
         }
+
+        [Authorize]
+        public IActionResult Edit(string id)
+        {
+            var userId = this.User.GetId();
+
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            var servicesToEdit = serviceService.Edit(id);
+
+            if (servicesToEdit.UserId != userId && !this.User.IsInRole(AdministratorRole))
+            {
+                return Unauthorized();
+            }
+
+            var service = mapper
+                .Map<ServiceModel>(servicesToEdit);
+
+            var manufacturers = this.manufacturerService.AllManufacturers();
+
+            if (User.IsMember())
+            {
+                manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+            }
+
+            service.Manufacturers = manufacturers;
+
+            return View(service);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Edit(ServiceModel service, string id)
+        {
+            var userId = User.GetId();
+
+            if (!(this.User.IsMember() || User.IsAdmin()))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            if (!manufacturerService.ManufacturerExistsById(service.ManufacturerId))
+            {
+                this.ModelState.AddModelError(nameof(service.ManufacturerId), "The Manufacturer does not exists.");
+            }
+
+            if (!serviceService.ServiceExists(service.ManufacturerId, service.Name))
+            {
+                this.ModelState.AddModelError(string.Empty, "The service is not in the list. Add it first.");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                service.Manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+
+                return View(service);
+            }
+
+            if (!(this.serviceService.IsItUsersService(userId, id) || User.IsAdmin()))
+            {
+                return BadRequest();
+            }
+
+            serviceService.ApplyChanges(id, service.Name, service.Description, service.ImageUrl, service.Price, service.Available, service.ManufacturerId);
+
+            return RedirectToAction("All");
+        }
+
+        public IActionResult Details() => View();
+
+        public IActionResult Delete() => View();
     }
 }

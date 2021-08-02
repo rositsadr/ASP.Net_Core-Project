@@ -8,8 +8,6 @@ namespace Web.Services.Products.Models
 
         public string Description { get; init; }
 
-        public bool InStock { get; init; }
-
         public int WineAreaId { get; init; }
 
         public IEnumerable<int> GrapeVarieties { get; init; }

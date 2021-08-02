@@ -1,14 +1,15 @@
-﻿@model ProductModel
+﻿@model ServiceModel
 
 @{
-    ViewData["Title"] = "Edit Product";
+    ViewData["Title"] = "Edit Service";
 }
 
 <h4 class="text-center">@ViewData["Title"]</h4>
 
-<partial name="_ProductFormPartial" model="@Model" />
+<partial name="_ServiceFormPartial" model="@Model" />
 
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+

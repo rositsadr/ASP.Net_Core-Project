@@ -5,7 +5,7 @@ using static Web.Data.DataConstants;
 
 namespace Web.Models.Services
 {
-    public class ServiceAddingModel
+    public class ServiceModel
     {
         [Required]
         [StringLength(ServiceMaxLength,MinimumLength =ServiceMinLength)]
@@ -19,6 +19,8 @@ namespace Web.Models.Services
         public string ImageUrl { get; init; }
 
         public decimal Price { get; init; }
+
+        public string DateCreated { get; init; }
 
         public bool Available { get; init; }
 

@@ -11,5 +11,7 @@
         public string ImageUrl { get; init; }
 
         public string ManufacturerId { get; init; }
+
+        public bool InStock { get; init; }
     }
 }

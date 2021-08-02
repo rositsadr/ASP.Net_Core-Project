@@ -74,12 +74,82 @@ namespace Web.Services.Services
             };
         }
 
-        public bool ServiceExists(string userId, string name) => data.Services
-            .Any(s => s.Manufacturer.UserId == userId && s.Name == name);
+        public ServiceDetailsIdServiceModel Edit(string serviceId)
+        {
+            return data.Services
+                .Where(s => s.Id == serviceId)
+                .ProjectTo<ServiceDetailsIdServiceModel>(config)
+                .FirstOrDefault();
+        }
+
+        public bool ApplyChanges(string serviceId, string name, string description, string imageUrl, decimal price, bool available, string manufacturerId)
+        {
+            var service = data.Services
+                .Where(s => s.Id == serviceId)
+                .FirstOrDefault();
+
+            if (service == null)
+            {
+                return false;
+            }
+
+            bool dateChange = false;
+
+            if (service.Name != name)
+            {
+                service.Name = name;
+                dateChange = true;
+            }
+
+            if(service.Description != description)
+            {
+                service.Description = description;
+                dateChange = true;
+            }
+
+            if (service.ImageUrl != imageUrl)
+            {
+                service.ImageUrl = imageUrl;
+                dateChange = true;
+            }
+
+            if (service.Price!=price)
+            {
+                service.Price = price;
+                dateChange = true;
+            }
+
+            if(service.Available != available)
+            {
+                service.Available = available;
+                dateChange = true;
+            }
+
+            if (service.ManufacturerId != manufacturerId)
+            {
+                service.ManufacturerId = manufacturerId;
+                dateChange = true;
+            }
+
+            if(dateChange)
+            {
+                service.DateCreated = DateTime.UtcNow.ToString("r");
+            }
+
+            data.SaveChanges();
+
+            return true;
+        }
+
+        public bool ServiceExists(string manufacturerId, string name) => data.Services
+            .Any(s => s.ManufacturerId == manufacturerId && s.Name == name);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId) => this.data.Services
             .Where(s => s.Manufacturer.UserId == userId)
             .ProjectTo<ServiceDetailsServiceModel>(config)
             .ToList();
+
+        public bool IsItUsersService(string userId, string serviceId) => data.Services
+             .Any(s => s.Id == serviceId && s.Manufacturer.UserId == userId);
     }
 }

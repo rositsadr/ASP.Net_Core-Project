@@ -6,7 +6,6 @@ using Web.Infrastructures;
 using Web.Models.Products;
 using Web.Services.Manufacturers;
 using Web.Services.Products;
-using Web.Services.Users;
 using static Web.WebConstants;
 
 namespace Web.Controllers
@@ -14,14 +13,12 @@ namespace Web.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductService productService;
-        private readonly IUserService userService; 
         private readonly IManufacturerService manufacturerService;
         private readonly IMapper mapper;
 
-        public ProductsController(IProductService productService, IUserService userService, IManufacturerService manufacturerService, IMapper mapper)
+        public ProductsController(IProductService productService, IManufacturerService manufacturerService, IMapper mapper)
         {
             this.productService = productService;
-            this.userService = userService;
             this.manufacturerService = manufacturerService;
             this.mapper = mapper;
         }
@@ -118,6 +115,12 @@ namespace Web.Controllers
         {
             var productsResult = this.productService.All(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
 
+            if(!User.IsAdmin())
+            {
+                productsResult.Products = productsResult.Products
+                    .Where(p => p.InStock);
+            }
+
             if(id!=null)
             {
                 productsResult.Products = productsResult.Products
@@ -131,38 +134,6 @@ namespace Web.Controllers
             query.Products = productsResult.Products;
 
             return View(query);
-        }
-
-        public IActionResult Details(string id)
-        {
-            var product = productService.Details(id);
-
-            if(product==null)
-            {
-                return RedirectToAction("All");
-            }
-
-            return View(product);
-        }
-
-        [Authorize]
-        public IActionResult Delete(string id)
-        {
-            var userId = User.GetId();
-
-            if (!(this.User.IsMember() || this.User.IsAdmin()))
-            {
-                return RedirectToAction("BecomeMember", "Users");
-            }
-
-            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsAdmin()))
-            {
-                return Unauthorized();
-            }
-
-            this.productService.Delete(id);
-
-            return RedirectToAction("All");
         }
 
         [Authorize]
@@ -182,7 +153,8 @@ namespace Web.Controllers
                 return Unauthorized();
             }
 
-            var productToEdit = mapper.Map<ProductModel>(product);
+            var productToEdit = mapper
+                .Map<ProductModel>(product);
 
             var manufacturers = this.manufacturerService.AllManufacturers();
 
@@ -206,7 +178,7 @@ namespace Web.Controllers
         {
             var userId = User.GetId();
 
-            if (!(this.userService.UserIsManufacturer(userId) || User.IsInRole(AdministratorRole)))
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
                 return RedirectToAction("BecomeMember", "Users");
             }
@@ -252,7 +224,7 @@ namespace Web.Controllers
                 return View(product);
             }
 
-            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsInRole(AdministratorRole)))
+            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsAdmin()))
             {
                 return BadRequest();
             }
@@ -260,6 +232,38 @@ namespace Web.Controllers
             this.productService.ApplyChanges(id, product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
             return RedirectToAction("MyProducts", "Users");
+        }
+
+        public IActionResult Details(string id)
+        {
+            var product = productService.Details(id);
+
+            if(product==null)
+            {
+                return RedirectToAction("All");
+            }
+
+            return View(product);
+        }
+
+        [Authorize]
+        public IActionResult Delete(string id)
+        {
+            var userId = User.GetId();
+
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsAdmin()))
+            {
+                return Unauthorized();
+            }
+
+            this.productService.Delete(id);
+
+            return RedirectToAction("All");
         }      
     }
 }
