@@ -9,16 +9,18 @@ namespace Web.Models.Services
     {
         [Required]
         [StringLength(ServiceMaxLength,MinimumLength =ServiceMinLength)]
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         [Required]
-        public string Description { get; set; }
+        public string Description { get; init; }
 
         [Display(Name = "Image URL")]
         [Url]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; init; }
 
-        public decimal Price { get; set; }
+        public decimal Price { get; init; }
+
+        public bool Available { get; init; }
 
         [Display(Name = "Manufacturer")]
         [Required]

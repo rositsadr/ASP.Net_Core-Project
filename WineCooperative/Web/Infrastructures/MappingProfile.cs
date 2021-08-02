@@ -4,6 +4,7 @@ using Web.Models;
 using Web.Models.Products;
 using Web.Services.Manufacturers.Models;
 using Web.Services.Products.Models;
+using Web.Services.Services.Models;
 
 namespace Web.Infrastructures
 {
@@ -26,6 +27,9 @@ namespace Web.Infrastructures
                 .ForMember(masm => masm.TownName, a => a.MapFrom(t => t.Town.Name));
             this.CreateMap<Manufacturer, ManufacturerServiceModel>();
             this.CreateMap<Manufacturer, ManufacturerNameServiceModel>();
+
+            this.CreateMap<Service, ServiceDetailsIdServiceModel>();
+            this.CreateMap<Service, ServiceDetailsServiceModel>();
         }
     }
 }

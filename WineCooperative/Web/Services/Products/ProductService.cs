@@ -55,8 +55,8 @@ namespace Web.Services.Products
 
         public ProductSearchPageServiceModel All(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
         {
+
             var productsQuery = data.Products
-                .Where(p=>p.InStock == true)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(color))

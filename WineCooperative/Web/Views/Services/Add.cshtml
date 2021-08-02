@@ -13,7 +13,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" placeholder="Produc name" />
+                <input asp-for="Name" class="form-control" placeholder="Service name" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -21,17 +21,24 @@
                 <input asp-for="ImageUrl" class="form-control" placeholder="Place image url" />
                 <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
-            <div class="form-group col">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" placeholder="Enter product price in levs" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" placeholder="Enter service price in levs" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="form-group form-check col mt-4 text-center">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="Available" />@Html.DisplayNameFor(model => model.Available)
+                    </label>
+                </div>
+            </div>          
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" rows="4" class="form-control" placeholder="Describe product"></textarea>
+                <textarea asp-for="Description" rows="4" class="form-control" placeholder="Describe service"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group col">
+            <div class="form-group">
                 <select class="form-select form-control" asp-for="ManufacturerId">
                     <option selected>Choose manufacturer</option>
                     @foreach (var manufacturer in Model.Manufacturers)
@@ -39,7 +46,7 @@
                         <option value="@manufacturer.Id">@manufacturer.Name</option>
                     }
                 </select>
-            </div>          
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary mt-2" />
             </div>

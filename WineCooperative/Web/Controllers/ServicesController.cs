@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Data;
+using System.Linq;
 using Web.Infrastructures;
-using Web.Models;
 using Web.Models.Services;
 using Web.Services.Manufacturers;
 using Web.Services.Services;
@@ -11,14 +10,12 @@ namespace Web.Controllers
 {
     public class ServicesController : Controller
     {
-        private readonly WineCooperativeDbContext data;
         private readonly IManufacturerService manufacturerService;
         private readonly IServiceService serviceService;
 
 
-        public ServicesController(WineCooperativeDbContext data, IManufacturerService manufacturerService, IServiceService serviceService)
+        public ServicesController(IManufacturerService manufacturerService, IServiceService serviceService)
         {
-            this.data = data;
             this.manufacturerService = manufacturerService;
             this.serviceService = serviceService;
         }
@@ -70,7 +67,7 @@ namespace Web.Controllers
                     return View(service);
                 }
 
-                serviceService.Create(service.Name, service.Price, service.ImageUrl, service.Description, service.ManufacturerId);
+                serviceService.Create(service.Name, service.Price, service.ImageUrl, service.Description, service.ManufacturerId, service.Available);
 
                 return RedirectToAction("All", "Services");
             }
@@ -78,8 +75,21 @@ namespace Web.Controllers
             return RedirectToAction("BecomeMember", "Users");
         }
 
-        public IActionResult All() => View();
+        public IActionResult All([FromQuery] ServiceSearchPageModel query, string id = null)
+        {
+            var servicesResult = this.serviceService.All(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
 
-        public IActionResult Details(string Id) => View();
+            if (id != null)
+            {
+                servicesResult.Services = servicesResult.Services
+                    .Where(s => s.ManufacturerId == id)
+                    .ToList();
+            }
+
+            query.TotalServices = servicesResult.TotalServices;
+            query.Services = servicesResult.Services;
+
+            return View(query);
+        }
     }
 }

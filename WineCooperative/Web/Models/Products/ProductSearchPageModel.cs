@@ -4,7 +4,7 @@ using Web.Services.Products.Models;
 
 namespace Web.Models.Products
 {
-    public class ProductSearchPageViewModel
+    public class ProductSearchPageModel
     {
         public const int productsPerPage = 3;
 

@@ -1,4 +1,4 @@
-﻿@model ProductSearchPageViewModel
+﻿@model ProductSearchPageModel
 
 @{
     ViewData["Title"] = "Products Page";
@@ -43,7 +43,7 @@
             previousPage = 1;
         }
 
-        var pagesCount = Math.Ceiling((double)Model.TotalProducts / ProductSearchPageViewModel.productsPerPage);
+        var pagesCount = Math.Ceiling((double)Model.TotalProducts / ProductSearchPageModel.productsPerPage);
 
         if (pagesCount == 0)
         {

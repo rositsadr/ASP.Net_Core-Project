@@ -102,6 +102,14 @@ namespace Web.Data
                 .HasIndex(c => c.CountryName)
                 .IsUnique();
 
+            builder.Entity<GrapeVariety>()
+                .HasIndex(gv => gv.Name)
+                .IsUnique();
+
+            builder.Entity<WineArea>()
+                .HasIndex(wa => wa.Name)
+                .IsUnique();
+
             base.OnModelCreating(builder);
         }
     }

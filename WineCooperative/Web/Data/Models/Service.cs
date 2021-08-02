@@ -22,6 +22,11 @@ namespace Web.Models
         public decimal Price { get; set; }
 
         [Required]
+        public string DateCreated { get; set; }
+
+        public bool Available { get; set; }
+
+        [Required]
         public string ManufacturerId { get; set; }
 
         public Manufacturer Manufacturer { get; set; }

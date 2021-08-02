@@ -2,14 +2,14 @@
 {
     public class ServiceDetailsServiceModel
     {
-        public string Name { get; set; }
+        public string Name { get; init; }
 
-        public string Description { get; set; }
+        public string Description { get; init; }
 
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; init; }
 
-        public decimal Price { get; set; }
+        public decimal Price { get; init; }
 
-        public string ManufacturerName { get; set; }
+        public string ManufacturerName { get; init; }
     }
 }

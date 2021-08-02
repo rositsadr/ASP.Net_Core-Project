@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
 using Web.Models;
+using Web.Models.Services;
+using Web.Models.Services.Enums;
 using Web.Services.Services.Models;
 
 namespace Web.Services.Services
@@ -9,10 +14,15 @@ namespace Web.Services.Services
     public class ServiceService:IServiceService
     {
         private readonly WineCooperativeDbContext data;
+        private readonly IConfigurationProvider config;
 
-        public ServiceService(WineCooperativeDbContext data) => this.data = data;
+        public ServiceService(WineCooperativeDbContext data, IMapper mapper)
+        {
+            this.data = data;
+            this.config = mapper.ConfigurationProvider;
+        }
 
-        public void Create(string name, decimal price, string imageUrl, string description, string manufacturerId)
+        public void Create(string name, decimal price, string imageUrl, string description, string manufacturerId, bool available)
         {
             var serviceToAdd = new Service
             {
@@ -20,11 +30,48 @@ namespace Web.Services.Services
                 Price = price,
                 ImageUrl = imageUrl,
                 Description = description,
-                ManufacturerId = manufacturerId
+                ManufacturerId = manufacturerId,
+                DateCreated = DateTime.UtcNow.ToString("r"),
+                Available = available
             };
 
             data.Services.Add(serviceToAdd);
             data.SaveChanges();
+        }
+
+        public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting)
+        {
+            var servicesQuery = data.Services
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                servicesQuery = servicesQuery
+                    .Where(p => (p.Name.ToLower() + " " + p.Description.ToLower()).Contains(searchTerm));
+            }
+
+            servicesQuery = sorting switch
+            {
+                ServiceSort.ByDate => servicesQuery.OrderByDescending(p => p.DateCreated),
+                ServiceSort.ByManufacturer => servicesQuery.OrderBy(p => p.Manufacturer.Name),
+                ServiceSort.ByName or _ => servicesQuery.OrderBy(p => p.Name)
+            };
+
+            var totalServices = servicesQuery.Count();
+
+            var services = servicesQuery
+                .Skip((currantPage - 1) * servicesPerRage)
+                 .Take(servicesPerRage)
+                 .ProjectTo<ServiceDetailsIdServiceModel>(config)
+                 .ToList();
+
+            return new ServiceSearchPageServiceModel
+            {
+                TotalServices = totalServices,
+                CurrantPage = currantPage,
+                ServicesPerPage = servicesPerRage,
+                Services = services,
+            };
         }
 
         public bool ServiceExists(string userId, string name) => data.Services
@@ -32,14 +79,7 @@ namespace Web.Services.Services
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId) => this.data.Services
             .Where(s => s.Manufacturer.UserId == userId)
-            .Select(s => new ServiceDetailsServiceModel
-            {
-                Name = s.Name,
-                Description = s.Description,
-                Price = s.Price,
-                ManufacturerName = s.Manufacturer.Name,
-                ImageUrl = s.ImageUrl,
-            })
+            .ProjectTo<ServiceDetailsServiceModel>(config)
             .ToList();
     }
 }

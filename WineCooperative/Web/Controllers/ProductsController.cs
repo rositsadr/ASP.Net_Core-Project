@@ -114,9 +114,9 @@ namespace Web.Controllers
             return RedirectToAction("BecomeMember", "Users");
         }
 
-        public IActionResult All([FromQuery] ProductSearchPageViewModel query, string id = null)
+        public IActionResult All([FromQuery] ProductSearchPageModel query, string id = null)
         {
-            var productsResult = this.productService.All(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageViewModel.productsPerPage);
+            var productsResult = this.productService.All(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
 
             if(id!=null)
             {
