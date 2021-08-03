@@ -36,7 +36,7 @@ namespace Web.Controllers
             {
                 return View(new ServiceModel
                 {
-                    Manufacturers = this.manufacturerService.ManufacturersByUser(User.GetId())
+                    Manufacturers = this.manufacturerService.ManufacturersNameByUser(User.GetId())
                 });
             }
 
@@ -66,7 +66,7 @@ namespace Web.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    service.Manufacturers = manufacturerService.ManufacturersByUser(User.GetId());
+                    service.Manufacturers = manufacturerService.ManufacturersNameByUser(User.GetId());
 
                     return View(service);
                 }
@@ -125,7 +125,7 @@ namespace Web.Controllers
 
             if (User.IsMember())
             {
-                manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+                manufacturers = this.manufacturerService.ManufacturersNameByUser(userId);
             }
 
             service.Manufacturers = manufacturers;
@@ -157,7 +157,7 @@ namespace Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                service.Manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+                service.Manufacturers = this.manufacturerService.ManufacturersNameByUser(userId);
 
                 return View(service);
             }
@@ -172,8 +172,35 @@ namespace Web.Controllers
             return RedirectToAction("All");
         }
 
-        public IActionResult Details() => View();
+        public IActionResult Details(string id)
+        {
+            var service = serviceService.Details(id);
 
-        public IActionResult Delete() => View();
+            if(service == null)
+            {
+                RedirectToAction("All");
+            }
+
+            return View(service);
+        }
+
+        public IActionResult Delete(string id)
+        {
+            var userId = User.GetId();
+
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            if (!(this.serviceService.IsItUsersService(userId, id) || User.IsAdmin()))
+            {
+                return Unauthorized();
+            }
+
+            serviceService.Delete(id);
+
+            return RedirectToAction("All");
+        }
     }
 }

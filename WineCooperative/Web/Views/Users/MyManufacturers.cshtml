@@ -1,0 +1,45 @@
+﻿@model List<ManufacturerServiceModel>
+
+@{
+    ViewData["Title"] = "My Manufacturers";
+}
+
+<div class="container">
+    @if (Model.Count == 0)
+    {
+        <div class="text-center">
+            <h2>You have no manufacturers.</h2>
+            <a asp-controller="Products" asp-action="Add">Add a manufacturer!</a>
+        </div>
+    }
+    <div class="row">
+        @foreach (var manufacturer in Model)
+        {
+            <div class="card mb-3" style="width: 50%;">
+                <div class="card-body">
+                    <h5 class="card-title">@manufacturer.Name</h5>
+                    <p class="card-text mb-0">Phone number: @manufacturer.PhoneNumber</p>
+                    <p class="card-text mb-0">E-mail: @manufacturer.Email</p>
+                    <p class="card-text mb-0">Address: @manufacturer.Address.Street</p>
+                    <div class="row">
+                        <div class="col-7">
+                            <p class="card-text mb-0">Town: @manufacturer.Address.TownName</p>
+                        </div>
+                        <div class="col-5">
+                            <p class="card-text mb-0">Zip code: @manufacturer.Address.ZipCode</p>
+                        </div>
+                    </div>
+                    @if (manufacturer.Description != null)
+                    {
+                        <p class="card-text mb-0">Description: @manufacturer.Description</p>
+                    }
+                </div>
+                <div class="text-center">
+                    <a asp-controller="Manufacturers" asp-action="Edit" asp-route-id=@manufacturer.Id class="btn btn-warning">Edit</a>
+                    <a asp-controller="Manufacturers" asp-action="Delete" asp-route-id=@manufacturer.Id class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

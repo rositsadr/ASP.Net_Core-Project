@@ -15,10 +15,13 @@ namespace Web.Infrastructures
         {
             this.CreateMap<ProductEditServiceModel, ProductModel>();
             this.CreateMap<Product, ProductServiceModel>();
-            this.CreateMap<Product, ProductDetailsServiceModel>();
+            this.CreateMap<Product, ProductDetailsServiceModel>()
+                .ForMember(pd => pd.Taste, p => p.MapFrom(p => p.Taste.Name))
+                .ForMember(pd => pd.Color, p => p.MapFrom(p => p.Color.Name))
+                .ForMember(pd=>pd.GrapeVarieties, p=>p.MapFrom(p=>p.GrapeVarieties.Select(gv=>gv.GrapeVariety.Name)));
             this.CreateMap<Product, ProductEditServiceModel>()
-                .ForMember(pesm => pesm.UserId, p => p.MapFrom(x => x.Manufacturer.UserId))
-                .ForMember(pesm => pesm.GrapeVarieties, p => p.MapFrom(x => x.GrapeVarieties.Select(gv => gv.GrapeVarietyId)));
+                .ForMember(pesm => pesm.UserId, p => p.MapFrom(p => p.Manufacturer.UserId))
+                .ForMember(pesm => pesm.GrapeVarieties, p => p.MapFrom(p => p.GrapeVarieties.Select(gv => gv.GrapeVarietyId)));
             this.CreateMap<WineArea, ProductWineAreaServiceModel>();
             this.CreateMap<GrapeVariety, ProductGrapeVarietiesServiceModel>()
                 .ForMember(pg => pg.GrapeVarietyId, gv => gv.MapFrom(g => g.Id))
@@ -31,7 +34,8 @@ namespace Web.Infrastructures
             this.CreateMap<Manufacturer, ManufacturerServiceModel>();
             this.CreateMap<Manufacturer, ManufacturerNameServiceModel>();
 
-            this.CreateMap<Service, ServiceDetailsIdServiceModel>();
+            this.CreateMap<Service, ServiceDetailsIdServiceModel>()
+                .ForMember(sd=>sd.UserId, s=>s.MapFrom(s=>s.Manufacturer.UserId));
             this.CreateMap<Service, ServiceDetailsServiceModel>();
             this.CreateMap<ServiceDetailsIdServiceModel, ServiceModel>();
         }

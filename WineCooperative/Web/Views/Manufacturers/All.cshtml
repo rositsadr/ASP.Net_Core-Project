@@ -21,7 +21,7 @@
                     </div>
                     <p class="card-text">@member.Description</p>
                     <a asp-controller="Products" asp-action="All" asp-route-id="@member.Id" class="card-link">Products</a>
-                    <a asp-controller="Manufacturers" asp-action="Services" asp-route-id="@member.Id" class="card-link float-right">Services</a>
+                    <a asp-controller="Services" asp-action="All" asp-route-id="@member.Id" class="card-link float-right">Services</a>
                 </div>
             </div>
         }

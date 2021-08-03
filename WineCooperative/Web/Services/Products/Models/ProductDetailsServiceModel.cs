@@ -1,4 +1,6 @@
-﻿namespace Web.Services.Products.Models
+﻿using System.Collections.Generic;
+
+namespace Web.Services.Products.Models
 {
     public class ProductDetailsServiceModel : ProductServiceModel
     {
@@ -13,5 +15,7 @@
         public string ManufacturerName { get; init; }
 
         public string WineAreaName { get; init; }
+
+        public IEnumerable<string> GrapeVarieties { get; init; }
     }
 }

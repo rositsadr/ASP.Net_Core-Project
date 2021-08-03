@@ -66,6 +66,6 @@ namespace Web.Controllers
 
         public IActionResult All() => View(this.manufacturerService.All());
 
-        public IActionResult Services(string memberId) => View();
+        public IActionResult Edit() => View();
     }
 }

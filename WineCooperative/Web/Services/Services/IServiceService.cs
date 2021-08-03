@@ -15,6 +15,10 @@ namespace Web.Services.Services
 
         public bool ApplyChanges(string serviceId, string name, string description, string imageUrl, decimal price, bool available, string manufacturerId);
 
+        public ServiceDetailsIdServiceModel Details(string serviceId);
+
+        public void Delete(string id);
+
         public bool ServiceExists(string manufacturerId, string name);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId);

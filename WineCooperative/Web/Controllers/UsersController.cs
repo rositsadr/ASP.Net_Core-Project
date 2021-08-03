@@ -5,8 +5,11 @@ using Web.Data;
 using Web.Infrastructures;
 using Web.Models;
 using Web.Models.Users;
+using Web.Services.Addresses;
+using Web.Services.Manufacturers;
 using Web.Services.Products;
 using Web.Services.Services;
+using Web.Services.Users;
 
 namespace Web.Controllers
 {
@@ -15,12 +18,17 @@ namespace Web.Controllers
         private readonly WineCooperativeDbContext data;
         private readonly IProductService productService;
         private readonly IServiceService serviceService;
+        private readonly IManufacturerService manufacturerService;
+        private readonly IUserService userService;
 
-        public UsersController(WineCooperativeDbContext data, IProductService productService, IServiceService serviceService)
+
+        public UsersController(WineCooperativeDbContext data, IProductService productService, IServiceService serviceService, IManufacturerService manufacturerService, IUserService userService)
         {
             this.data = data;
             this.productService = productService;
             this.serviceService = serviceService;
+            this.manufacturerService = manufacturerService;
+            this.userService = userService;
         }
 
         [Authorize]
@@ -35,70 +43,62 @@ namespace Web.Controllers
                 return View(userInfo);
             }
 
-            var country = data.Countries
-                .Where(c => c.CountryName == userInfo.Address.CountryName)
-                .FirstOrDefault();
-
-            if(country == null)
-            {
-                country = new Country
-                {
-                    CountryName = userInfo.Address.CountryName
-                };
-
-                data.Countries.Add(country);
-                data.SaveChanges();
-            }
-
-            var town = data.Towns
-                .Where(t => t.Name == userInfo.Address.TownName)
-                .FirstOrDefault();
-
-            if(town == null)
-            {
-                town = new Town
-                {
-                    Name = userInfo.Address.TownName,
-                    Country = country
-                };
-            }
-
-            var address = new Address
-            {
-                Street = userInfo.Address.Street,
-                ZipCode = userInfo.Address.ZipCode,
-                Town = town,                 
-            };
-
-            var userInformation = new UserAdditionalInformation
-            {
-                FirstName = userInfo.FirstName,
-                LastName = userInfo.LastName,
-                Address = address,
-            };
+            this.userService.AddUserAdditionalInfo(User.GetId(),userInfo.FirstName, userInfo.LastName, userInfo.Address.Street, userInfo.Address.TownName, userInfo.Address.ZipCode, userInfo.Address.CountryName);
 
             return RedirectToAction("Index","Home");
         }
 
         public IActionResult MyProducts()
         {
-            var userId = this.User.GetId();
+            if(User.IsMember())
+            {
+                var products = productService.ProductsByUser(User.GetId());
 
-            var products = productService.ProductsByUser(userId);
+                return View(products);
+            }
 
-            return View(products);
+            if (User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            return RedirectToAction("BecomeMember");
         }
 
         public IActionResult MyServices()
         {
-            var userId = this.User.GetId();
+            if(User.IsMember())
+            {
+                var services = serviceService.ServicesByUser(User.GetId());
 
-            var services = serviceService.ServicesByUser(userId); 
+                return View(services);
+            }
 
-            return View(services);
+            if (User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            return RedirectToAction("BecomeMember");
+
         }
 
-        public IActionResult MyManufecturers() => View();
+        public IActionResult MyManufacturers()
+        {
+            if (User.IsMember())
+            {
+                var manufacturers = manufacturerService.ManufacturersByUser(User.GetId());
+
+                return View(manufacturers);
+            }
+
+            if (User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            return RedirectToAction("BecomeMember");
+        }
 
         public IActionResult BecomeMember() => View();
     }

@@ -54,7 +54,12 @@ namespace Web.Services.Manufacturers
 
         public IEnumerable<ManufacturerNameServiceModel> AllManufacturers() => this.GetManufacturers(data.Manufacturers);
 
-        public IEnumerable<ManufacturerNameServiceModel> ManufacturersByUser(string userId) => this.GetManufacturers(data.Manufacturers.Where(m => m.UserId == userId));
+        public IEnumerable<ManufacturerNameServiceModel> ManufacturersNameByUser(string userId) => this.GetManufacturers(data.Manufacturers.Where(m => m.UserId == userId));
+
+        public IEnumerable<ManufacturerServiceModel> ManufacturersByUser(string userId) => data.Manufacturers
+                .Where(m=>m.UserId == userId)
+                .ProjectTo<ManufacturerServiceModel>(config)
+                .ToList();
 
         private IEnumerable<ManufacturerNameServiceModel> GetManufacturers(IQueryable<Manufacturer> productQuery) => productQuery
             .ProjectTo<ManufacturerNameServiceModel>(config)

@@ -11,7 +11,7 @@ using Web.Services.Services.Models;
 
 namespace Web.Services.Services
 {
-    public class ServiceService:IServiceService
+    public class ServiceService : IServiceService
     {
         private readonly WineCooperativeDbContext data;
         private readonly IConfigurationProvider config;
@@ -74,13 +74,7 @@ namespace Web.Services.Services
             };
         }
 
-        public ServiceDetailsIdServiceModel Edit(string serviceId)
-        {
-            return data.Services
-                .Where(s => s.Id == serviceId)
-                .ProjectTo<ServiceDetailsIdServiceModel>(config)
-                .FirstOrDefault();
-        }
+        public ServiceDetailsIdServiceModel Edit(string serviceId) => this.GetService(serviceId);
 
         public bool ApplyChanges(string serviceId, string name, string description, string imageUrl, decimal price, bool available, string manufacturerId)
         {
@@ -141,6 +135,20 @@ namespace Web.Services.Services
             return true;
         }
 
+        public ServiceDetailsIdServiceModel Details(string serviceId) => this.GetService(serviceId);
+
+        public void Delete(string serviceId)
+        {
+            var service = data.Services
+               .Find(serviceId);
+
+            if (service != null)
+            {
+                data.Services.Remove(service);
+                data.SaveChanges();
+            }
+        }
+
         public bool ServiceExists(string manufacturerId, string name) => data.Services
             .Any(s => s.ManufacturerId == manufacturerId && s.Name == name);
 
@@ -151,5 +159,10 @@ namespace Web.Services.Services
 
         public bool IsItUsersService(string userId, string serviceId) => data.Services
              .Any(s => s.Id == serviceId && s.Manufacturer.UserId == userId);
+
+        private ServiceDetailsIdServiceModel GetService(string serviceId) => data.Services
+            .Where(s=>s.Id == serviceId)
+            .ProjectTo<ServiceDetailsIdServiceModel>(config)
+            .FirstOrDefault();
     }
 }

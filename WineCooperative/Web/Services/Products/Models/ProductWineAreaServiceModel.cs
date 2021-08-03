@@ -2,8 +2,8 @@
 {
     public class ProductWineAreaServiceModel
     {
-        public int WineAreaId { get; init; }
+        public int Id { get; init; }
 
-        public string WineAreName { get; init; }
+        public string Name { get; init; }
     }
 }

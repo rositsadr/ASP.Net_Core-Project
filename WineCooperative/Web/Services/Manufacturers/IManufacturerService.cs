@@ -15,6 +15,8 @@ namespace Web.Services.Manufacturers
 
         public IEnumerable<ManufacturerNameServiceModel> AllManufacturers();
 
-        public IEnumerable<ManufacturerNameServiceModel> ManufacturersByUser(string userId);
+        public IEnumerable<ManufacturerNameServiceModel> ManufacturersNameByUser(string userId);
+
+        public IEnumerable<ManufacturerServiceModel> ManufacturersByUser(string userId);
     }
 }

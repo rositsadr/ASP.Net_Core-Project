@@ -37,7 +37,7 @@ namespace Web.Controllers
                 {
                     WineAreas = this.productService.GetAllWineAreas(),
                     AllGrapeVarieties = this.productService.GetAllGrapeVarieties(),
-                    Manufacturers = this.manufacturerService.ManufacturersByUser(User.GetId()),
+                    Manufacturers = this.manufacturerService.ManufacturersNameByUser(User.GetId()),
                     AllColors = this.productService.GetAllColors(),
                     AllTastes = this.productService.GetAllTastes(),
                 });
@@ -77,7 +77,7 @@ namespace Web.Controllers
                     this.ModelState.AddModelError(string.Empty, "The Manufacturer does not exists.");
                 }
 
-                if (!manufacturerService.ManufacturersByUser(User.GetId()).Any(m => m.Id == product.ManufacturerId))
+                if (!manufacturerService.ManufacturersNameByUser(User.GetId()).Any(m => m.Id == product.ManufacturerId))
                 {
                     this.ModelState.AddModelError(string.Empty, "The Manufacturer you have choosen is not allowed. Choose one of yours.");
                 }
@@ -96,7 +96,7 @@ namespace Web.Controllers
                 {
                     product.WineAreas = this.productService.GetAllWineAreas();
                     product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
-                    product.Manufacturers = this.manufacturerService.ManufacturersByUser(User.GetId());
+                    product.Manufacturers = this.manufacturerService.ManufacturersNameByUser(User.GetId());
                     product.AllColors = this.productService.GetAllColors();
                     product.AllTastes = this.productService.GetAllTastes();
 
@@ -160,7 +160,7 @@ namespace Web.Controllers
 
             if (User.IsMember())
             {
-                manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+                manufacturers = this.manufacturerService.ManufacturersNameByUser(userId);
             }
 
             productToEdit.AllColors = this.productService.GetAllColors();
@@ -217,7 +217,7 @@ namespace Web.Controllers
             {
                 product.WineAreas = this.productService.GetAllWineAreas();
                 product.AllGrapeVarieties = this.productService.GetAllGrapeVarieties();
-                product.Manufacturers = this.manufacturerService.ManufacturersByUser(userId);
+                product.Manufacturers = this.manufacturerService.ManufacturersNameByUser(userId);
                 product.AllColors = this.productService.GetAllColors();
                 product.AllTastes = this.productService.GetAllTastes();
 

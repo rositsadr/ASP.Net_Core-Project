@@ -1,0 +1,42 @@
+﻿@model List<ServiceDetailsServiceModel>
+
+
+@{
+    ViewData["Title"] = "My Services";
+}
+
+<div class="container">
+    @if (Model.Count == 0)
+    {
+        <div class="text-center">
+            <h2>You have no services</h2>
+            <a asp-controller="Services" asp-action="Add">Add a service!</a>
+        </div>
+    }
+    <div class="row">
+        @foreach (var service in Model)
+        {
+            <div class="pb-4 card" style="width: 50%">
+                @if (service.ImageUrl != null)
+                {
+                    <a class="thumbnail d-block mb-4"><img src=@service.ImageUrl alt="Image" class="card-img-top"></a>
+                }
+                <div class="card-body">
+                    <h3 class="card-title text-center"> @service.Name</h3>
+                    <div class="card-text">
+                        <p class="card-text mb-0">Manufacturer: @service.ManufacturerName</p>
+                        <p class="card-text mb-0">Price: @service.Price lv.</p>
+                        <p class="card-text mb-0">Description: @service.Description</p>
+                        <p class="card-text mb-0">In Stock: @(service.Available ? "Yes" : "No")</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a asp-controller="Services" asp-action="Edit" asp-route-id=@service.Id class="btn btn-warning">Edit</a>
+                    <a asp-controller="Services" asp-action="Delete" asp-route-id=@service.Id class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        }
+    </div>
+ </div>
+
+

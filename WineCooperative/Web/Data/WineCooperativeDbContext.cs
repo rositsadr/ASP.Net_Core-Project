@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Web.Data.Models;
 using Web.Models;
+using Web.Services.Products.Models;
+using Web.Services.Services.Models;
 
 namespace Web.Data
 {
