@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System.Linq;
 using Web.Models;
+using Web.Models.Manufacturers;
 using Web.Models.Products;
 using Web.Models.Services;
 using Web.Services.Manufacturers.Models;
@@ -24,15 +25,17 @@ namespace Web.Infrastructures
                 .ForMember(pesm => pesm.GrapeVarieties, p => p.MapFrom(p => p.GrapeVarieties.Select(gv => gv.GrapeVarietyId)));
             this.CreateMap<WineArea, ProductWineAreaServiceModel>();
             this.CreateMap<GrapeVariety, ProductGrapeVarietiesServiceModel>()
-                .ForMember(pg => pg.GrapeVarietyId, gv => gv.MapFrom(g => g.Id))
-                .ForMember(pg => pg.GrapeVarietyName, gv => gv.MapFrom(g => g.Name));
+                .ForMember(pg => pg.GrapeVarietyId, gv => gv.MapFrom(gv => gv.Id))
+                .ForMember(pg => pg.GrapeVarietyName, gv => gv.MapFrom(gv => gv.Name));
             this.CreateMap<ProductColor, ProductColorServiceModel>();
             this.CreateMap<ProductTaste, ProductTasteServiceModel>();
 
             this.CreateMap<Address, ManufacturerAddressServiceModel>()
-                .ForMember(masm => masm.TownName, a => a.MapFrom(t => t.Town.Name));
+                .ForMember(masm => masm.TownName, t => t.MapFrom(t => t.Town.Name));
             this.CreateMap<Manufacturer, ManufacturerServiceModel>();
             this.CreateMap<Manufacturer, ManufacturerNameServiceModel>();
+            this.CreateMap<ManufacturerServiceModel, ManufacturerModel>();
+            this.CreateMap<ManufacturerAddressServiceModel, ManufacturerAddressViewModel>();
 
             this.CreateMap<Service, ServiceDetailsIdServiceModel>()
                 .ForMember(sd=>sd.UserId, s=>s.MapFrom(s=>s.Manufacturer.UserId));

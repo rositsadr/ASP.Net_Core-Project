@@ -13,5 +13,7 @@
         public string Description { get; init; }
 
         public ManufacturerAddressServiceModel Address { get; init; }
+
+        public string UserId { get; init; }
     }
 }

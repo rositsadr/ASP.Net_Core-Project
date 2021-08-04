@@ -148,7 +148,12 @@ namespace Web.Controllers
 
             var product = this.productService.Edit(id);
 
-            if (product.UserId != userId && !this.User.IsInRole(AdministratorRole))
+            if(product == null)
+            {
+                return BadRequest();
+            }
+
+            if (product.UserId != userId && !this.User.IsAdmin())
             {
                 return Unauthorized();
             }
@@ -231,7 +236,7 @@ namespace Web.Controllers
 
             this.productService.ApplyChanges(id, product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
-            return RedirectToAction("MyProducts", "Users");
+            return RedirectToAction("All");
         }
 
         public IActionResult Details(string id)

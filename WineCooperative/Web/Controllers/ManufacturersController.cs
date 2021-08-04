@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using Web.Data;
 using Web.Infrastructures;
-using Web.Models;
 using Web.Models.Manufacturers;
-using Web.Services.Addresses;
 using Web.Services.Manufacturers;
-using Web.Services.Products;
 using static Web.Services.Constants;
 
 namespace Web.Controllers
@@ -15,8 +11,13 @@ namespace Web.Controllers
     public class ManufacturersController : Controller
     {
         private readonly IManufacturerService manufacturerService;
+        private readonly IMapper mapper;
 
-        public ManufacturersController(IManufacturerService manufacturerService) => this.manufacturerService = manufacturerService;
+        public ManufacturersController(IManufacturerService manufacturerService, IMapper mapper)
+        {
+            this.manufacturerService = manufacturerService;
+            this.mapper = mapper;
+        }
 
         [Authorize]
         public IActionResult Add()
@@ -36,7 +37,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(ManufacturerAddingModel manufacturer)
+        public IActionResult Add(ManufacturerModel manufacturer)
         {
             if (User.IsAdmin())
             {
@@ -66,6 +67,58 @@ namespace Web.Controllers
 
         public IActionResult All() => View(this.manufacturerService.All());
 
-        public IActionResult Edit() => View();
+        [Authorize]
+        public IActionResult Edit(string id)
+        {
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            var manufacturer = this.manufacturerService.Edit(id);
+
+            if (manufacturer == null)
+            {
+                return BadRequest();
+            }
+
+            if (manufacturer.UserId != User.GetId() && !this.User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            var manufacturerToEdit = mapper.Map<ManufacturerModel>(manufacturer);
+
+            return View(manufacturerToEdit);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Edit(ManufacturerModel manufacturer, string id)
+        {
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
+            {
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            if(!manufacturerService.ManufacturerExistsById(id))
+            {
+                ModelState.AddModelError(string.Empty, "The manufacturer does not exists.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(manufacturer);
+            }
+
+            if (!(this.manufacturerService.IsItUsersManufacturer(User.GetId(), id) || User.IsAdmin()))
+            {
+                return BadRequest();
+            }
+
+            this.manufacturerService.ApplyChanges(id, manufacturer.Name, manufacturer.Description, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Address.Street,manufacturer.Address.TownName, manufacturer.Address.ZipCode);
+
+            return RedirectToAction("All");
+        }
     }
 }

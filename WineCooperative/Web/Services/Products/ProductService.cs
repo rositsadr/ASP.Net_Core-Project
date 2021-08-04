@@ -98,17 +98,16 @@ namespace Web.Services.Products
         public IEnumerable<ProductDetailsServiceModel> ProductsByUser(string userId) => this.GetProducts(data.Products
             .Where(p => p.Manufacturer.UserId == userId));
 
-        public ProductEditServiceModel Edit(string productId)
-        {
-            return data.Products
+        public ProductEditServiceModel Edit(string productId) => data.Products
                  .Where(p => p.Id == productId)
                  .ProjectTo<ProductEditServiceModel>(config)
                  .FirstOrDefault();
-        }
 
         public bool ApplyChanges(string productId, string name, decimal price, string imageUrl, int manufactureYear, string description, bool inStock, int wineAreaId, string manufacturerId, int tasteId, int colorId, IEnumerable<int> grapeVarieties)
         {
-            var product = data.Products.Where(p => p.Id == productId).FirstOrDefault();
+            var product = data.Products
+                .Where(p => p.Id == productId)
+                .FirstOrDefault();
 
             if(product == null)
             {

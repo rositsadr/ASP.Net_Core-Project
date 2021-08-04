@@ -3,7 +3,7 @@ using static Web.Data.DataConstants;
 
 namespace Web.Models.Manufacturers
 {
-    public class ManufacturerAddingModel
+    public class ManufacturerModel
     {
         [Required]
         [StringLength(ManufacturerMaxLength, MinimumLength = ManufacturerMinLength)]

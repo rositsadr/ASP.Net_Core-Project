@@ -9,6 +9,10 @@ namespace Web.Services.Manufacturers
 
         public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId);
 
+        public ManufacturerServiceModel Edit(string manufacturerId);
+
+        public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode);
+
         public bool ManufacturerExistsByName(string uniqueParameter);
 
         public bool ManufacturerExistsById(string manufacturerId);
@@ -18,5 +22,7 @@ namespace Web.Services.Manufacturers
         public IEnumerable<ManufacturerNameServiceModel> ManufacturersNameByUser(string userId);
 
         public IEnumerable<ManufacturerServiceModel> ManufacturersByUser(string userId);
+
+        public bool IsItUsersManufacturer(string userId, string manufacturerId);
     }
 }

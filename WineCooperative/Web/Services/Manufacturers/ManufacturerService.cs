@@ -46,6 +46,35 @@ namespace Web.Services.Manufacturers
 
         }
 
+        public ManufacturerServiceModel Edit(string manufacturerId) => data.Manufacturers
+                .Where(m => m.Id == manufacturerId)
+                .ProjectTo<ManufacturerServiceModel>(config)
+                .FirstOrDefault();
+
+        public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode)
+        {
+            var manufacturer = data.Manufacturers
+                .Where(m => m.Id == manufacturerId)
+                .FirstOrDefault();
+
+            if (manufacturer == null)
+            {
+                return false;
+            }
+
+            var addressId = addressService.Address(street, townName, zipCode, CountryOfManufacturing);
+
+            manufacturer.Name = name;
+            manufacturer.Description = description;
+            manufacturer.PhoneNumber = phoneNumber;
+            manufacturer.Email = email;
+            manufacturer.AddressId = addressId;
+
+            data.SaveChanges();
+
+            return true;
+        }
+
         public bool ManufacturerExistsByName(string name) => data.Manufacturers
             .Any(m => m.Name == name);
 
@@ -65,5 +94,7 @@ namespace Web.Services.Manufacturers
             .ProjectTo<ManufacturerNameServiceModel>(config)
             .ToList();
 
+        public bool IsItUsersManufacturer(string userId, string manufacturerId) => data.Manufacturers
+            .Any(m => m.Id == manufacturerId && m.UserId == userId);
     }
 }

@@ -36,7 +36,7 @@ namespace Web.Data
         public const int ProductMaxLength = 30;
 
         public const int ServiceMinLength = 5;
-        public const int ServiceMaxLength = 40;
+        public const int ServiceMaxLength = 60;
 
         public const int ThemeMinLength = 3;
         public const int ThemeMaxLength = 35;  

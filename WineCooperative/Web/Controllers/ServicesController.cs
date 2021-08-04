@@ -113,6 +113,11 @@ namespace Web.Controllers
 
             var servicesToEdit = serviceService.Edit(id);
 
+            if (servicesToEdit == null)
+            {
+                return BadRequest();
+            }
+
             if (servicesToEdit.UserId != userId && !this.User.IsInRole(AdministratorRole))
             {
                 return Unauthorized();
