@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Data;
 
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    partial class WineCooperativeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210804135735_AddCartProductsInUser")]
+    partial class AddCartProductsInUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,22 +169,6 @@ namespace Web.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("Web.Data.Models.CartItem", b =>
-                {
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "UserId");
-
-                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
@@ -496,6 +482,9 @@ namespace Web.Data.Migrations
                     b.Property<int>("TasteId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("WineAreaId")
                         .HasColumnType("int");
 
@@ -506,6 +495,8 @@ namespace Web.Data.Migrations
                     b.HasIndex("ManufacturerId");
 
                     b.HasIndex("TasteId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("WineAreaId");
 
@@ -745,17 +736,6 @@ namespace Web.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Web.Data.Models.CartItem", b =>
-                {
-                    b.HasOne("Web.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
                 {
                     b.HasOne("Web.Models.Order", "Order")
@@ -861,6 +841,10 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Web.Data.Models.User", null)
+                        .WithMany("ProductsInCart")
+                        .HasForeignKey("UserId");
+
                     b.HasOne("Web.Models.WineArea", "WineArea")
                         .WithMany("Products")
                         .HasForeignKey("WineAreaId")
@@ -920,6 +904,8 @@ namespace Web.Data.Migrations
             modelBuilder.Entity("Web.Data.Models.User", b =>
                 {
                     b.Navigation("Manufacturers");
+
+                    b.Navigation("ProductsInCart");
 
                     b.Navigation("UserData");
                 });

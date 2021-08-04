@@ -79,7 +79,7 @@
                         <div class="text-center">
                             @if (SignInManager.IsSignedIn(User) && !User.IsAdmin())
                             {
-                                <a class="btn btn-danger" asp-controller="Cart" asp-action="AddToCart" asp-route-id=@wine.Id>
+                                <a class="btn btn-danger" asp-controller="Cart" asp-action="AddToCart" asp-route-productId=@wine.Id asp-route-userId=@User.GetId()>
                                     <i class="fas fa-shopping-cart">  Add to Cart</i></a>
                             }
                             else

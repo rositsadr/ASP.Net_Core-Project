@@ -46,6 +46,8 @@ namespace Web.Data
 
         public DbSet<ProductGrapeVariety> ProductGrapeVarieties { get; set; }
 
+        public DbSet<CartItem> ShoppingCartItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<UserAdditionalInformation>()
@@ -111,6 +113,9 @@ namespace Web.Data
             builder.Entity<WineArea>()
                 .HasIndex(wa => wa.Name)
                 .IsUnique();
+
+            builder.Entity<CartItem>()
+                .HasKey(x => new { x.ProductId, x.UserId });
 
             base.OnModelCreating(builder);
         }

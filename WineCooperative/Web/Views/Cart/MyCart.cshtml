@@ -1,1 +1,54 @@
-﻿
+﻿@model List<CartItemViewServiceModel>
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+    @if (Model.Count() == 0)
+    {
+        <h3 class="text-center">Your cart is empty.</h3>
+        <a class="btn btn-primary" role="button" asp-controller="Products" asp-action="All">Go Shop!</a>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-6">
+                @foreach (var product in Model)
+                {
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src=@product.ProductImageUrl class="img-fluid rounded-start" alt="Image">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">@product.ProductName</h5>
+                                    <p class="card-text"><span class="font-weight-bold">Price: </span>@product.ProductPrice</p>
+                                    <p class="card-text"><span class="font-weight-bold">Manufacturer: </span>@product.ProductManufacturerName</p>
+                                    <p class="card-text"><span class="font-weight-bold">Quantity: </span>@product.Quantity</p>
+                                </div>
+                                <a class="btn btn-danger" role="button" asp-controller="Cart" asp-action="DeleteProduct" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            @{ 
+                var totalSum = Model.Sum(x => (x.ProductPrice * x.Quantity));
+                var totalProductsCount = Model.Sum(x => x.Quantity);
+            }
+            <div class="col-6">
+                <div class="card" >
+                    <div class="card-body">
+                        <h5 class="card-title">You Order</h5>
+                        <h6 class="card-subtitle mb-2 ">Total price: @totalSum</h6>
+                        <p class="card-text">Products count: @totalProductsCount</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Data;
 
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    partial class WineCooperativeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210804151722_AddUserToProducts")]
+    partial class AddUserToProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,20 +171,19 @@ namespace Web.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Web.Data.Models.CartItem", b =>
+            modelBuilder.Entity("ProductUser", b =>
                 {
-                    b.Property<string>("ProductId")
+                    b.Property<string>("ProductsInCartId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UsersProductsId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.HasKey("ProductsInCartId", "UsersProductsId");
 
-                    b.HasKey("ProductId", "UserId");
+                    b.HasIndex("UsersProductsId");
 
-                    b.ToTable("ShoppingCartItems");
+                    b.ToTable("ProductUser");
                 });
 
             modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
@@ -745,15 +746,19 @@ namespace Web.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Web.Data.Models.CartItem", b =>
+            modelBuilder.Entity("ProductUser", b =>
                 {
-                    b.HasOne("Web.Models.Product", "Product")
+                    b.HasOne("Web.Models.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductsInCartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.HasOne("Web.Data.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>

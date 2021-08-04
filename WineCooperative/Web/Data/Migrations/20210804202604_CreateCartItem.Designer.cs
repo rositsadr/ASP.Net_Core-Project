@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Data;
 
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(WineCooperativeDbContext))]
-    partial class WineCooperativeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210804202604_CreateCartItem")]
+    partial class CreateCartItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,16 +173,26 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Data.Models.CartItem", b =>
                 {
-                    b.Property<string>("ProductId")
+                    b.Property<string>("CartItemId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductId", "UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ShoppingCartItems");
                 });

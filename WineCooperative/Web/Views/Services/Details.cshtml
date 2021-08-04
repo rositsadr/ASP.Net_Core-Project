@@ -10,60 +10,59 @@
     {
         <img src=@Model.ImageUrl class="card-img-top" alt="Image">
     }
-    <div class="card-body">
-        <h5 class="card-title">Service Details</h5>
-        <hr />
-        <div class="card-text">
-            <dl class="row">
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Name)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Name)
-                </dd>
-                <dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ManufacturerName)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ManufacturerName)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Description)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Description)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Price)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Price)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.DateCreated)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.DateCreated)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Available)
-                </dt>
-                <dd class="col-sm-10">
-                    @if (Model.Available)
-                    {
-                        <span>Yes</span>
-                    }
-                    else
-                    {
-                        <span>No</span>
-                    }
-                </dd>
-            </dl>
-        </div>
-        <div>
-            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-            <a asp-action="All">Back to List</a>
-        </div>
+<div class="card-body">
+    <h5 class="card-title">Service Details</h5>
+    <hr />
+    <div class="card-text">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ManufacturerName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ManufacturerName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.DateCreated)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Available)
+            </dt>
+            <dd class="col-sm-10">
+                @if (Model.Available)
+                {
+                    <span>Yes</span>
+                }
+                else
+                {
+                    <span>No</span>
+                }
+            </dd>
+        </dl>
     </div>
+    <div>
+        <a asp-action="All">Back to List.</a>
+    </div>
+</div>
 </div>

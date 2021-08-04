@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using System.Linq;
+using Web.Data.Models;
 using Web.Models;
 using Web.Models.Manufacturers;
 using Web.Models.Products;
 using Web.Models.Services;
+using Web.Services.Cart.Models;
 using Web.Services.Manufacturers.Models;
 using Web.Services.Products.Models;
 using Web.Services.Services.Models;
@@ -41,6 +43,9 @@ namespace Web.Infrastructures
                 .ForMember(sd=>sd.UserId, s=>s.MapFrom(s=>s.Manufacturer.UserId));
             this.CreateMap<Service, ServiceDetailsServiceModel>();
             this.CreateMap<ServiceDetailsIdServiceModel, ServiceModel>();
+
+            this.CreateMap<CartItem, CartItemViewServiceModel>();
+
         }
     }
 }
