@@ -28,20 +28,25 @@
                                     <h5 class="card-title">@product.ProductName</h5>
                                     <p class="card-text"><span class="font-weight-bold">Price: </span>@product.ProductPrice</p>
                                     <p class="card-text"><span class="font-weight-bold">Manufacturer: </span>@product.ProductManufacturerName</p>
-                                    <p class="card-text"><span class="font-weight-bold">Quantity: </span>@product.Quantity</p>
+                                    <p class="card-text font-weight-bold">Quantity:</p>
+                                    <div class="input-group w-50">
+                                        <a class="btn btn-light border-dark" role="button" asp-controller="Cart" asp-action="Remove" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>-</a>
+                                            <input type="text" class="form-control text-center" id="quantity" value="@product.Quantity">    
+                                        <a class="btn btn-light border-dark" role="button" asp-controller="Cart" asp-action="Add" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>+</a>
+                                    </div>
                                 </div>
-                                <a class="btn btn-danger" role="button" asp-controller="Cart" asp-action="DeleteProduct" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>Remove</a>
+                                <a class="btn btn-danger mb-3" role="button" asp-controller="Cart" asp-action="DeleteProduct" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>Remove</a>
                             </div>
                         </div>
                     </div>
                 }
             </div>
-            @{ 
+            @{
                 var totalSum = Model.Sum(x => (x.ProductPrice * x.Quantity));
                 var totalProductsCount = Model.Sum(x => x.Quantity);
             }
             <div class="col-6">
-                <div class="card" >
+                <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">You Order</h5>
                         <h6 class="card-subtitle mb-2 ">Total price: @totalSum</h6>
@@ -52,3 +57,5 @@
         </div>
     }
 </div>
+
+ 

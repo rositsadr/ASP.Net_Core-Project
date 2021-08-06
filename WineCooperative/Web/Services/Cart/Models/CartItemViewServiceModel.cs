@@ -12,6 +12,8 @@
 
         public string ProductManufacturerName { get; init; }
 
-        public int Quantity { get; init; }
+        public string UserId { get; init; }
+
+        public int Quantity { get; set; }
     }
 }

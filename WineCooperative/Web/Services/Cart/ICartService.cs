@@ -8,5 +8,9 @@ namespace Web.Services.Cart
         public IEnumerable<CartItemViewServiceModel> UsersCart(string userId);
 
         public bool AddProductToCart(string productId, string userId);
+
+        public bool AddFunction(string productId, string userId);
+
+        public bool RemoveFunction(string productId, string userId);
     }
 }

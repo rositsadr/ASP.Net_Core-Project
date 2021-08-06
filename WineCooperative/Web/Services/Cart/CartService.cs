@@ -69,5 +69,42 @@ namespace Web.Services.Cart
 
             return true;
         }
+
+        public bool AddFunction(string productId, string userId)
+        {
+            var cartItem = data.ShoppingCartItems
+                .Where(s => s.ProductId == productId && s.UserId == userId)
+                .FirstOrDefault();
+
+            if (cartItem == null)
+            {
+                return false;
+            }
+
+            cartItem.Quantity++;
+            data.SaveChanges();
+
+            return true;
+        }
+
+        public bool RemoveFunction(string productId, string userId)
+        {
+            var cartItem = data.ShoppingCartItems
+               .Where(s => s.ProductId == productId && s.UserId == userId)
+               .FirstOrDefault();
+
+            if (cartItem == null)
+            {
+                return false;
+            }
+
+            if(cartItem.Quantity>1)
+            {
+                cartItem.Quantity--;
+                data.SaveChanges();
+            }            
+
+            return true;
+        }
     }
 }
