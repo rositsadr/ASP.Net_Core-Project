@@ -45,7 +45,6 @@ namespace Web.Infrastructures
             this.CreateMap<ServiceDetailsIdServiceModel, ServiceModel>();
 
             this.CreateMap<CartItem, CartItemViewServiceModel>();
-
         }
     }
 }

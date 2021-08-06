@@ -12,5 +12,7 @@ namespace Web.Services.Cart
         public bool AddFunction(string productId, string userId);
 
         public bool RemoveFunction(string productId, string userId);
+
+        public bool Delete(string productId, string userId);
     }
 }

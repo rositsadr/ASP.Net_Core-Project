@@ -72,9 +72,7 @@ namespace Web.Services.Cart
 
         public bool AddFunction(string productId, string userId)
         {
-            var cartItem = data.ShoppingCartItems
-                .Where(s => s.ProductId == productId && s.UserId == userId)
-                .FirstOrDefault();
+           var cartItem= this.GetCartItem(productId, userId);
 
             if (cartItem == null)
             {
@@ -89,9 +87,7 @@ namespace Web.Services.Cart
 
         public bool RemoveFunction(string productId, string userId)
         {
-            var cartItem = data.ShoppingCartItems
-               .Where(s => s.ProductId == productId && s.UserId == userId)
-               .FirstOrDefault();
+            var cartItem=this.GetCartItem(productId, userId);
 
             if (cartItem == null)
             {
@@ -106,5 +102,24 @@ namespace Web.Services.Cart
 
             return true;
         }
+
+        public bool Delete(string productId, string userId)
+        {
+            var cartItem = this.GetCartItem(productId, userId);
+
+            if(cartItem == null)
+            {
+                return false;
+            }
+
+            data.ShoppingCartItems.Remove(cartItem);
+            data.SaveChanges();
+
+            return true;
+        }
+
+        private CartItem GetCartItem(string productId, string userId) => data.ShoppingCartItems
+               .Where(p => p.ProductId == productId && p.UserId == userId)
+               .FirstOrDefault();
     }
 }

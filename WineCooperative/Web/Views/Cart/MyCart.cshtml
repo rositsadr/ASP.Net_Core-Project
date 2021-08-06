@@ -30,12 +30,12 @@
                                     <p class="card-text"><span class="font-weight-bold">Manufacturer: </span>@product.ProductManufacturerName</p>
                                     <p class="card-text font-weight-bold">Quantity:</p>
                                     <div class="input-group w-50">
-                                        <a class="btn btn-light border-dark" role="button" asp-controller="Cart" asp-action="Remove" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>-</a>
-                                            <input type="text" class="form-control text-center" id="quantity" value="@product.Quantity">    
-                                        <a class="btn btn-light border-dark" role="button" asp-controller="Cart" asp-action="Add" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>+</a>
+                                        <a class="btn btn-light border-dark" asp-controller="Cart" asp-action="Remove" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>-</a>
+                                        <input type="text" class="form-control text-center" id="quantity" value="@product.Quantity">
+                                        <a class="btn btn-light border-dark" asp-controller="Cart" asp-action="Add" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>+</a>
                                     </div>
                                 </div>
-                                <a class="btn btn-danger mb-3" role="button" asp-controller="Cart" asp-action="DeleteProduct" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>Remove</a>
+                                <a class="btn btn-danger mb-3" asp-controller="Cart" asp-action="Delete" asp-route-productId=@product.ProductId asp-route-userId=@User.GetId()>Remove</a>
                             </div>
                         </div>
                     </div>
@@ -49,8 +49,11 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">You Order</h5>
+                        <hr />
                         <h6 class="card-subtitle mb-2 ">Total price: @totalSum</h6>
                         <p class="card-text">Products count: @totalProductsCount</p>
+                        <a class="btn btn-danger" asp-controller="Order" asp-action="Proceed" asp-route-userId="@User.GetId()">Proceed</a>
+                        <span>with oredr.</span>
                     </div>
                 </div>
             </div>
@@ -58,4 +61,26 @@
     }
 </div>
 
- 
+@*
+        @section Scripts{
+        <script type="text/javascript">
+
+            function Add() {
+                var productId = $("#ProductId").val();
+                var userId = $("#UserId").val();
+                $.ajax({
+                    url: '/Cart/Add?productId=' + productId + '&userId=' + userId,
+                    type: 'Post',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                   //TODO:success does not return a value! success: function (quantity) {
+                        alert(result);
+                        $("#quantity").val() = quantity;
+                    },
+                })
+            }
+        </script>
+    }
+*@
+
+

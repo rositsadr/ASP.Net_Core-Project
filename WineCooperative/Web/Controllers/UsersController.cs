@@ -13,6 +13,7 @@ using Web.Services.Users;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly WineCooperativeDbContext data;
@@ -31,11 +32,9 @@ namespace Web.Controllers
             this.userService = userService;
         }
 
-        [Authorize]
         public IActionResult AdditionalUserInfo() => View();
 
         [HttpPost]
-        [Authorize]
         public IActionResult AdditionalUserInfo(AdditionalUserInfoAddingModel userInfo)
         {
             if(!this.ModelState.IsValid)
@@ -100,6 +99,14 @@ namespace Web.Controllers
             return RedirectToAction("BecomeMember");
         }
 
+        public IActionResult MyOrders()
+        {
+            //TODO:
+            return View();
+        }
+
         public IActionResult BecomeMember() => View();
+
+
     }
 }

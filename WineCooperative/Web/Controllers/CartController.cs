@@ -17,7 +17,7 @@ namespace Web.Controllers
 
         public IActionResult MyCart(string userId)
         {
-            if(this.User.GetId() != userId || User.IsAdmin())
+            if(this.UserNotAuthorize(userId))
             {
                 return Unauthorized();
             }
@@ -29,7 +29,7 @@ namespace Web.Controllers
 
         public IActionResult AddToCart(string productId, string userId)
         {
-            if (this.User.GetId() != userId || User.IsAdmin())
+            if (this.UserNotAuthorize(userId))
             {
                 return Unauthorized();
             }
@@ -39,14 +39,11 @@ namespace Web.Controllers
             return RedirectToAction("All","Products");
         }
 
-        public IActionResult Delete(string id) => RedirectToAction("MyCart");
-
-        [Authorize]
         public IActionResult Add(string productId, string userId)
         {
-            if(userId != User.GetId())
+            if(this.UserNotAuthorize(userId))
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
             cartService.AddFunction(productId, userId);
@@ -54,7 +51,6 @@ namespace Web.Controllers
             return Redirect("MyCart?userId=" + userId);
         }
 
-        [Authorize]
         public IActionResult Remove(string productId, string userId)
         {
             if (userId != User.GetId())
@@ -66,5 +62,20 @@ namespace Web.Controllers
 
             return Redirect("MyCart?userId=" + userId);
         }
+
+        public IActionResult Delete(string productId, string userId)
+        {
+            if(this.UserNotAuthorize(userId))
+            {
+                return Unauthorized();
+            }
+
+            cartService.Delete(productId, userId);
+
+            return Redirect("MyCart?userId=" + userId);
+        }
+
+        private bool UserNotAuthorize(string userId) => this.User
+            .GetId() != userId || User.IsAdmin();
     }
 }
