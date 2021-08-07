@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Web.Data.Migrations
 {
-    public partial class InitialCreateAfterChanges : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -278,30 +278,6 @@ namespace Web.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GrapeVarietyWineArea",
-                columns: table => new
-                {
-                    GrapeVarietiesId = table.Column<int>(type: "int", nullable: false),
-                    WineAreasId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GrapeVarietyWineArea", x => new { x.GrapeVarietiesId, x.WineAreasId });
-                    table.ForeignKey(
-                        name: "FK_GrapeVarietyWineArea_GrapeVarieties_GrapeVarietiesId",
-                        column: x => x.GrapeVarietiesId,
-                        principalTable: "GrapeVarieties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GrapeVarietyWineArea_WineAreas_WineAreasId",
-                        column: x => x.WineAreasId,
-                        principalTable: "WineAreas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Addresses",
                 columns: table => new
                 {
@@ -429,10 +405,12 @@ namespace Web.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    DateCreated = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Available = table.Column<bool>(type: "bit", nullable: false),
                     ManufacturerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -453,15 +431,21 @@ namespace Web.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId1 = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserAdditionalInformationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_UserAdditionalInformation_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Orders_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_UserAdditionalInformation_UserAdditionalInformationId",
+                        column: x => x.UserAdditionalInformationId,
                         principalTable: "UserAdditionalInformation",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -492,28 +476,47 @@ namespace Web.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShoppingCartItems",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingCartItems", x => new { x.ProductId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_ShoppingCartItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrdersProducts",
                 columns: table => new
                 {
-                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OrderId1 = table.Column<int>(type: "int", nullable: true)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrdersProducts", x => new { x.OrderId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_OrdersProducts_Orders_OrderId1",
-                        column: x => x.OrderId1,
+                        name: "FK_OrdersProducts_Orders_OrderId",
+                        column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrdersProducts_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -561,14 +564,27 @@ namespace Web.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GrapeVarietyWineArea_WineAreasId",
-                table: "GrapeVarietyWineArea",
-                column: "WineAreasId");
+                name: "IX_Countries_CountryName",
+                table: "Countries",
+                column: "CountryName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GrapeVarieties_Name",
+                table: "GrapeVarieties",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Manufacturers_AddressId",
                 table: "Manufacturers",
                 column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Manufacturers_Name",
+                table: "Manufacturers",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Manufacturers_UserId",
@@ -581,14 +597,14 @@ namespace Web.Data.Migrations
                 column: "ThemeId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId1",
+                name: "IX_Orders_UserAdditionalInformationId",
                 table: "Orders",
-                column: "UserId1");
+                column: "UserAdditionalInformationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrdersProducts_OrderId1",
-                table: "OrdersProducts",
-                column: "OrderId1");
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrdersProducts_ProductId",
@@ -640,6 +656,12 @@ namespace Web.Data.Migrations
                 table: "UserAdditionalInformation",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WineAreas_Name",
+                table: "WineAreas",
+                column: "Name",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -660,9 +682,6 @@ namespace Web.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "GrapeVarietyWineArea");
-
-            migrationBuilder.DropTable(
                 name: "News");
 
             migrationBuilder.DropTable(
@@ -673,6 +692,9 @@ namespace Web.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingCartItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

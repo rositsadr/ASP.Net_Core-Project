@@ -21,8 +21,7 @@ namespace Web.Models
 
         public decimal Price { get; set; }
 
-        [Required]
-        public string DateCreated { get; set; }
+        public DateTime DateCreated { get; set; }
 
         public bool Available { get; set; }
 

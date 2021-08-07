@@ -31,7 +31,7 @@ namespace Web.Services.Services
                 ImageUrl = imageUrl,
                 Description = description,
                 ManufacturerId = manufacturerId,
-                DateCreated = DateTime.UtcNow.ToString("r"),
+                DateCreated = DateTime.UtcNow,
                 Available = available
             };
 
@@ -127,7 +127,7 @@ namespace Web.Services.Services
 
             if(dateChange)
             {
-                service.DateCreated = DateTime.UtcNow.ToString("r");
+                service.DateCreated = DateTime.UtcNow;
             }
 
             data.SaveChanges();

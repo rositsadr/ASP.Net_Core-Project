@@ -11,14 +11,14 @@ namespace Web.Models
 
         [Key]
         [Required]
-        public int Id { get; init; }
+        public int Id { get; set; }
 
         public DateTime OrderDate { get; set; }
 
         [Required]
         public string UserId { get; set; }
 
-        public UserAdditionalInformation User { get; set; }
+        public User User { get; set; }
 
         public ICollection<OrderProduct> OrderProducts { get; set; }
     }

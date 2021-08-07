@@ -8,12 +8,11 @@ namespace Web.Models
     {
         public Country() => this.Towns = new HashSet<Town>();
 
-        [Key]
-        public int Id { get; init; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(CountryMaxLength)]
-        public string CountryName { get; init; }
+        public string CountryName { get; set; }
 
         public ICollection<Town> Towns { get; set; }
     }

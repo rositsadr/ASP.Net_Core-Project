@@ -19,21 +19,6 @@ namespace Web.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("GrapeVarietyWineArea", b =>
-                {
-                    b.Property<int>("GrapeVarietiesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WineAreasId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GrapeVarietiesId", "WineAreasId");
-
-                    b.HasIndex("WineAreasId");
-
-                    b.ToTable("GrapeVarietyWineArea");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -443,16 +428,18 @@ namespace Web.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserAdditionalInformationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserAdditionalInformationId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -550,9 +537,8 @@ namespace Web.Data.Migrations
                     b.Property<bool>("Available")
                         .HasColumnType("bit");
 
-                    b.Property<string>("DateCreated")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -677,21 +663,6 @@ namespace Web.Data.Migrations
                     b.ToTable("WineAreas");
                 });
 
-            modelBuilder.Entity("GrapeVarietyWineArea", b =>
-                {
-                    b.HasOne("Web.Models.GrapeVariety", null)
-                        .WithMany()
-                        .HasForeignKey("GrapeVarietiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Web.Models.WineArea", null)
-                        .WithMany()
-                        .HasForeignKey("WineAreasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -759,13 +730,13 @@ namespace Web.Data.Migrations
                     b.HasOne("Web.Models.Order", "Order")
                         .WithMany("OrderProducts")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Web.Models.Product", "Product")
                         .WithMany("ProductOrders")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -833,9 +804,15 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Order", b =>
                 {
-                    b.HasOne("Web.Models.UserAdditionalInformation", "User")
+                    b.HasOne("Web.Models.UserAdditionalInformation", null)
                         .WithMany("Orders")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserAdditionalInformationId");
+
+                    b.HasOne("Web.Data.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -919,6 +896,8 @@ namespace Web.Data.Migrations
             modelBuilder.Entity("Web.Data.Models.User", b =>
                 {
                     b.Navigation("Manufacturers");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("UserData");
                 });

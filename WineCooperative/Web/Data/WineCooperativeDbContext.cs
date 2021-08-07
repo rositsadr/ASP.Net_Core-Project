@@ -65,16 +65,6 @@ namespace Web.Data
             builder.Entity<OrderProduct>()
                 .HasKey(op => new { op.OrderId, op.ProductId });
 
-            builder.Entity<Order>()
-                .HasMany(o => o.OrderProducts)
-                .WithOne(op => op.Order)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Product>()
-                .HasMany(p => p.ProductOrders)
-                .WithOne(po => po.Product)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasPrecision(10, 2);

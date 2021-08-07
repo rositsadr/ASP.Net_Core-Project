@@ -1,5 +1,5 @@
 ﻿
-<ul class="navbar-nav timesFont">
+<ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
         var userId = User.GetId();
@@ -9,39 +9,39 @@
         if (IsAdmin)
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Admin" asp-action="Pannel">Admin Pannel</a>
+                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Pannel">Admin Pannel</a>
             </li>
         }
         if (!(IsAdmin || IsMember))
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Users" asp-action="BecomeMember" asp-route-id="@userId">Become Member</a>
+                <a class="nav-link text-dark" asp-controller="Users" asp-action="BecomeMember" asp-route-id="@userId">Become Member</a>
             </li>
         }
         if (!IsAdmin)
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-controller="Cart" asp-action="MyCart" asp-route-userId="@userId">
+                <a class="nav-link text-dark" asp-controller="Cart" asp-action="MyCart" asp-route-userId="@userId">
                     <i class="fas fa-shopping-cart">  My Cart</i>
                 </a>
             </li>
         }
         <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Account</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark" style="font-family: 'Times New Roman', Times, serif">Logout</button>
+                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
     }
 </ul>

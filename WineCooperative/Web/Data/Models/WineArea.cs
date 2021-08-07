@@ -7,11 +7,7 @@ namespace Web.Models
 {
     public class WineArea
     {
-        public WineArea()
-        {
-            this.Products = new HashSet<Product>();
-            this.GrapeVarieties = new HashSet<GrapeVariety>();
-        }
+        public WineArea() => this.Products = new HashSet<Product>();
 
         [Key]
         public int Id { get; init; }
@@ -23,7 +19,5 @@ namespace Web.Models
         public string Description { get; set; }
 
         public ICollection<Product> Products { get; set; }
-
-        public ICollection<GrapeVariety> GrapeVarieties { get; set; }
     }
 }

@@ -12,8 +12,7 @@ namespace Web.Models
             this.Manufacturers = new HashSet<Manufacturer>();
         }
 
-        [Key]
-        public int Id { get; init; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(AddressMaxLength)]

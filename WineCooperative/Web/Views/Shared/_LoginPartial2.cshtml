@@ -1,14 +1,14 @@
-﻿<ul class="navbar-nav justify-content-center timesFont">
+﻿<ul class="navbar-nav justify-content-center">
     <li class="nav-item">
-        <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Home" asp-action="AboutUs">About Us</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AboutUs">About Us</a>
     </li>
     @if (SignInManager.IsSignedIn(User) && User.IsInRole(WebConstants.MemberRole))
     {
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown" style="font-family: 'Times New Roman', Times, serif">
+            <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown">
                 Products
             </a>
             <ul class="dropdown-menu dropdown-menu-dark">
@@ -18,7 +18,7 @@
             </ul>
         </li>
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown" style="font-family: 'Times New Roman', Times, serif">
+            <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown">
                 Services
             </a>
             <ul class="dropdown-menu dropdown-menu-dark">
@@ -28,7 +28,7 @@
             </ul>
         </li>
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown" style="font-family: 'Times New Roman', Times, serif">
+            <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown">
                 Manufacturers
             </a>
             <ul class="dropdown-menu dropdown-menu-dark">
@@ -41,16 +41,16 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Products" asp-action="All">Products</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="All">Products</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Services" asp-action="All">Services</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Services" asp-action="All">Services</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Manufacturers" asp-action="All">Manufactures</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Manufacturers" asp-action="All">Manufactures</a>
         </li>
     }
     <li class="nav-item">
-        <a class="nav-link text-dark" style="font-family: 'Times New Roman', Times, serif" asp-area="" asp-controller="Home" asp-action="Contacts">Contacts</a>
+        <a class="nav-link text-dark"  asp-area="" asp-controller="Home" asp-action="Contacts">Contacts</a>
     </li>
 </ul>

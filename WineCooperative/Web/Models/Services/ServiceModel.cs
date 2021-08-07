@@ -20,9 +20,6 @@ namespace Web.Models.Services
 
         public decimal Price { get; init; }
 
-        [Required]
-        public string DateCreated { get; init; }
-
         public bool Available { get; init; }
 
         [Display(Name = "Manufacturer")]

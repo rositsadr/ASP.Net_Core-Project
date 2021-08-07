@@ -45,6 +45,13 @@ namespace Web
 
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddMemoryCache();
+
+            services.AddSession(options=>
+            {
+                options.Cookie.HttpOnly = true;
+            });
+
             services.AddControllersWithViews(options=>
             {
                 options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
@@ -83,6 +90,7 @@ namespace Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
