@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Web.Data;
 using Web.Models;
@@ -31,7 +32,7 @@ namespace Web.Services.Services
                 ImageUrl = imageUrl,
                 Description = description,
                 ManufacturerId = manufacturerId,
-                DateCreated = DateTime.UtcNow,
+                DateCreated = DateTime.UtcNow.ToString("r",CultureInfo.CreateSpecificCulture("bg-BG")),
                 Available = available
             };
 
@@ -127,7 +128,7 @@ namespace Web.Services.Services
 
             if(dateChange)
             {
-                service.DateCreated = DateTime.UtcNow;
+                service.DateCreated = DateTime.UtcNow.ToString("r", CultureInfo.CreateSpecificCulture("bg-BG"));
             }
 
             data.SaveChanges();

@@ -1,10 +1,14 @@
 ﻿@model AdditionalUserInfoAddingModel
 
 @{
-    ViewData["Title"] = "User Additional Information";
+    ViewData["Title"] = "Edit User Additional Information";
 }
 
+<h4 class="text-center">@ViewData["Title"]</h4>
+<hr />
+
 <partial name="_AdditionalInfoFormPartial" />
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

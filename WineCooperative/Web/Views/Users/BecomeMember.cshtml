@@ -10,7 +10,7 @@
     <div>
         <h2>How to become a member?</h2>
         <p>To become member you need to apply here:</p>
-        <input type="submit" value="Apply" class="btn btn-primary mt-2" />
+        <a class="btn btn-primary" asp-controller="Users" asp-action="Apply" asp-route-id="@User.GetId()" >Apply!</a>
         <p>Within 48 hours you need to pay your first fee. The payment is done by bank.</p>
         <p><span class="font-weight-bold">Account: </span></p>
         <p><span class="font-weight-bold">Reason for payment: </span>Membership fee (Insert your username and email)</p>

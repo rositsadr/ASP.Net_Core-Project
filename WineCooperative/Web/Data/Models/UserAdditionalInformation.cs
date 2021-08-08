@@ -8,8 +8,6 @@ namespace Web.Models
 {
     public class UserAdditionalInformation
     {
-        public UserAdditionalInformation() => this.Orders = new HashSet<Order>();
-
         [Required]
         public int Id { get; set; }
 
@@ -25,8 +23,6 @@ namespace Web.Models
         public int AddressId { get; set; }
 
         public Address Address { get; set; }
-
-        public ICollection<Order> Orders { get; set; }
 
         [Required]
         public string UserId { get; set; }

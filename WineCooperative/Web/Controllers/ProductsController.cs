@@ -6,7 +6,6 @@ using Web.Infrastructures;
 using Web.Models.Products;
 using Web.Services.Manufacturers;
 using Web.Services.Products;
-using static Web.WebConstants;
 
 namespace Web.Controllers
 {
@@ -213,9 +212,9 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
             }
 
-            if (!productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
+            if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
             {
-                this.ModelState.AddModelError(string.Empty, "This wine is not in the list. Add it first.");
+                this.ModelState.AddModelError(string.Empty, "This wine is already in the list.");
             }
 
             if (!ModelState.IsValid)

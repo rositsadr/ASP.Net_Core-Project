@@ -1,4 +1,6 @@
-﻿namespace Web.Services.Services.Models
+﻿using System;
+
+namespace Web.Services.Services.Models
 {
     public class ServiceDetailsIdServiceModel : ServiceDetailsServiceModel
     {

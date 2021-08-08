@@ -23,12 +23,15 @@
                 </div>
             </div>
         </nav>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 sticky-top">
-            <div class="container justify-content-center">
-                <partial name="_LoginPartial2" />
-            </div>
-        </nav>
-    </header>
+        @if (!SignInManager.IsSignedIn(User) || !User.IsAdmin())
+        {
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 sticky-top">
+                <div class="container justify-content-center">
+                    <partial name="_LoginPartial2" />
+                </div>
+            </nav>
+        }
+        </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

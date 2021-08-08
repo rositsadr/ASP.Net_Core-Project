@@ -31,6 +31,7 @@
                     </div>
                 </div>
                 <div class="text-center">
+                    <a asp-controller="Services" asp-action="Details" asp-route-id=@service.Id class="btn btn-primary">View</a>
                     <a asp-controller="Services" asp-action="Edit" asp-route-id=@service.Id class="btn btn-warning">Edit</a>
                     <a asp-controller="Services" asp-action="Delete" asp-route-id=@service.Id class="btn btn-danger">Delete</a>
                 </div>

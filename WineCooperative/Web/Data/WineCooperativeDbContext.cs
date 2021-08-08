@@ -65,6 +65,7 @@ namespace Web.Data
             builder.Entity<OrderProduct>()
                 .HasKey(op => new { op.OrderId, op.ProductId });
 
+
             builder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasPrecision(10, 2);

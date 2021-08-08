@@ -106,6 +106,11 @@ namespace Web.Controllers
                 ModelState.AddModelError(string.Empty, "The manufacturer does not exists.");
             }
 
+            if(manufacturerService.ManufacturerExistsByName(manufacturer.Name))
+            {
+                ModelState.AddModelError(string.Empty, "This manufacturer already exists!");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(manufacturer);

@@ -12,9 +12,11 @@ namespace Web.Data.Models
             this.Orders = new HashSet<Order>();
         }
 
-        public string UserDataId { get; set; }
+        public int? UserDataId { get; set; }
 
         public UserAdditionalInformation UserData { get; set; }
+
+        public bool Applyed { get; set; }
 
         public ICollection<Order> Orders { get; set; }
 

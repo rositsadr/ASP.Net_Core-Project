@@ -154,9 +154,9 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(service.ManufacturerId), "The Manufacturer does not exists.");
             }
 
-            if (!serviceService.ServiceExists(service.ManufacturerId, service.Name))
+            if (serviceService.ServiceExists(service.ManufacturerId, service.Name))
             {
-                this.ModelState.AddModelError(string.Empty, "The service is not in the list. Add it first.");
+                this.ModelState.AddModelError(string.Empty, "This service is already in the list.");
             }
 
 
