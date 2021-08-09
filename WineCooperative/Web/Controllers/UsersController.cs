@@ -8,6 +8,7 @@ using Web.Services.Manufacturers;
 using Web.Services.Products;
 using Web.Services.Services;
 using Web.Services.Users;
+using static Web.WebConstants;
 
 namespace Web.Controllers
 {
@@ -29,30 +30,7 @@ namespace Web.Controllers
             this.mapper = mapper;
         }
 
-        public IActionResult AdditionalUserInfo()
-        {
-            if (User.IsAdmin())
-            {
-                return Unauthorized();
-            }
-
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult AdditionalUserInfo(AdditionalUserInfoAddingModel userInfo)
-        {
-            if(!this.ModelState.IsValid)
-            {
-                return View(userInfo);
-            }
-
-            this.userService.AddUserAdditionalInfo(User.GetId(),userInfo.FirstName, userInfo.LastName, userInfo.Address.Street, userInfo.Address.TownName, userInfo.Address.ZipCode, userInfo.Address.CountryName);
-
-            return RedirectToAction("Index","Home");
-        }
-
-        public IActionResult EditAdditionalInfo(string userId)
+        public IActionResult EditAdditionalData(string userId)
         {
             if(User.GetId() != userId || !User.IsAdmin())
             {
@@ -71,16 +49,28 @@ namespace Web.Controllers
             return View(infoToEdit);
         }
 
-        //[HttpPost]
-        //public IActionResult EditAdditionalInfo(AdditionalUserInfoAddingModel info, string userId)
-        //{
-        //    if(User.GetId() != userId || !User.IsAdmin())
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPost]
+        public IActionResult EditAdditionalData(AdditionalUserInfoAddingModel info, string userId)
+        {
+            if (User.GetId() != userId || !User.IsAdmin())
+            {
+                return BadRequest();
+            }
 
+            if(!ModelState.IsValid)
+            {
+                return View(info);
+            }
 
-        //}
+            userService.ApplyChanges(userId, info.FirstName, info.LastName, info.Address.Street, info.Address.TownName, info.Address.ZipCode, info.Address.CountryName);
+
+            if(User.IsAdmin())
+            {
+                return RedirectToAction("AllMembers","Users");
+            }
+
+            return RedirectToAction("Index","Home");
+        }
 
         public IActionResult MyProducts()
         {
@@ -134,9 +124,9 @@ namespace Web.Controllers
             return RedirectToAction("BecomeMember");
         }
 
+        //TODO:
         public IActionResult MyOrders()
         {
-            //TODO:
             return View();
         }
 
@@ -159,17 +149,15 @@ namespace Web.Controllers
 
             if(User.IsMember()|| userService.UserApplyed(id))
             {
-                return BadRequest();
+               this.TempData[ErrorMessageKey]= "You are a member or your request is pendding!";
+
+                return RedirectToAction("Index","Home");
             }
 
-            userService.Apply(id);
+            userService.ApplyForMember(id);
 
-            if (userService.UserHasAdditionaInfo(id))
-            {
-                return RedirectToAction("EditAdditionalInfo");
-            }
-
-            return RedirectToAction("AdditionalUserInfo");
+            this.TempData[SuccessMessageKey] = "You successfuly applyed for member. Now please check you additional data.";
+            return RedirectToPage("/Account/Manage/Index",new { area = "Identity" });
         }
     }
 }

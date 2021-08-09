@@ -51,13 +51,36 @@ namespace Web.Services.Users
                 .ProjectTo<UserEditInfoServiceModel>(config)
                 .FirstOrDefault();
 
+        public bool ApplyChanges(string userId, string firstName, string lastName, string street, string townName, string zipCode, string countryName)
+        {
+            var info = data.UserAdditionalInformation
+                .Where(ua => ua.UserId == userId)
+                .FirstOrDefault();
+
+            if (info == null)
+            {
+                return false;
+            }
+
+            info.FirstName = firstName;
+            info.LastName = lastName;
+
+            var addressId = addressService.Address(street, townName, zipCode, countryName);
+
+            info.AddressId = addressId;
+
+           data.SaveChanges();
+
+            return true;
+        }
+
         public bool UserHasAdditionaInfo(string userId) => data.Users
             .Any(u => u.Id == userId && u.UserDataId != null);
 
         public bool UserApplyed(string userId) => data.Users
             .Any(u => u.Id == userId && u.Applyed);
 
-        public void Apply(string userId)
+        public void ApplyForMember(string userId)
         {
             var user = data.Users
                 .Where(u => u.Id == userId)

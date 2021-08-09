@@ -13,11 +13,13 @@ namespace Web.Services.Users
 
         public UserEditInfoServiceModel Edit(string userId);
 
+        public bool ApplyChanges(string userId, string firstName, string lastName, string street, string townName, string zipCode, string countryName);
+
         public bool UserHasAdditionaInfo(string userId);
 
         public bool UserApplyed(string userId);
 
-        public void Apply(string userId);
+        public void ApplyForMember(string userId);
 
         public void NotApplyed(string userId);
     }

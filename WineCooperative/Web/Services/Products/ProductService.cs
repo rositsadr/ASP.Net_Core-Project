@@ -154,7 +154,7 @@ namespace Web.Services.Products
             .Where(p => p.Id == productId))
             .FirstOrDefault();
 
-        public void Delete(string productId)
+        public bool Delete(string productId)
         {
             var product = data.Products
                 .Find(productId);
@@ -166,7 +166,11 @@ namespace Web.Services.Products
                 data.ProductGrapeVarieties.RemoveRange(productGrapeVarieties);
                 data.Products.Remove(product);
                 data.SaveChanges();
+
+                return true;
             }
+
+            return false;
         }
 
         public IEnumerable<string> GetAllColorsName() => data.ProductColors
@@ -234,7 +238,7 @@ namespace Web.Services.Products
             return false;
         }
 
-        public bool IsItUsersProduct(string userId, string productId) => data.Products
+        public bool IsUsersProduct(string userId, string productId) => data.Products
             .Any(p => p.Id == productId && p.Manufacturer.UserId == userId);
 
         private IEnumerable<ProductDetailsServiceModel> GetProducts(IQueryable<Product> productQuery) => productQuery

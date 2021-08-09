@@ -13,6 +13,10 @@ namespace Web.Services.Manufacturers
 
         public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode);
 
+        public ManufacturerServiceModel Details(string manufacturerId);
+
+        public bool Delete(string manufacturerId);
+
         public bool ManufacturerExistsByName(string uniqueParameter);
 
         public bool ManufacturerExistsById(string manufacturerId);
@@ -23,6 +27,6 @@ namespace Web.Services.Manufacturers
 
         public IEnumerable<ManufacturerServiceModel> ManufacturersByUser(string userId);
 
-        public bool IsItUsersManufacturer(string userId, string manufacturerId);
+        public bool IsUsersManufacturer(string userId, string manufacturerId);
     }
 }

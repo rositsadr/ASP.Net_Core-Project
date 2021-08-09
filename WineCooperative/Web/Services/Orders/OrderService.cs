@@ -3,6 +3,8 @@ using System.Linq;
 using Web.Data;
 using Web.Models;
 using Web.Data.Models;
+using System.Collections.Generic;
+using Web.Services.Orders.Models;
 
 namespace Web.Services.Orders
 {
@@ -66,6 +68,54 @@ namespace Web.Services.Orders
             data.OrdersProducts.RemoveRange(orderProducts);
             data.Orders.Remove(order);
             data.SaveChanges();
+        }
+
+        public IEnumerable<OrderServiceModel> UsersOrders(string userId)
+        {
+            var ordersProducts = data.OrdersProducts
+                .Where(o => o.Order.UserId == userId)
+                .AsQueryable();
+
+            if(ordersProducts == null)
+            {
+                return null;
+            }
+
+            var ordersId = ordersProducts
+                 .Select(o => o.OrderId)
+                 .Distinct()
+                 .ToList();
+
+            var orders = new List<OrderServiceModel>();
+
+            foreach (var id in ordersId)
+            {
+                var order = new OrderServiceModel
+                {
+                    OrderId = id,
+                    Products = new List<OrderProductServiceModel>()
+                };
+
+                foreach (var item in ordersProducts)
+                {
+                    if(item.OrderId == id)
+                    {
+                        var product = new OrderProductServiceModel
+                        {
+                            ProductName = item.Product.Name,
+                            Price = item.Product.Price,
+                            Quantity = item.Quantity,
+                            TotalPrice = item.Product.Price * item.Quantity
+                        };
+
+                        order.Products.Add(product);
+                    }
+                }
+
+                orders.Add(order);
+            }
+
+            return orders;
         }
     }
 }

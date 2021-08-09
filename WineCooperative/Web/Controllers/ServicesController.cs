@@ -40,6 +40,7 @@ namespace Web.Controllers
                 });
             }
 
+            this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
         }
 
@@ -73,9 +74,11 @@ namespace Web.Controllers
 
                 serviceService.Create(service.Name, service.Price, service.ImageUrl, service.Description, service.ManufacturerId, service.Available);
 
+                this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded,"service");
                 return RedirectToAction("All", "Services");
             }
 
+            this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
         }
 
@@ -108,6 +111,7 @@ namespace Web.Controllers
 
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
@@ -146,6 +150,7 @@ namespace Web.Controllers
 
             if (!(this.User.IsMember() || User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
@@ -167,13 +172,14 @@ namespace Web.Controllers
                 return View(service);
             }
 
-            if (!(this.serviceService.IsItUsersService(userId, id) || User.IsAdmin()))
+            if (!(this.serviceService.IsUsersService(userId, id) || User.IsAdmin()))
             {
                 return BadRequest();
             }
 
             serviceService.ApplyChanges(id, service.Name, service.Description, service.ImageUrl, service.Price, service.Available, service.ManufacturerId);
 
+            this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyEdited,"service");
             return RedirectToAction("All");
         }
 
@@ -183,6 +189,7 @@ namespace Web.Controllers
 
             if(service == null)
             {
+                this.TempData[ErrorMessageKey] = "The service you are trying to view is not in the list!";
                 RedirectToAction("All");
             }
 
@@ -195,15 +202,25 @@ namespace Web.Controllers
 
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
-            if (!(this.serviceService.IsItUsersService(userId, id) || User.IsAdmin()))
+            if (!(this.serviceService.IsUsersService(userId, id) || User.IsAdmin()))
             {
                 return Unauthorized();
             }
 
-            serviceService.Delete(id);
+            var success = serviceService.Delete(id);
+
+            if (success)
+            {
+                this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted,"service");
+            }
+            else
+            {
+                this.TempData[ErrorMessageKey] = string.Format(NotExistToDelete,"Service");
+            }
 
             return RedirectToAction("All");
         }

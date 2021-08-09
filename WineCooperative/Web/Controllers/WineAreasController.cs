@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Web.Models.WineAreas;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers
 {

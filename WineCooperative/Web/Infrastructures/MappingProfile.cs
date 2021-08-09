@@ -60,7 +60,7 @@ namespace Web.Infrastructures
                 .ForMember(ue => ue.UserId, u => u.MapFrom(u => u.Id));
             this.CreateMap<UserEditInfoServiceModel, AdditionalUserInfoAddingModel>();
             this.CreateMap<AddressEditServiceModel, AddressAddingModel>();
-
+            this.CreateMap<UserAdditionalInformation, UserEditInfoServiceModel>();
         }
     }
 }

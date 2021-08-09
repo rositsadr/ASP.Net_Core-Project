@@ -18,7 +18,7 @@ namespace Web.Services.Products
 
         public ProductDetailsServiceModel Details(string productId);
 
-        public void Delete(string productId);
+        public bool Delete(string productId);
 
         public IEnumerable<string> GetAllColorsName();
 
@@ -40,6 +40,6 @@ namespace Web.Services.Products
 
         public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties);
 
-        public bool IsItUsersProduct(string userId, string productId);
+        public bool IsUsersProduct(string userId, string productId);
     }
 }

@@ -17,13 +17,13 @@ namespace Web.Services.Services
 
         public ServiceDetailsIdServiceModel Details(string serviceId);
 
-        public void Delete(string id);
+        public bool Delete(string id);
 
         public bool ServiceExists(string manufacturerId, string name);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId);
 
-        public bool IsItUsersService(string userId, string productId);
+        public bool IsUsersService(string userId, string serviceId);
 
     }
 }

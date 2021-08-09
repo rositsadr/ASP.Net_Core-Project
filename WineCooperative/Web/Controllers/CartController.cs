@@ -5,6 +5,7 @@ using Web.Data.Models;
 using Web.Infrastructures;
 using Web.Services.Cart;
 using Web.Services.Cart.Models;
+using static Web.WebConstants;
 
 namespace Web.Controllers
 {
@@ -34,7 +35,16 @@ namespace Web.Controllers
                 return Unauthorized();
             }
 
-            cartService.AddProductToCart(productId, userId);
+            var success = cartService.AddProductToCart(productId, userId);
+
+            if (success)
+            {
+                this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded, "product to your cart");
+            }
+            else
+            {
+                this.TempData[ErrorMessageKey] = "No product added to your cart!";
+            }
 
             return RedirectToAction("All","Products");
         }
@@ -72,6 +82,7 @@ namespace Web.Controllers
 
             cartService.Delete(productId, userId);
 
+            this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "product from your cart");
             return Redirect("MyCart?userId=" + userId);
         }
 

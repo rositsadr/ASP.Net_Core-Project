@@ -12,6 +12,7 @@ using Web.Infrastructures;
 using Web.Services.Addresses;
 using Web.Services.Cart;
 using Web.Services.Manufacturers;
+using Web.Services.Orders;
 using Web.Services.Products;
 using Web.Services.Services;
 using Web.Services.Users;
@@ -66,6 +67,7 @@ namespace Web
             services.AddTransient<IManufacturerService, ManufacturerService>();
             services.AddTransient<IAddressService, AddressService>();
             services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IOrderService, OrderService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

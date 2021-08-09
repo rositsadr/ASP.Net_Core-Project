@@ -78,10 +78,8 @@
                         <a class="btn btn-primary" role="button" asp-controller="Services" asp-action="Details" asp-route-id=@service.Id>Details</a>
                         @if (User.IsAdmin())
                         {
-
-                            <a class="btn btn-danger" role="button" asp-controller="Services" asp-action="Delete" asp-route-id=@service.Id>Delete</a>
                             <a class="btn btn-warning" role="button" asp-controller="Services" asp-action="Edit" asp-route-id=@service.Id>Edit</a>
-
+                            <a class="btn btn-danger" role="button" asp-controller="Services" asp-action="Delete" asp-route-id=@service.Id>Delete</a>
                         }
                     </div>                   
                 </div>

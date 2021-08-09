@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -47,7 +48,8 @@ namespace Web.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [StringLength(UsernameMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = UsernameMinLength)]
+            [StringLength(UsernameMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} symbols long.", MinimumLength = UsernameMinLength)]
+            [Display(Name = "Username")]
             public string Username { get; set; }
 
             [Required]
@@ -56,7 +58,7 @@ namespace Web.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [StringLength(PasswordMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = PasswordMinLength)]
+            [StringLength(PasswordMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} symbols long.", MinimumLength = PasswordMinLength)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }

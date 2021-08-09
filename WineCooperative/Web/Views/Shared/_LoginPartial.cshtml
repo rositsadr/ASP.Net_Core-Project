@@ -12,9 +12,9 @@
                 <a class="nav-link dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown">Admin Pannel</a>
                 <ul class="dropdown-menu dropdown-menu-dark">
                     <li><a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="ApplyedUsers">Aplications for Member</a></li>
-                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="All">Products</a></li>
-                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Services" asp-action="All">Services</a></li>
-                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Manufacturers" asp-action="All">Manufacturers</a></li>
+                    <li><a class="dropdown-item" asp-area="" asp-controller="Products" asp-action="All">Products</a></li>
+                    <li><a class="dropdown-item" asp-area="" asp-controller="Services" asp-action="All">Services</a></li>
+                    <li><a class="dropdown-item" asp-area="" asp-controller="Manufacturers" asp-action="All">Manufacturers</a></li>
                     <li><a class="dropdown-item" asp-area="Admin" asp-controller="Users" asp-action="AllMembers">Members</a></li>
                 </ul>
             </li>
@@ -22,15 +22,18 @@
         else if (!(IsAdmin || IsMember))
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Users" asp-action="BecomeMember" asp-route-id="@userId">Become Member</a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="BecomeMember" asp-route-id="@userId">Become Member</a>
             </li>
         }
         else if (!IsAdmin)
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Cart" asp-action="MyCart" asp-route-userId="@userId">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="MyCart" asp-route-userId="@userId">
                     <i class="fas fa-shopping-cart">  My Cart</i>
                 </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="MyOrders">Past Orders</a>
             </li>
         }
         <li class="nav-item">

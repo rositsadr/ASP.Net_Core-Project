@@ -33,6 +33,18 @@
         }
         </header>
     <div class="container">
+        @if (TempData.ContainsKey(WebConstants.ErrorMessageKey))
+        {
+            <div class="alert alert-danger text-center" role="alert">
+                @TempData[WebConstants.ErrorMessageKey]
+            </div>
+        }
+        else if (TempData.ContainsKey(WebConstants.SuccessMessageKey))
+        {
+            <div class="alert alert-success text-center" role="alert">
+                @TempData[WebConstants.SuccessMessageKey]
+            </div>
+        }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

@@ -6,6 +6,7 @@ using Web.Infrastructures;
 using Web.Models.Products;
 using Web.Services.Manufacturers;
 using Web.Services.Products;
+using static Web.WebConstants;
 
 namespace Web.Controllers
 {
@@ -42,6 +43,7 @@ namespace Web.Controllers
                 });
             }
 
+            this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
         }
 
@@ -104,9 +106,11 @@ namespace Web.Controllers
 
                 this.productService.CreateProduct(product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
+                this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded, "product");
                 return RedirectToAction("All", "Products");
             }
 
+            this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
         }
 
@@ -142,6 +146,7 @@ namespace Web.Controllers
 
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
@@ -184,6 +189,7 @@ namespace Web.Controllers
 
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
@@ -228,13 +234,14 @@ namespace Web.Controllers
                 return View(product);
             }
 
-            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsAdmin()))
+            if (!(this.productService.IsUsersProduct(userId, id) || User.IsAdmin()))
             {
                 return BadRequest();
             }
 
             this.productService.ApplyChanges(id, product.Name, product.Price, product.ImageUrl, product.ManufactureYear, product.Description, product.InStock, product.WineAreaId, product.ManufacturerId, product.TasteId, product.ColorId, product.GrapeVarieties);
 
+            this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyEdited,"product");
             return RedirectToAction("All");
         }
 
@@ -244,6 +251,7 @@ namespace Web.Controllers
 
             if(product==null)
             {
+                this.TempData[ErrorMessageKey] = "The product you are trying to view is not in the list!";
                 return RedirectToAction("All");
             }
 
@@ -257,15 +265,25 @@ namespace Web.Controllers
 
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
-            if (!(this.productService.IsItUsersProduct(userId, id) || User.IsAdmin()))
+            if (!this.productService.IsUsersProduct(userId, id))
             {
                 return Unauthorized();
             }
 
-            this.productService.Delete(id);
+            var success = this.productService.Delete(id);
+
+            if (success)
+            {
+                this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "product");
+            }
+            else
+            {
+                this.TempData[ErrorMessageKey] = string.Format(NotExistToDelete,"Product");
+            }
 
             return RedirectToAction("All");
         }      

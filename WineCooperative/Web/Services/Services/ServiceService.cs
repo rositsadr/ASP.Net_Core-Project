@@ -138,7 +138,7 @@ namespace Web.Services.Services
 
         public ServiceDetailsIdServiceModel Details(string serviceId) => this.GetService(serviceId);
 
-        public void Delete(string serviceId)
+        public bool Delete(string serviceId)
         {
             var service = data.Services
                .Find(serviceId);
@@ -147,7 +147,11 @@ namespace Web.Services.Services
             {
                 data.Services.Remove(service);
                 data.SaveChanges();
+
+                return true;
             }
+
+            return false;
         }
 
         public bool ServiceExists(string manufacturerId, string name) => data.Services
@@ -158,7 +162,7 @@ namespace Web.Services.Services
             .ProjectTo<ServiceDetailsServiceModel>(config)
             .ToList();
 
-        public bool IsItUsersService(string userId, string serviceId) => data.Services
+        public bool IsUsersService(string userId, string serviceId) => data.Services
              .Any(s => s.Id == serviceId && s.Manufacturer.UserId == userId);
 
         private ServiceDetailsIdServiceModel GetService(string serviceId) => data.Services

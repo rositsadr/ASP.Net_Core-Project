@@ -75,6 +75,26 @@ namespace Web.Services.Manufacturers
             return true;
         }
 
+        public ManufacturerServiceModel Details(string manufacturerId) => data.Manufacturers
+                .Where(m => m.Id == manufacturerId)
+                .ProjectTo<ManufacturerServiceModel>(config)
+                .FirstOrDefault();
+
+        public bool Delete(string manufacturerId)
+        {
+            var manufacturer = data.Manufacturers
+                .Find(manufacturerId);
+
+            if (manufacturer != null)
+            {
+                data.Manufacturers.Remove(manufacturer);
+                data.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
         public bool ManufacturerExistsByName(string name) => data.Manufacturers
             .Any(m => m.Name == name);
 
@@ -94,7 +114,7 @@ namespace Web.Services.Manufacturers
             .ProjectTo<ManufacturerNameServiceModel>(config)
             .ToList();
 
-        public bool IsItUsersManufacturer(string userId, string manufacturerId) => data.Manufacturers
+        public bool IsUsersManufacturer(string userId, string manufacturerId) => data.Manufacturers
             .Any(m => m.Id == manufacturerId && m.UserId == userId);
     }
 }

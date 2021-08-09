@@ -5,6 +5,7 @@ using Web.Infrastructures;
 using Web.Models.Manufacturers;
 using Web.Services.Manufacturers;
 using static Web.Services.Constants;
+using static Web.WebConstants;
 
 namespace Web.Controllers
 {
@@ -32,6 +33,7 @@ namespace Web.Controllers
                 return View();
             };
 
+            this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
         }
 
@@ -58,9 +60,11 @@ namespace Web.Controllers
 
                 manufacturerService.Create(manufacturer.Name, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Description,manufacturer.Address.Street, manufacturer.Address.ZipCode, manufacturer.Address.TownName, CountryOfManufacturing, User.GetId());
 
+                this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded,"manufacturer");
                 return RedirectToAction("All");
             }
 
+            this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
 
         }
@@ -72,6 +76,7 @@ namespace Web.Controllers
         {
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
@@ -98,6 +103,7 @@ namespace Web.Controllers
         {
             if (!(this.User.IsMember() || this.User.IsAdmin()))
             {
+                this.TempData[ErrorMessageKey] = NotPermitted;
                 return RedirectToAction("BecomeMember", "Users");
             }
 
@@ -116,12 +122,55 @@ namespace Web.Controllers
                 return View(manufacturer);
             }
 
-            if (!(this.manufacturerService.IsItUsersManufacturer(User.GetId(), id) || User.IsAdmin()))
+            if (!(this.manufacturerService.IsUsersManufacturer(User.GetId(), id) || User.IsAdmin()))
             {
                 return BadRequest();
             }
 
             this.manufacturerService.ApplyChanges(id, manufacturer.Name, manufacturer.Description, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Address.Street,manufacturer.Address.TownName, manufacturer.Address.ZipCode);
+
+            this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyEdited,"manufacturer");
+            return RedirectToAction("All");
+        }
+
+        public IActionResult Details(string id)
+        {
+            var manufacturer = manufacturerService.Details(id);
+
+            if (manufacturer == null)
+            {
+                this.TempData[ErrorMessageKey] = "The manufacturer you are trying to view is not in the list!";
+                return RedirectToAction("All");
+            }
+
+            return View(manufacturer);
+        }
+
+        public IActionResult Delete(string id)
+        {
+            var userId = User.GetId();
+
+            if (!(this.User.IsMember() || this.User.IsAdmin()))
+            {
+                this.TempData[ErrorMessageKey] = NotPermitted;
+                return RedirectToAction("BecomeMember", "Users");
+            }
+
+            if (!this.manufacturerService.IsUsersManufacturer(userId, id))
+            {
+                return Unauthorized();
+            }
+
+            var success = this.manufacturerService.Delete(id);
+
+            if (success)
+            {
+                this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "manufacturer");
+            }
+            else
+            {
+                this.TempData[ErrorMessageKey] = string.Format(NotExistToDelete, "Manufacturer");
+            }
 
             return RedirectToAction("All");
         }
