@@ -5,7 +5,6 @@ using Web.Models;
 using Web.Models.Manufacturers;
 using Web.Models.Products;
 using Web.Models.Services;
-using Web.Models.Users;
 using Web.Services.Addresses;
 using Web.Services.Cart.Models;
 using Web.Services.Manufacturers.Models;
@@ -56,11 +55,10 @@ namespace Web.Infrastructures
                 .ForMember(ae => ae.TownName, a => a.MapFrom(a => a.Town.Name))
                 .ForMember(ae => ae.CountryName, a => a.MapFrom(a => a.Town.Country.CountryName));
             this.CreateMap<User, UserEditInfoServiceModel>()
-                .ForMember(ue => ue.DataId, u => u.MapFrom(u => u.UserDataId))
                 .ForMember(ue => ue.UserId, u => u.MapFrom(u => u.Id));
-            this.CreateMap<UserEditInfoServiceModel, AdditionalUserInfoAddingModel>();
-            this.CreateMap<AddressEditServiceModel, AddressAddingModel>();
-            this.CreateMap<UserAdditionalInformation, UserEditInfoServiceModel>();
+            this.CreateMap<UserAdditionalInformation, UserEditInfoServiceModel>()
+                .ForMember(ue => ue.UserId, u => u.MapFrom(u => u.UserId))
+                .ForMember(ue => ue.PhoneNumber, u => u.MapFrom(u => u.User.PhoneNumber));
         }
     }
 }

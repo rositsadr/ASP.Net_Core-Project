@@ -1,10 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Data.Models;
 using Web.Infrastructures;
 using Web.Services.Cart;
-using Web.Services.Cart.Models;
 using static Web.WebConstants;
 
 namespace Web.Controllers
@@ -58,7 +55,7 @@ namespace Web.Controllers
 
             cartService.AddFunction(productId, userId);
 
-            return Redirect("MyCart?userId=" + userId);
+            return RedirectToAction("MyCart",new { userId = userId });
         }
 
         public IActionResult Remove(string productId, string userId)
@@ -70,7 +67,7 @@ namespace Web.Controllers
 
             cartService.RemoveFunction(productId, userId);
 
-            return Redirect("MyCart?userId=" + userId);
+            return RedirectToAction("MyCart", new { userId = userId });
         }
 
         public IActionResult Delete(string productId, string userId)
@@ -83,7 +80,7 @@ namespace Web.Controllers
             cartService.Delete(productId, userId);
 
             this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "product from your cart");
-            return Redirect("MyCart?userId=" + userId);
+            return RedirectToAction("MyCart", new { userId = userId });
         }
 
         private bool UserNotAuthorize(string userId) => this.User

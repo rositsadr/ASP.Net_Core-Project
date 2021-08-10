@@ -122,6 +122,7 @@ namespace Web.Infrastructures
                 new GrapeVariety {Name = "Singurlarski Misket"},
                 new GrapeVariety {Name = "Varnenski Misket"},
                 new GrapeVariety {Name = "Traminer"},
+                new GrapeVariety {Name = "Chardonay"},
             });
 
                 data.SaveChanges();

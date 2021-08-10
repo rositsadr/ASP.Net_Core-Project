@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Web.Services.Users.Models
+﻿namespace Web.Services.Users.Models
 {
     public class UserInfoServiceModel
     {
@@ -16,6 +11,8 @@ namespace Web.Services.Users.Models
         public string LastName { get; init; }
 
         public string  Email { get; init; }
+
+        public string PhoneNumber { get; init; }
 
         public bool Applyed { get; init; }
     }

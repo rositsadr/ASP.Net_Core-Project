@@ -1,0 +1,51 @@
+﻿@model List<OrderServiceModel>
+
+@{
+    ViewData["Title"] = "Orders List";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr />
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>OrderId</th>
+            <th>Product name</th>
+            <th>Product price</th>
+            <th>Product quantity</th>
+            <th>Total price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            foreach (var item in order.Products)
+            {
+                <tr>
+                    <td scope="col">@order.OrderId</td>
+                    <td scope="col">@item.ProductName</td>
+                    <td scope="col">@item.Price lv.</td>
+                    <td scope="col" class="text-center">@item.Quantity</td>
+                    <td scope="col" class="text-center">@item.TotalPrice lv.</td>                    
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Order Total Amount:</td>
+                <td scope="col" class="text-center">@order.TotalAmount lv.</td>               
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td scope="col">
+                    <a class="btn btn-danger float-right ml-2" asp-controller="Order" asp-action="DeleteFromArchives" asp-route-id=@order.OrderId>Delete from archives.</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

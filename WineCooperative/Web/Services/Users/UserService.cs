@@ -103,5 +103,13 @@ namespace Web.Services.Users
         private IEnumerable<UserInfoServiceModel> GetUsers(IQueryable<User> userQuery)=> userQuery
             .ProjectTo<UserInfoServiceModel>(config)
             .ToList();
+
+        public bool UserExists(string userId) => data.Users
+            .Any(u => u.Id == userId);
+
+        public UserInfoServiceModel GetUserWithData(string userId) => data.Users
+                .Where(u => u.Id == userId)
+                .ProjectTo<UserInfoServiceModel>(config)
+                .FirstOrDefault();
     }
 }

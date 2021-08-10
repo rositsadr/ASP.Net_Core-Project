@@ -11,17 +11,16 @@
     <tbody>
         @foreach (var member in Model)
         {
-        <tr>
-            <td scope="col">@member.Username</td>
-            <td scope="col">@member.Email</td>
-            <td scope="col">@member.FirstName</td>
-            <td scope="col">@member.LastName</td>
-            <td scope="col">
-                <a class="btn btn-danger float-right ml-2" asp-controller="Users" asp-action="DeclineMember" asp-route-id=@member.Id>Remove Member</a>
-                <a class="btn btn-warning float-right ml-2" asp-controller="Users" asp-action="DeclineMember" asp-route-id=@member.Id>Edit Info</a>
-                <a class="btn btn-primary float-right ml-2" asp-controller="Users" asp-action="ApproveMember" asp-route-id=@member.Id>View Info</a>
-            </td>
-        </tr>
+            <tr>
+                <td scope="col">@member.Username</td>
+                <td scope="col">@member.Email</td>
+                <td scope="col">@member.FirstName</td>
+                <td scope="col">@member.LastName</td>
+                <td scope="col">@member.PhoneNumber</td>
+                <td scope="col" class="text-center">
+                    <a class="btn btn-danger ml-2" asp-controller="Users" asp-action="RemoveMember" asp-route-id=@member.Id>Remove Member</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

@@ -10,10 +10,13 @@ namespace Web.Controllers
 
         public IActionResult Index() => View();
 
+        //ToDo:
         public IActionResult Privacy() => View();
 
+        //ToDo
         public IActionResult AboutUs() => View();
 
+        //toDo:
         public IActionResult Contacts() => View(); 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

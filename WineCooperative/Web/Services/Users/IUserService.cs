@@ -22,5 +22,9 @@ namespace Web.Services.Users
         public void ApplyForMember(string userId);
 
         public void NotApplyed(string userId);
+
+        public bool UserExists(string userId);
+
+        public UserInfoServiceModel GetUserWithData(string userId);
     }
 }

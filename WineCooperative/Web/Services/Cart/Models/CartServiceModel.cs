@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Web.Services.Cart.Models
+﻿namespace Web.Services.Cart.Models
 {
     public class CartServiceModel
     {

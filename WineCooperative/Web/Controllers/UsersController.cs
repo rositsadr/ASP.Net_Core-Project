@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web.Data;
 using Web.Infrastructures;
-using Web.Models.Users;
 using Web.Services.Manufacturers;
+using Web.Services.Orders;
 using Web.Services.Products;
 using Web.Services.Services;
 using Web.Services.Users;
@@ -15,119 +13,70 @@ namespace Web.Controllers
     [Authorize]
     public class UsersController : Controller
     {
+        private readonly IUserService userService;
         private readonly IProductService productService;
         private readonly IServiceService serviceService;
         private readonly IManufacturerService manufacturerService;
-        private readonly IUserService userService;
-        private readonly IMapper mapper;
+        private readonly IOrderService orderService;
 
-        public UsersController(IProductService productService, IServiceService serviceService, IManufacturerService manufacturerService, IUserService userService, IMapper mapper)
+        public UsersController(IUserService userService, IProductService productService, IServiceService serviceService, IManufacturerService manufacturerService, IOrderService orderService)
         {
+            this.userService = userService;
             this.productService = productService;
             this.serviceService = serviceService;
             this.manufacturerService = manufacturerService;
-            this.userService = userService;
-            this.mapper = mapper;
-        }
-
-        public IActionResult EditAdditionalData(string userId)
-        {
-            if(User.GetId() != userId || !User.IsAdmin())
-            {
-                return BadRequest();
-            }
-
-            var info = userService.Edit(userId);
-
-            if(info == null)
-            {
-                return BadRequest();
-            }
-
-            var infoToEdit = mapper.Map<AdditionalUserInfoAddingModel>(info);
-
-            return View(infoToEdit);
-        }
-
-        [HttpPost]
-        public IActionResult EditAdditionalData(AdditionalUserInfoAddingModel info, string userId)
-        {
-            if (User.GetId() != userId || !User.IsAdmin())
-            {
-                return BadRequest();
-            }
-
-            if(!ModelState.IsValid)
-            {
-                return View(info);
-            }
-
-            userService.ApplyChanges(userId, info.FirstName, info.LastName, info.Address.Street, info.Address.TownName, info.Address.ZipCode, info.Address.CountryName);
-
-            if(User.IsAdmin())
-            {
-                return RedirectToAction("AllMembers","Users");
-            }
-
-            return RedirectToAction("Index","Home");
+            this.orderService = orderService;
         }
 
         public IActionResult MyProducts()
         {
-            if(User.IsMember())
+            if (User.IsMember())
             {
                 var products = productService.ProductsByUser(User.GetId());
-
                 return View(products);
             }
-
             if (User.IsAdmin())
             {
                 return Unauthorized();
             }
-
             return RedirectToAction("BecomeMember");
         }
-
         public IActionResult MyServices()
         {
-            if(User.IsMember())
+            if (User.IsMember())
             {
                 var services = serviceService.ServicesByUser(User.GetId());
-
                 return View(services);
             }
-
             if (User.IsAdmin())
             {
                 return Unauthorized();
             }
-
             return RedirectToAction("BecomeMember");
-
         }
-
         public IActionResult MyManufacturers()
         {
             if (User.IsMember())
             {
                 var manufacturers = manufacturerService.ManufacturersByUser(User.GetId());
-
                 return View(manufacturers);
             }
-
             if (User.IsAdmin())
             {
                 return Unauthorized();
             }
-
             return RedirectToAction("BecomeMember");
         }
-
-        //TODO:
-        public IActionResult MyOrders()
+        public IActionResult MyOrders(string id)
         {
-            return View();
+            if (User.GetId() != id)
+            {
+                return BadRequest();
+            }
+
+            var orders = orderService.UsersOrders(id);
+
+            return View(orders);
         }
 
         public IActionResult BecomeMember()

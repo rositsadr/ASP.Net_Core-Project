@@ -146,6 +146,7 @@ namespace Web.Controllers
             return View(manufacturer);
         }
 
+        [Authorize]
         public IActionResult Delete(string id)
         {
             var userId = User.GetId();

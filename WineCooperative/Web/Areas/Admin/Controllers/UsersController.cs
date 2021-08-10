@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -18,13 +17,11 @@ namespace Web.Areas.Admin.Controllers
     {
         private readonly IUserService userService;
         private readonly UserManager<User> userManager;
-        private readonly IMapper mapper;
 
-        public UsersController(IUserService userService, UserManager<User> userManager, IMapper mapper)
+        public UsersController(IUserService userService, UserManager<User> userManager)
         {
             this.userService = userService;
             this.userManager = userManager;
-            this.mapper = mapper;
         }
 
         public IActionResult ApplyedUsers()
@@ -36,26 +33,42 @@ namespace Web.Areas.Admin.Controllers
             return View(users);
         }
 
-        public IActionResult ApproveMember(string Id)
+        public async Task<IActionResult> ApproveMember(string id)
         {
-            Task.Run(async () =>
+            var user = await userManager.FindByIdAsync(id);
+
+            if (user == null)
             {
-                var user = await userManager.FindByIdAsync(Id);
-                await userManager.AddToRoleAsync(user, MemberRole);
-            })
-                .GetAwaiter()
-                .GetResult();
+                return NotFound($"Unable to load user.");
+            }
 
-            userService.NotApplyed(Id);
+            if(await userManager.IsInRoleAsync(user,MemberRole))
+            {
+                return BadRequest($"The user is a member.");
+            }
 
-            return RedirectToAction("AllMembers");
+            await userManager.AddToRoleAsync(user, MemberRole);
+
+            userService.NotApplyed(id);
+
+            return RedirectToAction("ApplyedUsers");
         }
 
-        public IActionResult DeclineMember(string Id)
+        public IActionResult DeclineMember(string id)
         {
-            userService.NotApplyed(Id);
+            if(!userService.UserExists(id))
+            {
+                return NotFound("User does not exists.");
+            }
 
-            return RedirectToAction("AllMembers");
+            if(!userService.UserApplyed(id))
+            {
+                return BadRequest("No application from that user found.");
+            }
+
+            userService.NotApplyed(id);
+
+            return RedirectToAction("ApplyedUsers");
         }
 
         public IActionResult AllMembers()
@@ -70,7 +83,8 @@ namespace Web.Areas.Admin.Controllers
                 var user = await userManager.FindByIdAsync(id);
                 if (await userManager.IsInRoleAsync(user, MemberRole))
                 {
-                    members.Add(mapper.Map<UserInfoServiceModel>(user));
+                    var userMember = userService.GetUserWithData(id);
+                    members.Add(userMember);
                 }
             })
                 .GetAwaiter()
@@ -80,6 +94,23 @@ namespace Web.Areas.Admin.Controllers
             return View(members);
         }
 
+        public async Task<IActionResult> RemoveMember(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
 
+            if (user == null)
+            {
+                return NotFound($"Unable to load user.");
+            }
+
+            if(!await userManager.IsInRoleAsync(user,MemberRole))
+            {
+                return BadRequest($"User is not a member.");
+            }
+
+            await userManager.RemoveFromRoleAsync(user, MemberRole);
+
+            return RedirectToAction("AllMembers");
+        }
     }
 }

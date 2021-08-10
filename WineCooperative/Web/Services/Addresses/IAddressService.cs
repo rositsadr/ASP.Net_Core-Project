@@ -1,6 +1,4 @@
-﻿using Web.Models;
-
-namespace Web.Services.Addresses
+﻿namespace Web.Services.Addresses
 {
     public interface IAddressService
     {

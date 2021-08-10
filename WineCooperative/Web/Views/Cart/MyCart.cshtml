@@ -50,10 +50,10 @@
                     <div class="card-body">
                         <h5 class="card-title">You Order</h5>
                         <hr />
-                        <h6 class="card-subtitle mb-2 ">Total price: @totalSum</h6>
+                        <h6 class="card-subtitle mb-2 ">Total price: @totalSum lv.</h6>
                         <p class="card-text">Products count: @totalProductsCount</p>
-                        <a class="btn btn-danger" asp-controller="Order" asp-action="Proceed" asp-route-userId="@User.GetId()">Proceed</a>
-                        <span>with oredr.</span>
+                        <a class="btn btn-danger" asp-controller="Order" asp-action="OrderDetails" asp-route-id="@User.GetId()">Proceed</a>
+                        <span>with oreder.</span>
                     </div>
                 </div>
             </div>

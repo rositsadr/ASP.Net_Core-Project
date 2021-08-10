@@ -5,6 +5,7 @@ using Web.Models;
 using Web.Data.Models;
 using System.Collections.Generic;
 using Web.Services.Orders.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Web.Services.Orders
 {
@@ -14,7 +15,7 @@ namespace Web.Services.Orders
 
         public OrderService(WineCooperativeDbContext data) => this.data = data;
 
-        public int CreateOrder(string userId)
+        public int CreateOrderInTheDatabase(string userId)
         {
             var order = new Order
             {
@@ -28,11 +29,16 @@ namespace Web.Services.Orders
             return order.Id;          
         }
 
-        public void finalizeOrder(string userId, int orderId)
+        public bool finalizeOrder(string userId, int orderId)
         {
             var productsInCart = data.ShoppingCartItems
                 .Where(s => s.UserId == userId)
                 .ToList();
+
+            if (productsInCart == null)
+            {
+                return false;
+            }
 
             foreach (var item in productsInCart)
             {
@@ -44,15 +50,55 @@ namespace Web.Services.Orders
                     OrderId = orderId, 
                     ProductId = productId,
                     Quantity = quantity,
-                });
-                
-                var itemCart = data.ShoppingCartItems
-                    .Where(p => p.UserId == userId && p.ProductId == productId)
-                    .FirstOrDefault();
+                });               
 
-                data.ShoppingCartItems.Remove(itemCart);
+                data.ShoppingCartItems.Remove(item);
                 data.SaveChanges();
             }
+
+            return true;
+        }
+
+        public OrderServiceModel OrderDetailsFromCart(string userId)
+        {
+            var newOrderItems = data.ShoppingCartItems
+                .Where(sh => sh.UserId == userId)
+                .Include(i=>i.Product)
+                .ToList();
+
+            if (newOrderItems == null)
+            {
+                return null;
+            }
+
+            var newOrder = new OrderServiceModel()
+            {
+                Products = new List<OrderProductServiceModel>()
+            };
+
+            foreach (var item in newOrderItems)
+            {
+                var newItem = new OrderProductServiceModel
+                {
+                     ProductName=item.Product.Name,
+                      Price = item.Product.Price,
+                      Quantity = item.Quantity,
+                };
+
+                newItem.TotalPrice = newItem.Price * newItem.Quantity;
+
+                newOrder.Products.Add(newItem);
+            }
+
+            newOrder.TotalAmount = newOrder.Products.Sum(p => p.TotalPrice);
+            newOrder.Products = newOrder.Products.OrderBy(p => p.ProductName).ToList();
+
+            return newOrder;
+        }
+
+        public bool OrderExists(int orderId, string userId)
+        {
+            return data.Orders.Any(o => o.Id == orderId && o.UserId == userId);
         }
 
         public void RemoveOrder(int orderId)
@@ -74,6 +120,7 @@ namespace Web.Services.Orders
         {
             var ordersProducts = data.OrdersProducts
                 .Where(o => o.Order.UserId == userId)
+                .Include(o=>o.Product)
                 .AsQueryable();
 
             if(ordersProducts == null)
@@ -111,6 +158,8 @@ namespace Web.Services.Orders
                         order.Products.Add(product);
                     }
                 }
+
+                order.TotalAmount = order.Products.Sum(p => p.TotalPrice);
 
                 orders.Add(order);
             }
