@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Web.Infrastructures;
 using Web.Models.Manufacturers;
 using Web.Services.Manufacturers;
+using Web.Services.Manufacturers.Models;
 using static Web.Services.Constants;
 using static Web.WebConstants;
+using static Web.Controllers.ControllersConstants;
+using System;
 
 namespace Web.Controllers
 {
@@ -13,11 +18,13 @@ namespace Web.Controllers
     {
         private readonly IManufacturerService manufacturerService;
         private readonly IMapper mapper;
+        private readonly IMemoryCache cache;
 
-        public ManufacturersController(IManufacturerService manufacturerService, IMapper mapper)
+        public ManufacturersController(IManufacturerService manufacturerService, IMapper mapper, IMemoryCache ceche)
         {
             this.manufacturerService = manufacturerService;
             this.mapper = mapper;
+            this.cache = ceche;
         }
 
         [Authorize]
@@ -64,12 +71,26 @@ namespace Web.Controllers
                 return RedirectToAction("All");
             }
 
+            cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
+
             this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
 
         }
 
-        public IActionResult All() => View(this.manufacturerService.All());
+        public IActionResult All()
+        {
+            var manufacturers = cache.Get<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey);
+
+            if(manufacturers == null)
+            {
+                manufacturers = this.manufacturerService.All();
+
+                cache.Set(manufacturersCacheKey, manufacturers);
+            }
+           
+            return View(manufacturers);
+        }
 
         [Authorize]
         public IActionResult Edit(string id)
@@ -129,6 +150,8 @@ namespace Web.Controllers
 
             this.manufacturerService.ApplyChanges(id, manufacturer.Name, manufacturer.Description, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Address.Street,manufacturer.Address.TownName, manufacturer.Address.ZipCode);
 
+            cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
+
             this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyEdited,"manufacturer");
             return RedirectToAction("All");
         }
@@ -166,6 +189,8 @@ namespace Web.Controllers
 
             if (success)
             {
+                cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
+
                 this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "manufacturer");
             }
             else

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ using Web.Data.Models;
 using Web.Services.Users;
 using Web.Services.Users.Models;
 using static Web.WebConstants;
+using static Web.Areas.AreaConstants;
+using System;
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -17,18 +20,27 @@ namespace Web.Areas.Admin.Controllers
     {
         private readonly IUserService userService;
         private readonly UserManager<User> userManager;
+        private readonly IMemoryCache cache;
 
-        public UsersController(IUserService userService, UserManager<User> userManager)
+        public UsersController(IUserService userService, UserManager<User> userManager, IMemoryCache cache)
         {
             this.userService = userService;
             this.userManager = userManager;
+            this.cache = cache;
         }
 
         public IActionResult ApplyedUsers()
         {
-            var users = userService.All()
-                .Where(u => u.Applyed)
-                .ToList();
+            var users = cache.Get<List<UserInfoServiceModel>>(applyedCacheKey);
+
+            if(users == null)
+            {
+                users = userService.All()
+                    .Where(u => u.Applyed)
+                    .ToList();
+
+                cache.Set(applyedCacheKey, users);
+            }
 
             return View(users);
         }
@@ -51,6 +63,9 @@ namespace Web.Areas.Admin.Controllers
 
             userService.NotApplyed(id);
 
+            cache.Set<List<UserInfoServiceModel>>(membersCacheKey, null);
+            cache.Set<List<UserInfoServiceModel>>(applyedCacheKey, null);
+
             return RedirectToAction("ApplyedUsers");
         }
 
@@ -68,28 +83,37 @@ namespace Web.Areas.Admin.Controllers
 
             userService.NotApplyed(id);
 
+            cache.Set<List<UserInfoServiceModel>>(applyedCacheKey, null);
+
             return RedirectToAction("ApplyedUsers");
         }
 
         public IActionResult AllMembers()
         {
-            var usersId = userService.All().Select(u => u.Id);
-            var members = new List<UserInfoServiceModel>();
+            var members = this.cache.Get<List<UserInfoServiceModel>>(membersCacheKey);
 
-            foreach (var id in usersId)
+            if(members == null)
             {
-                Task.Run(async () =>
-            {
-                var user = await userManager.FindByIdAsync(id);
-                if (await userManager.IsInRoleAsync(user, MemberRole))
+                var usersId = userService.All().Select(u => u.Id);
+                members = new List<UserInfoServiceModel>();
+
+                foreach (var id in usersId)
                 {
-                    var userMember = userService.GetUserWithData(id);
-                    members.Add(userMember);
+                    Task.Run(async () =>
+                    {
+                        var user = await userManager.FindByIdAsync(id);
+                        if (await userManager.IsInRoleAsync(user, MemberRole))
+                        {
+                            var userMember = userService.GetUserWithData(id);
+                            members.Add(userMember);
+                        }
+                    })
+                    .GetAwaiter()
+                    .GetResult();
                 }
-            })
-                .GetAwaiter()
-                .GetResult();
-            }
+
+                cache.Set(membersCacheKey, members);
+            }            
 
             return View(members);
         }
@@ -110,6 +134,9 @@ namespace Web.Areas.Admin.Controllers
 
             await userManager.RemoveFromRoleAsync(user, MemberRole);
 
+            cache.Set<List<UserInfoServiceModel>>(membersCacheKey, null);
+            
+            this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "member");
             return RedirectToAction("AllMembers");
         }
     }

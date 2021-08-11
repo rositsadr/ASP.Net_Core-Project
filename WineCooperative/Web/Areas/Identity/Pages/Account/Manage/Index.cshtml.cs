@@ -7,6 +7,7 @@ using Web.Data.Models;
 using Web.Infrastructures;
 using Web.Services.Users;
 using static Web.Data.DataConstants;
+using static Web.WebConstants;
 
 namespace Web.Areas.Identity.Pages.Account.Manage
 {
@@ -71,8 +72,9 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             var userId = user.Id;
             var personalData = userService.Edit(userId);
 
-            if (User.GetId() == userId)
+            if (User.GetId() != userId)
             {
+                this.TempData[ErrorMessageKey] = "You are not allowed to see this.";
                 personalData = null;
             }
 

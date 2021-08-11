@@ -85,7 +85,7 @@
                 </dl>
             </div>
             <div>
-                <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id">Add to Cart</a> |
+                <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.Id" asp-route-userId="@User.GetId()">Add to Cart</a> |
                 <a asp-action="All">Back to List</a>
             </div>
         </div>
