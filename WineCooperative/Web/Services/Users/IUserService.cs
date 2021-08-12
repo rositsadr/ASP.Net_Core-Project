@@ -5,8 +5,6 @@ namespace Web.Services.Users
 {
    public interface IUserService
     {
-        public bool UserIsManufacturer(string userId);
-
         public IEnumerable<UserInfoServiceModel> All();
 
         public void AddUserAdditionalInfo(string userID, string firstName, string lastName, string street, string townName, string zipCode, string countryName);
@@ -26,5 +24,11 @@ namespace Web.Services.Users
         public bool UserExists(string userId);
 
         public UserInfoServiceModel GetUserWithData(string userId);
+
+        public void ChangeAllUsersProductsToNotInStock(string userId);
+
+        public void ChangeAllServiceToNotAvailable(string userId);
+
+        public void ChangeAllManufacturersToNotFunctional(string userId);
     }
 }

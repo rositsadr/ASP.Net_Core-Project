@@ -6,6 +6,8 @@ using Web.Data;
 using Web.Models;
 using Web.Services.Addresses;
 using Web.Services.Manufacturers.Models;
+using Web.Services.Products;
+using Web.Services.Services;
 using static Web.Services.Constants;
 
 namespace Web.Services.Manufacturers
@@ -15,19 +17,23 @@ namespace Web.Services.Manufacturers
         private readonly WineCooperativeDbContext data;
         private readonly IAddressService addressService;
         private readonly IConfigurationProvider config;
+        private readonly IProductService productService;
+        private readonly IServiceService serviceService;
 
-        public ManufacturerService(WineCooperativeDbContext data, IAddressService addressService, IMapper mapper)
+        public ManufacturerService(WineCooperativeDbContext data, IAddressService addressService, IMapper mapper, IProductService productService, IServiceService serviceService)
         {
             this.data = data;
             this.addressService = addressService;
             this.config = mapper.ConfigurationProvider;
+            this.productService = productService;
+            this.serviceService = serviceService;
         }
 
         public IEnumerable<ManufacturerServiceModel> All() => data.Manufacturers
             .ProjectTo<ManufacturerServiceModel>(config)
             .ToList();
 
-        public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId)
+        public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId,bool isFunctional)
         {
             var addressId = addressService.Address(street, townName, zipCode, countryName);
 
@@ -38,7 +44,8 @@ namespace Web.Services.Manufacturers
                 Email = Email,
                 Description = description,
                 AddressId = addressId,
-                UserId = userId
+                UserId = userId,
+                IsFunctional = isFunctional
             };
 
             data.Manufacturers.Add(manufacturer);
@@ -51,7 +58,7 @@ namespace Web.Services.Manufacturers
                 .ProjectTo<ManufacturerServiceModel>(config)
                 .FirstOrDefault();
 
-        public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode)
+        public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode, bool isFunctional)
         {
             var manufacturer = data.Manufacturers
                 .Where(m => m.Id == manufacturerId)
@@ -69,6 +76,7 @@ namespace Web.Services.Manufacturers
             manufacturer.PhoneNumber = phoneNumber;
             manufacturer.Email = email;
             manufacturer.AddressId = addressId;
+            manufacturer.IsFunctional = isFunctional;
 
             data.SaveChanges();
 
@@ -87,6 +95,24 @@ namespace Web.Services.Manufacturers
 
             if (manufacturer != null)
             {
+                var products = data.Products
+                    .Where(p => p.ManufacturerId == manufacturerId)
+                    .ToList();
+
+                foreach (var product in products)
+                {
+                    productService.Delete(product.Id);
+                }
+
+                var services = data.Services
+                    .Where(p => p.ManufacturerId == manufacturerId)
+                    .ToList();
+
+                foreach (var service in services)
+                {
+                    serviceService.Delete(service.Id);
+                }
+
                 data.Manufacturers.Remove(manufacturer);
                 data.SaveChanges();
                 return true;
@@ -96,14 +122,14 @@ namespace Web.Services.Manufacturers
         }
 
         public bool ManufacturerExistsByName(string name) => data.Manufacturers
-            .Any(m => m.Name == name);
+            .Any(m => m.Name == name && m.IsFunctional == true);
 
         public bool ManufacturerExistsById(string manufacturerId) => this.data.Manufacturers
 .Any(m => m.Id == manufacturerId);
 
         public IEnumerable<ManufacturerNameServiceModel> AllManufacturers() => this.GetManufacturers(data.Manufacturers);
 
-        public IEnumerable<ManufacturerNameServiceModel> ManufacturersNameByUser(string userId) => this.GetManufacturers(data.Manufacturers.Where(m => m.UserId == userId));
+        public IEnumerable<ManufacturerNameServiceModel> ManufacturersNameByUser(string userId) => this.GetManufacturers(data.Manufacturers.Where(m => m.UserId == userId && m.IsFunctional));
 
         public IEnumerable<ManufacturerServiceModel> ManufacturersByUser(string userId) => data.Manufacturers
                 .Where(m=>m.UserId == userId)

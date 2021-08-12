@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Web.Infrastructures;
 using Web.Services.Orders;
+using Web.Services.Users;
 using static Web.WebConstants;
 
 namespace Web.Controllers
@@ -10,8 +11,13 @@ namespace Web.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderService orderService;
+        private readonly IUserService userService;
 
-        public OrderController(IOrderService orderService) => this.orderService = orderService;
+        public OrderController(IOrderService orderService, IUserService userService)
+        {
+            this.orderService = orderService;
+            this.userService = userService;
+        }
 
         public IActionResult OrderDetails(string id)
         {
@@ -31,6 +37,12 @@ namespace Web.Controllers
             if (User.GetId() != id)
             {
                 return BadRequest();
+            }
+
+            if(!userService.UserHasAdditionaInfo(id))
+            {
+                this.TempData[ErrorMessageKey] = "Please fill up your data before order.";
+                return RedirectToPage("/Account/Manage/Index", new { area = "Identity" });
             }
 
             int orderId = orderService.CreateOrderInTheDatabase(id);

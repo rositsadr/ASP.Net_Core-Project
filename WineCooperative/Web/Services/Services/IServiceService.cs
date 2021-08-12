@@ -9,8 +9,9 @@ namespace Web.Services.Services
     {
         public void Create(string name, decimal price, string imageUrl, string description, string manufacturerId, bool available);
 
-        public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
+        public ServiceSearchPageServiceModel AllAvailable(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
 
+        public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
         public ServiceDetailsIdServiceModel Edit(string serviceId);
 
         public bool ApplyChanges(string serviceId, string name, string description, string imageUrl, decimal price, bool available, string manufacturerId);

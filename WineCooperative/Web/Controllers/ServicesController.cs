@@ -84,13 +84,17 @@ namespace Web.Controllers
 
         public IActionResult All([FromQuery] ServiceSearchPageModel query, string id = null)
         {
-            var servicesResult = this.serviceService.All(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
+            var servicesResult = new ServiceSearchPageServiceModel();
 
-            if(!User.IsAdmin())
+            if(User.IsAdmin())
             {
-                servicesResult.Services = servicesResult.Services
-                    .Where(s => s.Available);
+                servicesResult = this.serviceService.All(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
             }
+            else
+            {
+                servicesResult = this.serviceService.AllAvailable(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
+            }
+
             if (id != null)
             {
                 servicesResult.Services = servicesResult.Services
@@ -159,7 +163,7 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(service.ManufacturerId), "The Manufacturer does not exists.");
             }
 
-            if (serviceService.ServiceExists(service.ManufacturerId, service.Name))
+            if (serviceService.ServiceExists(service.ManufacturerId, service.Name) && service.Available)
             {
                 this.ModelState.AddModelError(string.Empty, "This service is already in the list.");
             }

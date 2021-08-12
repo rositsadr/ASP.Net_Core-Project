@@ -7,11 +7,11 @@ namespace Web.Services.Manufacturers
     {
         public IEnumerable<ManufacturerServiceModel> All();
 
-        public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId);
+        public void Create(string name, string phoneNumber, string Email, string description, string street, string zipCode, string townName, string countryName, string userId, bool isFunctional);
 
         public ManufacturerServiceModel Edit(string manufacturerId);
 
-        public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode);
+        public bool ApplyChanges(string manufacturerId, string name, string description, string phoneNumber, string email, string street, string townName, string zipCode, bool isFunctional);
 
         public ManufacturerServiceModel Details(string manufacturerId);
 

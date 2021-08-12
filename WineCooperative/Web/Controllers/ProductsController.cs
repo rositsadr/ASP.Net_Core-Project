@@ -6,6 +6,7 @@ using Web.Infrastructures;
 using Web.Models.Products;
 using Web.Services.Manufacturers;
 using Web.Services.Products;
+using Web.Services.Products.Models;
 using static Web.WebConstants;
 
 namespace Web.Controllers
@@ -116,12 +117,15 @@ namespace Web.Controllers
 
         public IActionResult All([FromQuery] ProductSearchPageModel query, string id = null)
         {
-            var productsResult = this.productService.All(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
+            var productsResult = new ProductSearchPageServiceModel();
 
-            if(!User.IsAdmin())
+            if (User.IsAdmin())
             {
-                productsResult.Products = productsResult.Products
-                    .Where(p => p.InStock);
+                productsResult = this.productService.All(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
+            }
+            else
+            {
+                productsResult = this.productService.AllInStock(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
             }
 
             if(id!=null)
@@ -218,7 +222,7 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
             }
 
-            if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
+            if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties) && product.InStock)
             {
                 this.ModelState.AddModelError(string.Empty, "This wine is already in the list.");
             }

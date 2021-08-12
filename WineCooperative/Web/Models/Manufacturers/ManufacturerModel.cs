@@ -14,11 +14,14 @@ namespace Web.Models.Manufacturers
         [Required]
         [StringLength(ManufacturerPhoneNumberMaxLength, MinimumLength = ManufacturerPhoneNumberMinLength)]
         [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; init; }
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; init; }
+
+        [Display(Name ="Is functional")]
+        public bool IsFunctional { get; init; }
 
         [Required]
         public ManufacturerAddressViewModel Address { get; init; }

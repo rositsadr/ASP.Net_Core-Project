@@ -37,6 +37,8 @@ namespace Web.Models
         [Required]
         public string Email { get; set; }
 
+        public bool IsFunctional { get; set; }
+
         [Required]
         public string UserId { get; set; }
 

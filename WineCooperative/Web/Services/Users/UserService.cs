@@ -27,9 +27,6 @@ namespace Web.Services.Users
 
         public IEnumerable<UserInfoServiceModel> All() => this.GetUsers(data.Users);
 
-        public bool UserIsManufacturer(string userId) => data.Manufacturers
-            .Any(m => m.UserId == userId);
-
         public void AddUserAdditionalInfo(string userID, string firstName, string lastName, string street, string townName, string zipCode, string countryName)
         {
             var addressId = addressService.Address(street,townName,zipCode,countryName);
@@ -111,5 +108,47 @@ namespace Web.Services.Users
                 .Where(u => u.Id == userId)
                 .ProjectTo<UserInfoServiceModel>(config)
                 .FirstOrDefault();
+
+        public void ChangeAllUsersProductsToNotInStock(string userId)
+        {
+            var products = data.Products
+                .Where(p => p.Manufacturer.UserId == userId)
+                .ToList();
+
+            foreach (var product in products)
+            {
+                product.InStock = false;
+            }
+
+            data.SaveChanges();
+        }
+
+        public void ChangeAllServiceToNotAvailable(string userId)
+        {
+            var services = data.Services
+                .Where(s => s.Manufacturer.UserId == userId)
+                .ToList();
+
+            foreach (var service in services)
+            {
+                service.Available = false;
+            }
+
+            data.SaveChanges();
+        }
+
+        public void ChangeAllManufacturersToNotFunctional(string userId)
+        {
+            var manufacturers = data.Manufacturers
+                .Where(m => m.UserId == userId)
+                .ToList();
+
+            foreach (var manufacturer in manufacturers)
+            {
+                manufacturer.IsFunctional = false;
+            }
+
+            data.SaveChanges();
+        }
     }
 }

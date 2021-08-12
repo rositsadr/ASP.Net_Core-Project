@@ -40,39 +40,21 @@ namespace Web.Services.Services
             data.SaveChanges();
         }
 
+        public ServiceSearchPageServiceModel AllAvailable(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting)
+        {
+            var servicesQuery = data.Services
+                .Where(s=>s.Available)
+                .AsQueryable();
+
+            return this.SearchPage(servicesQuery, servicesPerRage, currantPage, searchTerm, sorting);
+        }
+
         public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting)
         {
             var servicesQuery = data.Services
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                servicesQuery = servicesQuery
-                    .Where(p => (p.Name.ToLower() + " " + p.Description.ToLower()).Contains(searchTerm));
-            }
-
-            servicesQuery = sorting switch
-            {
-                ServiceSort.ByDate => servicesQuery.OrderByDescending(p => p.DateCreated),
-                ServiceSort.ByManufacturer => servicesQuery.OrderBy(p => p.Manufacturer.Name),
-                ServiceSort.ByName or _ => servicesQuery.OrderBy(p => p.Name)
-            };
-
-            var totalServices = servicesQuery.Count();
-
-            var services = servicesQuery
-                .Skip((currantPage - 1) * servicesPerRage)
-                 .Take(servicesPerRage)
-                 .ProjectTo<ServiceDetailsIdServiceModel>(config)
-                 .ToList();
-
-            return new ServiceSearchPageServiceModel
-            {
-                TotalServices = totalServices,
-                CurrantPage = currantPage,
-                ServicesPerPage = servicesPerRage,
-                Services = services,
-            };
+            return this.SearchPage(servicesQuery, servicesPerRage, currantPage, searchTerm, sorting);
         }
 
         public ServiceDetailsIdServiceModel Edit(string serviceId) => this.GetService(serviceId);
@@ -155,7 +137,7 @@ namespace Web.Services.Services
         }
 
         public bool ServiceExists(string manufacturerId, string name) => data.Services
-            .Any(s => s.ManufacturerId == manufacturerId && s.Name == name);
+            .Any(s => s.ManufacturerId == manufacturerId && s.Name == name && s.Available);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId) => this.data.Services
             .Where(s => s.Manufacturer.UserId == userId)
@@ -169,5 +151,37 @@ namespace Web.Services.Services
             .Where(s=>s.Id == serviceId)
             .ProjectTo<ServiceDetailsIdServiceModel>(config)
             .FirstOrDefault();
+
+        private ServiceSearchPageServiceModel SearchPage(IQueryable<Service> servicesQuery, int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting)
+        {
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                servicesQuery = servicesQuery
+                    .Where(p => (p.Name.ToLower() + " " + p.Description.ToLower()).Contains(searchTerm));
+            }
+
+            servicesQuery = sorting switch
+            {
+                ServiceSort.ByDate => servicesQuery.OrderByDescending(p => p.DateCreated),
+                ServiceSort.ByManufacturer => servicesQuery.OrderBy(p => p.Manufacturer.Name),
+                ServiceSort.ByName or _ => servicesQuery.OrderBy(p => p.Name)
+            };
+
+            var totalServices = servicesQuery.Count();
+
+            var services = servicesQuery
+                .Skip((currantPage - 1) * servicesPerRage)
+                 .Take(servicesPerRage)
+                 .ProjectTo<ServiceDetailsIdServiceModel>(config)
+                 .ToList();
+
+            return new ServiceSearchPageServiceModel
+            {
+                TotalServices = totalServices,
+                CurrantPage = currantPage,
+                ServicesPerPage = servicesPerRage,
+                Services = services,
+            };
+        }
     }
 }

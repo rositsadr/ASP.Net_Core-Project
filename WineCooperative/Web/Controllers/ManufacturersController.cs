@@ -9,8 +9,7 @@ using Web.Services.Manufacturers;
 using Web.Services.Manufacturers.Models;
 using static Web.Services.Constants;
 using static Web.WebConstants;
-using static Web.Controllers.ControllersConstants;
-using System;
+using System.Linq;
 
 namespace Web.Controllers
 {
@@ -20,11 +19,11 @@ namespace Web.Controllers
         private readonly IMapper mapper;
         private readonly IMemoryCache cache;
 
-        public ManufacturersController(IManufacturerService manufacturerService, IMapper mapper, IMemoryCache ceche)
+        public ManufacturersController(IManufacturerService manufacturerService, IMapper mapper, IMemoryCache cache)
         {
             this.manufacturerService = manufacturerService;
             this.mapper = mapper;
-            this.cache = ceche;
+            this.cache = cache;
         }
 
         [Authorize]
@@ -65,13 +64,13 @@ namespace Web.Controllers
                     return View(manufacturer);
                 }
 
-                manufacturerService.Create(manufacturer.Name, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Description,manufacturer.Address.Street, manufacturer.Address.ZipCode, manufacturer.Address.TownName, CountryOfManufacturing, User.GetId());
+                manufacturerService.Create(manufacturer.Name, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Description,manufacturer.Address.Street, manufacturer.Address.ZipCode, manufacturer.Address.TownName, CountryOfManufacturing, User.GetId(), manufacturer.IsFunctional);
+
+                cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
 
                 this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded,"manufacturer");
                 return RedirectToAction("All");
             }
-
-            cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
 
             this.TempData[ErrorMessageKey] = NotPermitted;
             return RedirectToAction("BecomeMember", "Users");
@@ -89,6 +88,13 @@ namespace Web.Controllers
                 cache.Set(manufacturersCacheKey, manufacturers);
             }
            
+            if(!User.IsAdmin())
+            {
+                manufacturers = manufacturers
+                    .Where(m => m.IsFunctional)
+                    .ToList();
+            }
+
             return View(manufacturers);
         }
 
@@ -133,7 +139,7 @@ namespace Web.Controllers
                 ModelState.AddModelError(string.Empty, "The manufacturer does not exists.");
             }
 
-            if(manufacturerService.ManufacturerExistsByName(manufacturer.Name))
+            if(manufacturerService.ManufacturerExistsByName(manufacturer.Name) && manufacturer.IsFunctional)
             {
                 ModelState.AddModelError(string.Empty, "This manufacturer already exists!");
             }
@@ -148,7 +154,7 @@ namespace Web.Controllers
                 return BadRequest();
             }
 
-            this.manufacturerService.ApplyChanges(id, manufacturer.Name, manufacturer.Description, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Address.Street,manufacturer.Address.TownName, manufacturer.Address.ZipCode);
+            this.manufacturerService.ApplyChanges(id, manufacturer.Name, manufacturer.Description, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Address.Street,manufacturer.Address.TownName, manufacturer.Address.ZipCode, manufacturer.IsFunctional);
 
             cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
 
@@ -156,18 +162,18 @@ namespace Web.Controllers
             return RedirectToAction("All");
         }
 
-        public IActionResult Details(string id)
-        {
-            var manufacturer = manufacturerService.Details(id);
+        //public IActionResult Details(string id)
+        //{
+        //    var manufacturer = manufacturerService.Details(id);
 
-            if (manufacturer == null)
-            {
-                this.TempData[ErrorMessageKey] = "The manufacturer you are trying to view is not in the list!";
-                return RedirectToAction("All");
-            }
+        //    if (manufacturer == null)
+        //    {
+        //        this.TempData[ErrorMessageKey] = "The manufacturer you are trying to view is not in the list!";
+        //        return RedirectToAction("All");
+        //    }
 
-            return View(manufacturer);
-        }
+        //    return View(manufacturer);
+        //}
 
         [Authorize]
         public IActionResult Delete(string id)

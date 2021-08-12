@@ -10,7 +10,7 @@ using Web.Services.Users;
 using Web.Services.Users.Models;
 using static Web.WebConstants;
 using static Web.Areas.AreaConstants;
-using System;
+using Web.Services.Manufacturers.Models;
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -134,6 +134,11 @@ namespace Web.Areas.Admin.Controllers
 
             await userManager.RemoveFromRoleAsync(user, MemberRole);
 
+            userService.ChangeAllUsersProductsToNotInStock(id);
+            userService.ChangeAllServiceToNotAvailable(id);
+            userService.ChangeAllManufacturersToNotFunctional(id);
+
+            cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
             cache.Set<List<UserInfoServiceModel>>(membersCacheKey, null);
             
             this.TempData[SuccessMessageKey] = string.Format(SuccessfullyDeleted, "member");

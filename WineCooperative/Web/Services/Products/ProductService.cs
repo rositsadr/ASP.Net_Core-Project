@@ -53,46 +53,22 @@ namespace Web.Services.Products
             return productToImport.Id;
         }
 
-        public ProductSearchPageServiceModel All(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
+        public ProductSearchPageServiceModel AllInStock(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
         {
 
             var productsQuery = data.Products
+                .Where(p=>p.InStock)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(color))
-            {
-                productsQuery = productsQuery
-                    .Where(p => p.Color.Name == color);
-            }
+            return this.SearchPage(productsQuery, color, searchTerm, sorting, currantPage, productsPerRage);
+        }
 
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                productsQuery = productsQuery
-                    .Where(p => (p.Name.ToLower() + " " + p.Description.ToLower()).Contains(searchTerm));
-            }
+        public ProductSearchPageServiceModel All(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage)
+        {
+            var productsQuery = data.Products
+               .AsQueryable();
 
-            productsQuery = sorting switch
-            {
-                ProductsSort.ByYear => productsQuery.OrderByDescending(p => p.ManufactureYear),
-                ProductsSort.ByManufacturer => productsQuery.OrderBy(p => p.Manufacturer.Name),
-                ProductsSort.ByName or _ => productsQuery.OrderBy(p => p.Name)
-            };
-
-            var totalProducts = productsQuery.Count();
-
-            var products = productsQuery
-                 .Skip((currantPage - 1) * productsPerRage)
-                 .Take(productsPerRage)
-                 .ProjectTo<ProductServiceModel>(config)
-                 .ToList();
-
-            return new ProductSearchPageServiceModel
-            {
-                TotalProducts = totalProducts,
-                CurrantPage = currantPage,
-                ProductsPerPage = productsPerRage,
-                Products = products,
-            };
+            return this.SearchPage(productsQuery, color, searchTerm, sorting, currantPage, productsPerRage);
         }
 
         public IEnumerable<ProductDetailsServiceModel> ProductsByUser(string userId) => this.GetProducts(data.Products
@@ -212,7 +188,7 @@ namespace Web.Services.Products
 
         public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties)
         {
-            if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId && p.GrapeVarieties.Count() == grapeVarieties.Count()))
+            if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId && p.GrapeVarieties.Count() == grapeVarieties.Count() && p.InStock))
             {
                 var grapeVarietiesToCompare = data.Products
                     .Where(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId)
@@ -244,5 +220,49 @@ namespace Web.Services.Products
         private IEnumerable<ProductDetailsServiceModel> GetProducts(IQueryable<Product> productQuery) => productQuery
             .ProjectTo<ProductDetailsServiceModel>(config)
             .ToList();
+
+        private ProductSearchPageServiceModel SearchPage(IQueryable<Product> productsQuery, string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
+        {
+
+            //var productsQuery = data.Products
+            //    .Where(p=>p.InStock)
+            //    .AsQueryable();
+
+            if (!string.IsNullOrEmpty(color))
+            {
+                productsQuery = productsQuery
+                    .Where(p => p.Color.Name == color);
+            }
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                productsQuery = productsQuery
+                    .Where(p => (p.Name.ToLower() + " " + p.Description.ToLower()).Contains(searchTerm));
+            }
+
+            productsQuery = sorting switch
+            {
+                ProductsSort.ByYear => productsQuery.OrderByDescending(p => p.ManufactureYear),
+                ProductsSort.ByManufacturer => productsQuery.OrderBy(p => p.Manufacturer.Name),
+                ProductsSort.ByName or _ => productsQuery.OrderBy(p => p.Name)
+            };
+
+            
+            var totalProducts = productsQuery.Count();
+
+            var products = productsQuery
+                 .Skip((currantPage - 1) * productsPerRage)
+                 .Take(productsPerRage)
+                 .ProjectTo<ProductServiceModel>(config)
+                 .ToList();
+
+            return new ProductSearchPageServiceModel
+            {
+                TotalProducts = totalProducts,
+                CurrantPage = currantPage,
+                ProductsPerPage = productsPerRage,
+                Products = products,
+            };
+        }
     }
 }

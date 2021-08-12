@@ -22,5 +22,7 @@
 
         public const string NotExistToDelete = "{0} does not exists to be deleted!";
 
+        public const string manufacturersCacheKey = "AllManufacturers";
+
     }
 }

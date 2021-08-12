@@ -29,6 +29,7 @@
                             <p class="card-text mb-0">Zip code: @manufacturer.Address.ZipCode</p>
                         </div>
                     </div>
+                    <p class="card-text mb-0">Is Functional: @(manufacturer.IsFunctional?"Yes":"No")</p>
                     @if (manufacturer.Description != null)
                     {
                         <p class="card-text mb-0">Description: @manufacturer.Description</p>
