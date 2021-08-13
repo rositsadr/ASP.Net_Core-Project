@@ -162,6 +162,7 @@ namespace Web.Controllers
             return RedirectToAction("All");
         }
 
+        //To be implemented when or if needed!!!
         //public IActionResult Details(string id)
         //{
         //    var manufacturer = manufacturerService.Details(id);

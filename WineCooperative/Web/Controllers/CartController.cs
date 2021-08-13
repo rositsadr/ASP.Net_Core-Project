@@ -53,9 +53,16 @@ namespace Web.Controllers
                 return Unauthorized();
             }
 
-            cartService.AddFunction(productId, userId);
+            var success = cartService.AddFunction(productId, userId);
 
-            return RedirectToAction("MyCart",new { userId = userId });
+            if(success)
+            {
+                return RedirectToAction("MyCart", new { userId = userId });
+            }
+            else
+            {
+                return BadRequest("Not Existing item in your cart.");
+            }
         }
 
         public IActionResult Remove(string productId, string userId)
