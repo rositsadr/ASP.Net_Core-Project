@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
@@ -223,11 +224,6 @@ namespace Web.Services.Products
 
         private ProductSearchPageServiceModel SearchPage(IQueryable<Product> productsQuery, string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
         {
-
-            //var productsQuery = data.Products
-            //    .Where(p=>p.InStock)
-            //    .AsQueryable();
-
             if (!string.IsNullOrEmpty(color))
             {
                 productsQuery = productsQuery
@@ -247,22 +243,28 @@ namespace Web.Services.Products
                 ProductsSort.ByName or _ => productsQuery.OrderBy(p => p.Name)
             };
 
-            
             var totalProducts = productsQuery.Count();
 
-            var products = productsQuery
+            var maxPage = Math.Ceiling((double)totalProducts /productsPerRage);
+
+            if (currantPage >= 1 && currantPage <= maxPage)
+            {
+                var products = productsQuery
                  .Skip((currantPage - 1) * productsPerRage)
                  .Take(productsPerRage)
                  .ProjectTo<ProductServiceModel>(config)
                  .ToList();
 
-            return new ProductSearchPageServiceModel
-            {
-                TotalProducts = totalProducts,
-                CurrantPage = currantPage,
-                ProductsPerPage = productsPerRage,
-                Products = products,
-            };
+                return new ProductSearchPageServiceModel
+                {
+                    TotalProducts = totalProducts,
+                    CurrantPage = currantPage,
+                    ProductsPerPage = productsPerRage,
+                    Products = products,
+                };
+            }
+
+            return null;
         }
     }
 }

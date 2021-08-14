@@ -14,7 +14,7 @@ using static Web.Tests.Data.ProductTestData;
 
 namespace Web.Tests.Controllers
 {
-    public class ManufacturerControllerTests
+    public class ManufacturersControllerTests
     {
         [Fact]
         public void GetAddActionShouldReturnViewIfUserIsMember() =>
@@ -97,11 +97,10 @@ namespace Web.Tests.Controllers
             .To<ManufacturersController>(c => c.All());
 
         [Theory]
-        [InlineData(2,2)]
-        public void AllActionShouldReturnView(int count, int expectedCount) =>
+        [InlineData(2)]
+        public void AllActionShouldReturnView(int count) =>
             MyController<ManufacturersController>
-            .Instance(controller => controller
-                .WithUser(TestUser.Identifier, TestUser.Username, MemberRole, AdministratorRole)
+            .Instance(controller => controller                
                 .WithData(GetManufacturers(count)))
             .Calling(c => c.All())
             .ShouldHave()
@@ -113,7 +112,7 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<List<ManufacturerServiceModel>>()
-                    .Passing(m=>m.Count() == expectedCount));
+                    .Passing(m=>m.Count() == count));
 
         [Fact]
         public void GetEditActionRouteWithRouteValue() =>
@@ -145,7 +144,7 @@ namespace Web.Tests.Controllers
             .Configuration()
             .ShouldMap(request => request
                 .WithPath($"/Manufacturers/Edit/{ManufacturerId}")
-                .WithMethod(HttpMethod.Post)
+                .WithMethod(HttpMethod.Post)                
                 .WithAntiForgeryToken())
             .To<ManufacturersController>(c => c.Edit(With
                     .Any<ManufacturerModel>(), ManufacturerId));
@@ -207,8 +206,7 @@ namespace Web.Tests.Controllers
              MyController<ManufacturersController>
             .Instance(controller => controller
                 .WithUser(TestUser.Identifier, TestUser.Username, MemberRole, AdministratorRole)
-                .WithData(new Manufacturer() { UserId = TestUser.Identifier, Id = ManufacturerId })
-                .WithData(new Product() { Id = ProductId, ManufacturerId = ManufacturerId })
+                .WithData(new Manufacturer() { UserId = TestUser.Identifier, Id = ManufacturerId }, new Product() { Id = ProductId, ManufacturerId = ManufacturerId })                
                 .WithMemoryCache(cache => cache
                     .WithEntry(entity => entity
                         .WithKey(membersCacheKey)

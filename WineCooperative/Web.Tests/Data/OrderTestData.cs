@@ -18,7 +18,8 @@ namespace Web.Tests.Data
                 .Select(i => new OrderProduct
                 {
                     OrderId = orderId,
-                    ProductId = i.ToString()
+                    ProductId = i.ToString(),
+                    Quantity = i
                 })
                 .ToList();
 
@@ -29,5 +30,39 @@ namespace Web.Tests.Data
                 UserId = userId,
                 OrderProducts = OrderProducts(count,orderId)
             };
+
+        public static Order OrderWithUserAndProduct(int productsCount, int orderId, string userId)
+        {
+            var products = Enumerable
+                .Range(1, productsCount)
+                .Select(i => new Product
+                {
+                    Id = i.ToString(),
+                    Name = $"Product {i}",
+                    Price = i,
+                });
+
+            var order = new Order
+            {
+                Id = orderId,
+                UserId = userId,
+                OrderProducts =new List<OrderProduct>()
+            };
+
+            foreach (var product in products)
+            {
+                var orderProduct = new OrderProduct
+                {
+                    OrderId = orderId,
+                    ProductId = product.Id,
+                    Product = product,
+                    Quantity = 1
+                };
+
+                order.OrderProducts.Add(orderProduct);
+            }
+
+            return order;
+        }
     }
 }

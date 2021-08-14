@@ -17,7 +17,7 @@ namespace Web.Tests.Controllers
         public void CartControllerShouldHaveAuthorizedUser() =>
             MyController<CartController>
             .Instance(controller => controller
-                .WithUser(MyTested.AspNetCore.Mvc.TestUser.Identifier, MyTested.AspNetCore.Mvc.TestUser.Username))
+                .WithUser(TestUser.Identifier, TestUser.Username))
             .ShouldHave()
             .Attributes(attributes => attributes
                .RestrictingForAuthorizedRequests());
@@ -28,18 +28,18 @@ namespace Web.Tests.Controllers
             .Configuration()
             .ShouldMap(request => request
                .WithPath("/Cart/MyCart")
-               .WithQuery("userId", MyTested.AspNetCore.Mvc.TestUser.Identifier)
-               .WithUser(MyTested.AspNetCore.Mvc.TestUser.Identifier, MyTested.AspNetCore.Mvc.TestUser.Username))
-            .To<CartController>(c => c.MyCart(MyTested.AspNetCore.Mvc.TestUser.Identifier));
+               .WithQuery("userId", TestUser.Identifier)
+               .WithUser(TestUser.Identifier, TestUser.Username))
+            .To<CartController>(c => c.MyCart(TestUser.Identifier));
 
         [Theory]
-        [InlineData("1", "2", 3,1)]
-        public void MyCartControllerShouldHaveAuthorizedUserAndReturnViewWithCorrectData(string manufacturerId, string ownerUserId, int count, int quantity) =>
+        [InlineData("1", "2", 3,1, 1,2,3)]
+        public void MyCartControllerShouldHaveAuthorizedUserAndReturnViewWithCorrectData(string manufacturerId, string ownerUserId, int count, int quantity, int tasteId, int wineAreId, int colorId) =>
             MyController<CartController>
             .Instance(controller => controller
-                .WithUser(MyTested.AspNetCore.Mvc.TestUser.Identifier, MyTested.AspNetCore.Mvc.TestUser.Username)
-                .WithData(GetCartItems(manufacturerId, ownerUserId, count, MyTested.AspNetCore.Mvc.TestUser.Identifier, quantity)))
-            .Calling(c => c.MyCart(MyTested.AspNetCore.Mvc.TestUser.Identifier))
+                .WithUser(TestUser.Identifier, TestUser.Username)
+                .WithData(GetCartItems(manufacturerId, ownerUserId, count,TestUser.Identifier, quantity, tasteId, wineAreId, colorId)))
+            .Calling(c => c.MyCart(TestUser.Identifier))
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<List<CartItemViewServiceModel>>()
@@ -53,17 +53,17 @@ namespace Web.Tests.Controllers
                 .WithPath("/Cart/AddToCart")
                 .WithUser()
                 .WithQuery("productId", ProductId)
-                .WithQuery("userId", MyTested.AspNetCore.Mvc.TestUser.Identifier))
-            .To<CartController>(c => c.AddToCart(ProductId, MyTested.AspNetCore.Mvc.TestUser.Identifier));
+                .WithQuery("userId", TestUser.Identifier))
+            .To<CartController>(c => c.AddToCart(ProductId, TestUser.Identifier));
 
         [Theory]
-        [InlineData("1", "2", "3", 4)]
-        public void AddToCartActionShouldAddProductToCartAndRedirectToAll(string manufacturerId, string ownerId, string buyerId, int count) =>
+        [InlineData("1", "2", "3", 4, 1, 2, 3)]
+        public void AddToCartActionShouldAddProductToCartAndRedirectToAll(string manufacturerId, string ownerId, string buyerId, int count, int tasteId, int colorId, int wineAreId) =>
             MyController<CartController>
             .Instance(controller => controller
                 .WithUser(buyerId,"testUser")
-                .WithData(GetProducts(manufacturerId, ownerId, count))
-                .WithData(TestUser(buyerId)))
+                .WithData(GetProducts(manufacturerId, ownerId, count, tasteId, wineAreId, colorId))
+                .WithData(CustomeTestUser(buyerId)))
             .Calling(c => c.AddToCart(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
@@ -84,18 +84,18 @@ namespace Web.Tests.Controllers
                 .WithPath("/Cart/Add")
                 .WithUser()
                 .WithQuery("productId", ProductId)
-                .WithQuery("userId", MyTested.AspNetCore.Mvc.TestUser.Identifier))
-            .To<CartController>(c => c.Add(ProductId, MyTested.AspNetCore.Mvc.TestUser.Identifier));
+                .WithQuery("userId", TestUser.Identifier))
+            .To<CartController>(c => c.Add(ProductId, TestUser.Identifier));
 
 
         [Theory]
-        [InlineData("1", "2", "3", 4, 1)]
-        public void AddActionShouldIncreaseQuantityOfCartItem(string manufacturerId, string ownerId, string buyerId, int count, int quantity) =>
+        [InlineData("1", "2", "3", 4, 1, 1,2,3)]
+        public void AddActionShouldIncreaseQuantityOfCartItem(string manufacturerId, string ownerId, string buyerId, int count, int quantity, int tasteId, int wineareId, int colorId) =>
             MyController<CartController>
             .Instance(controller => controller
                 .WithUser(buyerId, "testUser")
-                .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity))
-                .WithData(TestUser(buyerId)))
+                .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity, tasteId, wineareId, colorId))
+                .WithData(CustomeTestUser(buyerId)))
             .Calling(c => c.Add(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
@@ -112,18 +112,18 @@ namespace Web.Tests.Controllers
                .WithPath("/Cart/Remove")
                .WithUser()
                .WithQuery("productId", ProductId)
-               .WithQuery("userId", MyTested.AspNetCore.Mvc.TestUser.Identifier))
-           .To<CartController>(c => c.Remove(ProductId, MyTested.AspNetCore.Mvc.TestUser.Identifier));
+               .WithQuery("userId", TestUser.Identifier))
+           .To<CartController>(c => c.Remove(ProductId, TestUser.Identifier));
 
 
         [Theory]
-        [InlineData("1", "2", "3", 4, 2)]
-        public void RemoveActionShouldDecreaseQuantityOfCartItem(string manufacturerId, string ownerId, string buyerId, int count, int quantity) =>
+        [InlineData("1", "2", "3", 4, 2, 1, 2, 3)]
+        public void RemoveActionShouldDecreaseQuantityOfCartItem(string manufacturerId, string ownerId, string buyerId, int count, int quantity, int tasteId, int wineareId, int colorId) =>
             MyController<CartController>
             .Instance(controller => controller
                 .WithUser(buyerId, "testUser")
-                .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity))
-                .WithData(TestUser(buyerId)))
+                .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity,  tasteId, wineareId, colorId))
+                .WithData(CustomeTestUser(buyerId)))
             .Calling(c => c.Remove(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
@@ -134,13 +134,13 @@ namespace Web.Tests.Controllers
 
 
         [Theory]
-        [InlineData("1", "2", "3", 4, 1)]
-        public void RemoveActionShouldNotRemoveIfQuantityIsLessThenTwo(string manufacturerId, string ownerId, string buyerId, int count, int quantity) =>
+        [InlineData("1", "2", "3", 4, 1, 1,2,3)]
+        public void RemoveActionShouldNotRemoveIfQuantityIsLessThenTwo(string manufacturerId, string ownerId, string buyerId, int count, int quantity, int tasteId, int colorId, int wineAreId) =>
             MyController<CartController>
             .Instance(controller => controller
                 .WithUser(buyerId, "testUser")
-                .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity))
-                .WithData(TestUser(buyerId)))
+                .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity, tasteId, wineAreId, colorId))
+                .WithData(CustomeTestUser(buyerId)))
             .Calling(c => c.Remove(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
@@ -157,17 +157,17 @@ namespace Web.Tests.Controllers
                 .WithPath("/Cart/Delete")
                 .WithUser()
                 .WithQuery("productId", ProductId)
-               .WithQuery("userId", MyTested.AspNetCore.Mvc.TestUser.Identifier))
-            .To<CartController>(c=> c.Delete(ProductId, MyTested.AspNetCore.Mvc.TestUser.Identifier));
+               .WithQuery("userId", TestUser.Identifier))
+            .To<CartController>(c=> c.Delete(ProductId, TestUser.Identifier));
 
         [Theory]
-        [InlineData("1", "2", "3", 4, 2)]
-        public void DeleteActionShouldRemoveProductFromCartItem(string manufacturerId, string ownerId, string buyerId, int count, int quantity) =>
+        [InlineData("1", "2", "3", 4, 2, 1, 2, 3)]
+        public void DeleteActionShouldRemoveProductFromCartItem(string manufacturerId, string ownerId, string buyerId, int count, int quantity, int tasteId, int wineareId, int colorId) =>
            MyController<CartController>
            .Instance(controller => controller
                .WithUser(buyerId, "testUser")
-               .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity))
-               .WithData(TestUser(buyerId)))
+               .WithData(GetCartItems(manufacturerId, ownerId, count, buyerId, quantity, tasteId, wineareId, colorId))
+               .WithData(CustomeTestUser(buyerId)))
            .Calling(c => c.Delete(count.ToString(), buyerId))
            .ShouldHave()
            .Data(data => data

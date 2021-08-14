@@ -75,7 +75,7 @@ namespace Web.Controllers
                 serviceService.Create(service.Name, service.Price, service.ImageUrl, service.Description, service.ManufacturerId, service.Available);
 
                 this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded,"service");
-                return RedirectToAction("All", "Services");
+                return RedirectToAction("All");
             }
 
             this.TempData[ErrorMessageKey] = NotPermitted;

@@ -16,7 +16,9 @@
                 <div class="card-body">
                     <h5 class="card-title">@manufacturer.Name</h5>
                     <div class="card-subtitle mb-2 text-muted">
-                        <p>Address: @manufacturer.Address.Street , @manufacturer.Address.TownName</p>
+                        <p><span class="fw-bold">E-mail: </span>@manufacturer.Email</p>
+                        <p><span class="fw-bold">Phone number: </span>@manufacturer.PhoneNumber</p>
+                        <p><span class="fw-bold">Address: </span>@manufacturer.Address.Street , @manufacturer.Address.TownName</p>
                         <p>@manufacturer.Address.ZipCode Bulgaria</p>
                     </div>
                     <p class="card-text">@manufacturer.Description</p>
@@ -24,10 +26,10 @@
                     <a asp-controller="Services" asp-action="All" asp-route-id="@manufacturer.Id" class="card-link float-right">Services</a>
                     @if (User.IsAdmin())
                     {
-                <div class="text-center mt-3">
-                    <a class="btn btn-warning" role="button" asp-area="" asp-controller="Services" asp-action="Edit" asp-route-id=@manufacturer.Id>Edit</a>
-                    <a class="btn btn-danger" role="button" asp-area="" asp-controller="Services" asp-action="Delete" asp-route-id=@manufacturer.Id>Delete</a>
-                </div>
+                        <div class="text-center mt-3">
+                            <a class="btn btn-warning" role="button" asp-area="" asp-controller="Services" asp-action="Edit" asp-route-id=@manufacturer.Id>Edit</a>
+                            <a class="btn btn-danger" role="button" asp-area="" asp-controller="Services" asp-action="Delete" asp-route-id=@manufacturer.Id>Delete</a>
+                        </div>
                     }
                 </div>
             </div>

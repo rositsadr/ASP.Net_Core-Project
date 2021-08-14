@@ -1,12 +1,14 @@
-﻿using Web.Data.Models;
-using Web.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using Web.Data.Models;
+using static Web.WebConstants;
 
 namespace Web.Tests.Data
 {
     public static class UserTestData
     {
-        public static User TestUser(string userId) =>
-         new User() { Id = userId, UserName = "testUser" };
+        public static User CustomeTestUser(string userId) =>
+         new User() { Id = userId, UserName = "testUser",Applyed = false };
 
         public static User UserWithAdditionalData(string userId, int dataId) =>
             new User()
@@ -15,6 +17,6 @@ namespace Web.Tests.Data
                 UserName = "testUser",
                 UserDataId = dataId,               
             };
-
+      
     }
 }

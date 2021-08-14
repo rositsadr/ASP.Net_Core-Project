@@ -113,6 +113,7 @@ namespace Web.Controllers
             userService.ApplyForMember(id);
 
             cache.Set<List<UserInfoServiceModel>>(applyedCacheKey, null);
+
             this.TempData[SuccessMessageKey] = "You successfuly applyed for member. Now please check you additional data.";
             return RedirectToPage("/Account/Manage/Index",new { area = "Identity" });
         }

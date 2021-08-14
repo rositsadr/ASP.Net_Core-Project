@@ -128,6 +128,11 @@ namespace Web.Controllers
                 productsResult = this.productService.AllInStock(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
             }
 
+            if(productsResult == null)
+            {
+                return BadRequest();
+            }
+
             if(id!=null)
             {
                 productsResult.Products = productsResult.Products

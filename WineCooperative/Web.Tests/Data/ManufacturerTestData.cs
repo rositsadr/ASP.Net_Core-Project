@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Web.Data.Models;
 using Web.Models;
 
 
@@ -41,5 +42,13 @@ namespace Web.Tests.Data
 
         public static string ManufacturerId =>
             new Guid().ToString();
+
+        public static Manufacturer ManufacturerWithUser(string userMemberId, string manufacturerId) => new Manufacturer
+        {
+            Id = manufacturerId,
+            Name = "TestManufacturer",
+            UserId = userMemberId,
+            IsFunctional = true,
+        };
     }
 }
