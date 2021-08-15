@@ -7,11 +7,13 @@ using Web.Services.Orders.Models;
 using System.Collections.Generic;
 using Xunit;
 using static Web.WebConstants;
+using static Web.Areas.AreaConstants;
 using static Web.Tests.Data.ProductTestData;
 using static Web.Tests.Data.ServiceTestData;
 using static Web.Tests.Data.ManufacturerTestData;
 using static Web.Tests.Data.OrderTestData;
 using static Web.Tests.Data.UserTestData;
+using Web.Services.Users.Models;
 
 namespace Web.Tests.Controllers
 {
@@ -99,19 +101,38 @@ namespace Web.Tests.Controllers
                 .WithUser())
             .To<UsersController>(c => c.BecomeMember());
 
+        [Fact]
+        public void ApplyActionRouteShouldMap() =>
+            MyRouting
+            .Configuration()
+            .ShouldMap(request => request
+                .WithPath($"/Users/Apply/{TestUser.Identifier}")
+                .WithUser())
+            .To<UsersController>(c=>c.Apply(TestUser.Identifier));
+
         [Theory]
         [InlineData("TestUser")]
         public void ApplyActionShouldMapCorrectly(string userId) =>
-            MyMvc
-            .Pipeline()
-            .ShouldMap(request => request
-                .WithPath($"/Users/Apply/{userId}")
-                .WithUser(userId,"testUser"))
-            .To<UsersController>(c => c.Apply(userId))
-            .Which(controller => controller
-                .WithData(CustomeTestUser(userId)))
-            .ShouldReturn()
-            .Redirect(result => result
-                .ToPage("/Account/Manage/Index"));
+            MyController<UsersController>
+            .Instance(controller => controller
+                .WithUser(userId, "testUser")
+                .WithData(CustomeTestUser(userId))
+                .WithMemoryCache(cache => cache
+                    .WithEntry(entry => entry
+                        .WithKey(applyedCacheKey)
+                        .WithValue(With.Any<List<UserInfoServiceModel>>()))))
+            .Calling(c => c.Apply(userId))
+            .ShouldHave()
+            .MemoryCache(cache => cache
+                .ContainingEntry(entity => entity
+                    .WithKey(applyedCacheKey)
+                    .WithValue(null)))
+            .TempData(temp => temp
+                .ContainingEntryWithKey(SuccessMessageKey));
+            //.AndAlso()
+            //.ShouldReturn()
+            //.Redirect(redirect => redirect
+            //    .ToPage("/Account/Manage/Index")
+            //    .ContainingRouteValue(new { area = "Identity" }));
     }
 }

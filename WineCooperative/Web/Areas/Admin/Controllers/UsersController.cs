@@ -31,7 +31,7 @@ namespace Web.Areas.Admin.Controllers
 
         public IActionResult ApplyedUsers()
         {
-            var users = cache.Get<List<UserInfoServiceModel>>(applyedCacheKey);
+            var users = this.cache.Get<List<UserInfoServiceModel>>(applyedCacheKey);
 
             if(users == null)
             {

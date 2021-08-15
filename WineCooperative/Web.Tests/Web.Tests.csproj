@@ -26,8 +26,4 @@
     <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Areas\" />
-  </ItemGroup>
-
 </Project>

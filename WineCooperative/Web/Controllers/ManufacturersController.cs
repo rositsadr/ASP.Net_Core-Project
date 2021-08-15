@@ -66,8 +66,11 @@ namespace Web.Controllers
 
                 manufacturerService.Create(manufacturer.Name, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Description,manufacturer.Address.Street, manufacturer.Address.ZipCode, manufacturer.Address.TownName, CountryOfManufacturing, User.GetId(), manufacturer.IsFunctional);
 
-                cache.Set<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey, null);
+                var manufacturers = cache.Get<List<ManufacturerServiceModel>>(manufacturersCacheKey);
 
+                cache.Set<List<ManufacturerServiceModel>>(manufacturersCacheKey, null);
+
+                manufacturers = cache.Get<List<ManufacturerServiceModel>>(manufacturersCacheKey);
                 this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded,"manufacturer");
                 return RedirectToAction("All");
             }
@@ -79,11 +82,11 @@ namespace Web.Controllers
 
         public IActionResult All()
         {
-            var manufacturers = cache.Get<IEnumerable<ManufacturerServiceModel>>(manufacturersCacheKey);
+            var manufacturers = cache.Get<List<ManufacturerServiceModel>>(manufacturersCacheKey);
 
             if(manufacturers == null)
             {
-                manufacturers = this.manufacturerService.All();
+                manufacturers = this.manufacturerService.All().ToList();
 
                 cache.Set(manufacturersCacheKey, manufacturers);
             }

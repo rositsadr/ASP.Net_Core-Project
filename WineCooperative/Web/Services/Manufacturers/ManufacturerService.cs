@@ -50,7 +50,6 @@ namespace Web.Services.Manufacturers
 
             data.Manufacturers.Add(manufacturer);
             data.SaveChanges();
-
         }
 
         public ManufacturerServiceModel Edit(string manufacturerId) => data.Manufacturers

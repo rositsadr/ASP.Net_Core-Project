@@ -45,15 +45,14 @@ namespace Web.Tests.Controllers
                     .Any<ManufacturerModel>()));
 
         [Theory]
-        [InlineData("Winary", "00359876543", "winery@abv.bg", true, "Kovachev", "3124", "Spasovo",3)]
-        public void PostAddActionShouldAddManufacturerToDataIfModelStateIsValid(string name, string phoneNumber, string email, bool isFunctional, string street, string zipCode, string townName, int count) =>
+        [InlineData("Winary", "00359876543", "winery@abv.bg", true, "Kovachev", "3124", "Spasovo")]
+        public void PostAddActionShouldAddManufacturerToDataIfModelStateIsValid(string name, string phoneNumber, string email, bool isFunctional, string street, string zipCode, string townName) =>
             MyController<ManufacturersController>
             .Instance(controller => controller
                 .WithUser(roles: MemberRole)
-                .WithData(GetManufacturers(count))
                 .WithMemoryCache(cache => cache
                     .WithEntry(entity => entity
-                        .WithKey(membersCacheKey)
+                        .WithKey(manufacturersCacheKey)
                         .WithValue(With.Any<List<ManufacturerServiceModel>>()))))
             .Calling(c => c.Add(new ManufacturerModel
             {
@@ -69,17 +68,20 @@ namespace Web.Tests.Controllers
                 }
             }))
             .ShouldHave()
+            .MemoryCache(cache => cache
+                .ContainingEntry(entity => entity
+                    .WithKey(manufacturersCacheKey)
+                    .WithValue(null)))
+            .AndAlso()
+            .ShouldHave()
             .ActionAttributes(attributes => attributes
                 .RestrictingForHttpMethod(HttpMethod.Post)
                 .RestrictingForAuthorizedRequests())
-            .ValidModelState()
+            .ValidModelState()           
             .Data(data => data
                 .WithSet<Manufacturer>(manufacturers => manufacturers
                     .Any(m => m.Name == name && m.UserId == TestUser.Identifier))
-                .WithSet<Manufacturer>(m=>m.Count() == count+1))
-            .AndAlso()
-            .ShouldHave()
-            .NoMemoryCache()
+                .WithSet<Manufacturer>(m=> Assert.Equal(1, m.Count())))           
             .AndAlso()
             .ShouldHave() 
             .TempData(tempData=>tempData
@@ -158,7 +160,7 @@ namespace Web.Tests.Controllers
                 .WithData(GetManufacturers(count))
                 .WithMemoryCache(cache => cache
                     .WithEntry(entity => entity
-                        .WithKey(membersCacheKey)
+                        .WithKey(manufacturersCacheKey)
                         .WithValue(With.Any<List<ManufacturerServiceModel>>()))))
             .Calling(c => c.Edit(new ManufacturerModel()
             {
@@ -174,6 +176,10 @@ namespace Web.Tests.Controllers
                 }
             }, count.ToString()))
             .ShouldHave()
+            .MemoryCache(cache => cache
+                .ContainingEntry(entity => entity
+                    .WithKey(manufacturersCacheKey)
+                    .WithValue(null)))
             .ActionAttributes(attributes => attributes
                 .RestrictingForHttpMethod(HttpMethod.Post)
                 .RestrictingForAuthorizedRequests())
@@ -181,11 +187,6 @@ namespace Web.Tests.Controllers
             .Data(data=>data
                 .WithSet<Manufacturer>(m=>m.Any(m=>m.Id == count.ToString() && m.Name == name && m.UserId == TestUser.Identifier && m.PhoneNumber == phoneNumber && m.IsFunctional == isFunctional && m.Email == email && m.Address.Street == street && m.Address.Town.Name == townName && m.Address.ZipCode == zipCode))
                 .WithSet<Manufacturer>(m=>m.Count() == count))
-            .AndAlso()
-            .ShouldHave()
-            .NoMemoryCache()
-            .AndAlso()
-            .ShouldHave()
             .TempData(temp=>temp
                 .ContainingEntryWithKey(SuccessMessageKey))
             .AndAlso()
