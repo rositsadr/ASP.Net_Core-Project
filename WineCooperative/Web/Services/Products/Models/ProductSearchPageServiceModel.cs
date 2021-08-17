@@ -8,7 +8,7 @@ namespace Web.Services.Products.Models
 
         public int CurrantPage { get; init; }
 
-        public int TotalProducts { get; init; }
+        public int TotalProducts { get; set; }
 
         public IEnumerable<ProductServiceModel> Products { get; set; }
     }

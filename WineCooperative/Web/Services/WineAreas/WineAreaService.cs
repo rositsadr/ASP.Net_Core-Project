@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
+using Web.Data.Models;
 using Web.Services.Manufacturers.Models;
 using Web.Services.WineAreas.Models;
 

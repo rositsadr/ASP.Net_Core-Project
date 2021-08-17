@@ -12,9 +12,6 @@ namespace Web.Controllers
         //ToDo:
         public IActionResult Privacy() => View();
 
-        //ToDo
-        public IActionResult AboutUs() => View();
-
         //toDo:
         public IActionResult Contacts() => View(); 
 

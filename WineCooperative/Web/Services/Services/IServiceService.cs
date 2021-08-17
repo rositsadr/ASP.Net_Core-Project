@@ -19,7 +19,7 @@ namespace Web.Services.Services
 
         public bool Delete(string id);
 
-        public bool ServiceExists(string manufacturerId, string name);
+        public bool ServiceExists(string manufacturerId, string name, string imageUrl, decimal price, string description);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId);
 

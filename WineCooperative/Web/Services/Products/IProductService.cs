@@ -40,7 +40,7 @@ namespace Web.Services.Products
 
         public bool GrapeVarietiesExists(IEnumerable<int> grapeVarieties);
 
-        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties);
+        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties,string imageUrl);
 
         public bool IsUsersProduct(string userId, string productId);
     }

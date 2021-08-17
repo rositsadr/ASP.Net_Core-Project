@@ -135,8 +135,8 @@ namespace Web.Services.Services
             return false;
         }
 
-        public bool ServiceExists(string manufacturerId, string name) => data.Services
-            .Any(s => s.ManufacturerId == manufacturerId && s.Name == name && s.Available);
+        public bool ServiceExists(string manufacturerId, string name,string imageUrl, decimal price, string description) => data.Services
+            .Any(s => s.ManufacturerId == manufacturerId && s.Name == name && s.Available && imageUrl == s.ImageUrl && s.Price == price && s.Description == description);
 
         public IEnumerable<ServiceDetailsServiceModel> ServicesByUser(string userId) => this.data.Services
             .Where(s => s.Manufacturer.UserId == userId)
@@ -168,19 +168,31 @@ namespace Web.Services.Services
 
             var totalServices = servicesQuery.Count();
 
-            var services = servicesQuery
+            var maxPage = 1;
+
+            if (totalServices > 0)
+            {
+                maxPage = (int)Math.Ceiling((double)totalServices / servicesPerRage);
+            }
+
+            if (currantPage >= 1 && currantPage <= maxPage)
+            {
+                var services = servicesQuery
                 .Skip((currantPage - 1) * servicesPerRage)
                  .Take(servicesPerRage)
                  .ProjectTo<ServiceDetailsIdServiceModel>(config)
                  .ToList();
 
-            return new ServiceSearchPageServiceModel
-            {
-                TotalServices = totalServices,
-                CurrantPage = currantPage,
-                ServicesPerPage = servicesPerRage,
-                Services = services,
-            };
+                return new ServiceSearchPageServiceModel
+                {
+                    TotalServices = totalServices,
+                    CurrantPage = currantPage,
+                    ServicesPerPage = servicesPerRage,
+                    Services = services,
+                };
+            }
+
+            return null;
         }
     }
 }

@@ -55,7 +55,6 @@ namespace Web.Services.Products
 
         public ProductSearchPageServiceModel AllInStock(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
         {
-
             var productsQuery = data.Products
                 .Where(p=>p.InStock)
                 .AsQueryable();
@@ -186,9 +185,9 @@ namespace Web.Services.Products
             return true;
         }
 
-        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties)
+        public bool WineExists(string name, int manufactureYear, string manufacturerId, int colorId, int tasteId, int wineAreaId, IEnumerable<int> grapeVarieties, string imageUrl)
         {
-            if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId && p.GrapeVarieties.Count() == grapeVarieties.Count() && p.InStock))
+            if (data.Products.Any(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId && p.GrapeVarieties.Count() == grapeVarieties.Count() && p.InStock && p.ImageUrl == imageUrl))
             {
                 var grapeVarietiesToCompare = data.Products
                     .Where(p => p.Name == name && p.ManufactureYear == manufactureYear && p.Manufacturer.Id == manufacturerId && p.ColorId == colorId && p.TasteId == tasteId && p.WineAreaId == wineAreaId)
@@ -239,12 +238,19 @@ namespace Web.Services.Products
             {
                 ProductsSort.ByYear => productsQuery.OrderByDescending(p => p.ManufactureYear),
                 ProductsSort.ByManufacturer => productsQuery.OrderBy(p => p.Manufacturer.Name),
+                ProductsSort.ByPriceAscending => productsQuery.OrderBy(p=>p.Price),
+                ProductsSort.ByPriceDescending => productsQuery.OrderByDescending(p => p.Price),
                 ProductsSort.ByName or _ => productsQuery.OrderBy(p => p.Name)
             };
 
             var totalProducts = productsQuery.Count();
 
-            var maxPage = Math.Ceiling((double)totalProducts /productsPerRage);
+            var maxPage = 1;
+
+            if (totalProducts>0)
+            {
+                maxPage =(int) Math.Ceiling((double)totalProducts / productsPerRage);
+            }
 
             if (currantPage >= 1 && currantPage <= maxPage)
             {

@@ -62,7 +62,7 @@ namespace Web.Controllers
                     this.ModelState.AddModelError(string.Empty, "The Manufacturer does not exists.");
                 }
 
-                if(serviceService.ServiceExists(service.ManufacturerId,service.Name))
+                if(serviceService.ServiceExists(service.ManufacturerId,service.Name, service.ImageUrl, service.Price, service.Description))
                 {
                     this.ModelState.AddModelError(string.Empty, "The service already exists. Check your Services.");
                 }
@@ -95,6 +95,11 @@ namespace Web.Controllers
             else
             {
                 servicesResult = this.serviceService.AllAvailable(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
+            }
+
+            if (servicesResult == null)
+            {
+                return BadRequest();
             }
 
             if (id != null)
@@ -165,7 +170,7 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(service.ManufacturerId), "The Manufacturer does not exists.");
             }
 
-            if (serviceService.ServiceExists(service.ManufacturerId, service.Name) && service.Available)
+            if (serviceService.ServiceExists(service.ManufacturerId, service.Name, service.ImageUrl, service.Price, service.Description) && service.Available)
             {
                 this.ModelState.AddModelError(string.Empty, "This service is already in the list.");
             }

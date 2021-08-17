@@ -89,7 +89,7 @@ namespace Web.Controllers
                     this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
                 }
 
-                if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties))
+                if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties, product.ImageUrl))
                 {
                     this.ModelState.AddModelError(string.Empty, "This wine is already in the list. Check your product list.");
                 }
@@ -227,7 +227,7 @@ namespace Web.Controllers
                 this.ModelState.AddModelError(nameof(product.GrapeVarieties), "The grape variety you have chosen does not exists!");
             }
 
-            if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties) && product.InStock)
+            if (productService.WineExists(product.Name, product.ManufactureYear, product.ManufacturerId, product.ColorId, product.TasteId, product.WineAreaId, product.GrapeVarieties, product.ImageUrl) && product.InStock)
             {
                 this.ModelState.AddModelError(string.Empty, "This wine is already in the list.");
             }

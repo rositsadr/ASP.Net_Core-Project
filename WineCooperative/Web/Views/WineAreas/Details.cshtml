@@ -6,38 +6,40 @@
 
 <div class="card mb-3">
     <div class="row g-0">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <img src="~/Images/wineyard.jpg" class="img-fluid rounded-start" alt="image">
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="card-body">
                 <h5 class="card-title  text-center">@Model.Name</h5>
                 <p class="card-text">@Model.Description</p>
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="text-center">Products from this region</li>
-                            @foreach (var product in Model.Products)
-                            {
-                                <li >
-                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
-                                </li>  
-                            }
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class=" text-center">Manufacturers from this region</li>
-                            @foreach (var manufacturer in Model.Manufacturers)
-                            {
-                                <li>
-                                    <a  class="text-decoration-none" asp-controller="Manufacturers" asp-action="Details" asp-route-id="@manufacturer.Id">@manufacturer.Name</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" class="col-8 text-center">Products from this region</th>
+                    <th scope="col" class="col-4 text-center">Manufacturers from this region</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td  scope="col" class="col-8 text-center">
+                        @foreach (var product in Model.Products)
+                        {
+                           <span><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">@product.Name </a>,  </span> 
+                        }
+                    </td>
+                    <td scope="col" class="col-4 text-center">
+                        @foreach (var manufacturer in Model.Manufacturers)
+                        {
+                        <span>
+                            <a  asp-controller="Manufacturers" asp-action="Details" asp-route-id="@manufacturer.Id">@manufacturer.Name </a>, 
+                        </span>                           
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </div>
