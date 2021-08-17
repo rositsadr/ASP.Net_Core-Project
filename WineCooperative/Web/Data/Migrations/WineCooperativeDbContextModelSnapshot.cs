@@ -154,6 +154,33 @@ namespace Web.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Web.Data.Models.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("TownId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TownId");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("Web.Data.Models.CartItem", b =>
                 {
                     b.Property<string>("ProductId")
@@ -168,6 +195,150 @@ namespace Web.Data.Migrations
                     b.HasKey("ProductId", "UserId");
 
                     b.ToTable("ShoppingCartItems");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CountryName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryName")
+                        .IsUnique();
+
+                    b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.GrapeVariety", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("GrapeVarieties");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Manufacturer", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFunctional")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Manufacturers");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.News", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThemeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ThemeId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThemeId1");
+
+                    b.ToTable("News");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
@@ -188,6 +359,75 @@ namespace Web.Data.Migrations
                     b.ToTable("OrdersProducts");
                 });
 
+            modelBuilder.Entity("Web.Data.Models.Product", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ColorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("InStock")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ManufactureYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ManufacturerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("TasteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WineAreaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("TasteId");
+
+                    b.HasIndex("WineAreaId");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.ProductColor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductColors");
+                });
+
             modelBuilder.Entity("Web.Data.Models.ProductGrapeVariety", b =>
                 {
                     b.Property<string>("ProductId")
@@ -201,6 +441,99 @@ namespace Web.Data.Migrations
                     b.HasIndex("GrapeVarietyId");
 
                     b.ToTable("ProductGrapeVarieties");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.ProductTaste", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductTastes");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Service", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManufacturerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Theme", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(35)
+                        .HasColumnType("nvarchar(35)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Themes");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Town", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("Towns");
                 });
 
             modelBuilder.Entity("Web.Data.Models.User", b =>
@@ -274,340 +607,7 @@ namespace Web.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Web.Models.Address", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("TownId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TownId");
-
-                    b.ToTable("Addresses");
-                });
-
-            modelBuilder.Entity("Web.Models.Country", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CountryName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryName")
-                        .IsUnique();
-
-                    b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Web.Models.GrapeVariety", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("GrapeVarieties");
-                });
-
-            modelBuilder.Entity("Web.Models.Manufacturer", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsFunctional")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Manufacturers");
-                });
-
-            modelBuilder.Entity("Web.Models.News", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ThemeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ThemeId1")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ThemeId1");
-
-                    b.ToTable("News");
-                });
-
-            modelBuilder.Entity("Web.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Web.Models.Product", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ColorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("InStock")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ManufactureYear")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ManufacturerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("TasteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WineAreaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ColorId");
-
-                    b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("TasteId");
-
-                    b.HasIndex("WineAreaId");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Web.Models.ProductColor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductColors");
-                });
-
-            modelBuilder.Entity("Web.Models.ProductTaste", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductTastes");
-                });
-
-            modelBuilder.Entity("Web.Models.Service", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Available")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("DateCreated")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManufacturerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ManufacturerId");
-
-                    b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("Web.Models.Theme", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(35)
-                        .HasColumnType("nvarchar(35)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Themes");
-                });
-
-            modelBuilder.Entity("Web.Models.Town", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Towns");
-                });
-
-            modelBuilder.Entity("Web.Models.UserAdditionalInformation", b =>
+            modelBuilder.Entity("Web.Data.Models.UserAdditionalInformation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -641,7 +641,7 @@ namespace Web.Data.Migrations
                     b.ToTable("UserAdditionalInformation");
                 });
 
-            modelBuilder.Entity("Web.Models.WineArea", b =>
+            modelBuilder.Entity("Web.Data.Models.WineArea", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -715,58 +715,9 @@ namespace Web.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Web.Data.Models.CartItem", b =>
+            modelBuilder.Entity("Web.Data.Models.Address", b =>
                 {
-                    b.HasOne("Web.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
-                {
-                    b.HasOne("Web.Models.Order", "Order")
-                        .WithMany("OrderProducts")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Web.Models.Product", "Product")
-                        .WithMany("ProductOrders")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Web.Data.Models.ProductGrapeVariety", b =>
-                {
-                    b.HasOne("Web.Models.GrapeVariety", "GrapeVariety")
-                        .WithMany("Products")
-                        .HasForeignKey("GrapeVarietyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Web.Models.Product", "Product")
-                        .WithMany("GrapeVarieties")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("GrapeVariety");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Web.Models.Address", b =>
-                {
-                    b.HasOne("Web.Models.Town", "Town")
+                    b.HasOne("Web.Data.Models.Town", "Town")
                         .WithMany("Addresses")
                         .HasForeignKey("TownId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -775,9 +726,20 @@ namespace Web.Data.Migrations
                     b.Navigation("Town");
                 });
 
-            modelBuilder.Entity("Web.Models.Manufacturer", b =>
+            modelBuilder.Entity("Web.Data.Models.CartItem", b =>
                 {
-                    b.HasOne("Web.Models.Address", "Address")
+                    b.HasOne("Web.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Manufacturer", b =>
+                {
+                    b.HasOne("Web.Data.Models.Address", "Address")
                         .WithMany("Manufacturers")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -794,16 +756,16 @@ namespace Web.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Web.Models.News", b =>
+            modelBuilder.Entity("Web.Data.Models.News", b =>
                 {
-                    b.HasOne("Web.Models.Theme", "Theme")
+                    b.HasOne("Web.Data.Models.Theme", "Theme")
                         .WithMany("News")
                         .HasForeignKey("ThemeId1");
 
                     b.Navigation("Theme");
                 });
 
-            modelBuilder.Entity("Web.Models.Order", b =>
+            modelBuilder.Entity("Web.Data.Models.Order", b =>
                 {
                     b.HasOne("Web.Data.Models.User", "User")
                         .WithMany("Orders")
@@ -814,27 +776,46 @@ namespace Web.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Web.Models.Product", b =>
+            modelBuilder.Entity("Web.Data.Models.OrderProduct", b =>
                 {
-                    b.HasOne("Web.Models.ProductColor", "Color")
+                    b.HasOne("Web.Data.Models.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Web.Data.Models.Product", "Product")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Product", b =>
+                {
+                    b.HasOne("Web.Data.Models.ProductColor", "Color")
                         .WithMany("Products")
                         .HasForeignKey("ColorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Web.Models.Manufacturer", "Manufacturer")
+                    b.HasOne("Web.Data.Models.Manufacturer", "Manufacturer")
                         .WithMany("Products")
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Web.Models.ProductTaste", "Taste")
+                    b.HasOne("Web.Data.Models.ProductTaste", "Taste")
                         .WithMany("Products")
                         .HasForeignKey("TasteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Web.Models.WineArea", "WineArea")
+                    b.HasOne("Web.Data.Models.WineArea", "WineArea")
                         .WithMany("Products")
                         .HasForeignKey("WineAreaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -849,9 +830,28 @@ namespace Web.Data.Migrations
                     b.Navigation("WineArea");
                 });
 
-            modelBuilder.Entity("Web.Models.Service", b =>
+            modelBuilder.Entity("Web.Data.Models.ProductGrapeVariety", b =>
                 {
-                    b.HasOne("Web.Models.Manufacturer", "Manufacturer")
+                    b.HasOne("Web.Data.Models.GrapeVariety", "GrapeVariety")
+                        .WithMany("Products")
+                        .HasForeignKey("GrapeVarietyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Web.Data.Models.Product", "Product")
+                        .WithMany("GrapeVarieties")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GrapeVariety");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Service", b =>
+                {
+                    b.HasOne("Web.Data.Models.Manufacturer", "Manufacturer")
                         .WithMany("Services")
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -860,9 +860,9 @@ namespace Web.Data.Migrations
                     b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("Web.Models.Town", b =>
+            modelBuilder.Entity("Web.Data.Models.Town", b =>
                 {
-                    b.HasOne("Web.Models.Country", "Country")
+                    b.HasOne("Web.Data.Models.Country", "Country")
                         .WithMany("Towns")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -871,9 +871,9 @@ namespace Web.Data.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("Web.Models.UserAdditionalInformation", b =>
+            modelBuilder.Entity("Web.Data.Models.UserAdditionalInformation", b =>
                 {
-                    b.HasOne("Web.Models.Address", "Address")
+                    b.HasOne("Web.Data.Models.Address", "Address")
                         .WithMany("Users")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -881,13 +881,69 @@ namespace Web.Data.Migrations
 
                     b.HasOne("Web.Data.Models.User", "User")
                         .WithOne("UserData")
-                        .HasForeignKey("Web.Models.UserAdditionalInformation", "UserId")
+                        .HasForeignKey("Web.Data.Models.UserAdditionalInformation", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Address");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Address", b =>
+                {
+                    b.Navigation("Manufacturers");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Country", b =>
+                {
+                    b.Navigation("Towns");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.GrapeVariety", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Manufacturer", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Order", b =>
+                {
+                    b.Navigation("OrderProducts");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Product", b =>
+                {
+                    b.Navigation("GrapeVarieties");
+
+                    b.Navigation("ProductOrders");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.ProductColor", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.ProductTaste", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Theme", b =>
+                {
+                    b.Navigation("News");
+                });
+
+            modelBuilder.Entity("Web.Data.Models.Town", b =>
+                {
+                    b.Navigation("Addresses");
                 });
 
             modelBuilder.Entity("Web.Data.Models.User", b =>
@@ -899,63 +955,7 @@ namespace Web.Data.Migrations
                     b.Navigation("UserData");
                 });
 
-            modelBuilder.Entity("Web.Models.Address", b =>
-                {
-                    b.Navigation("Manufacturers");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Web.Models.Country", b =>
-                {
-                    b.Navigation("Towns");
-                });
-
-            modelBuilder.Entity("Web.Models.GrapeVariety", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Web.Models.Manufacturer", b =>
-                {
-                    b.Navigation("Products");
-
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("Web.Models.Order", b =>
-                {
-                    b.Navigation("OrderProducts");
-                });
-
-            modelBuilder.Entity("Web.Models.Product", b =>
-                {
-                    b.Navigation("GrapeVarieties");
-
-                    b.Navigation("ProductOrders");
-                });
-
-            modelBuilder.Entity("Web.Models.ProductColor", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Web.Models.ProductTaste", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Web.Models.Theme", b =>
-                {
-                    b.Navigation("News");
-                });
-
-            modelBuilder.Entity("Web.Models.Town", b =>
-                {
-                    b.Navigation("Addresses");
-                });
-
-            modelBuilder.Entity("Web.Models.WineArea", b =>
+            modelBuilder.Entity("Web.Data.Models.WineArea", b =>
                 {
                     b.Navigation("Products");
                 });

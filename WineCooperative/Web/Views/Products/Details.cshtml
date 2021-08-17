@@ -63,12 +63,10 @@
                     <dd class="col-sm-8">
                         @if (Model.InStock)
                         {
-                            <span>Yes</span>
-                        }
+            <span>Yes</span> }
                         else
                         {
-                            <span>No</span>
-                        }
+            <span>No</span>}
                     </dd>
                     <dt class="col-sm-4">
                         @Html.DisplayNameFor(model => model.ManufacturerName)
@@ -84,10 +82,17 @@
                     </dd>
                 </dl>
             </div>
-            <div>
-                <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.Id" asp-route-userId="@User.GetId()">Add to Cart</a> |
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div>
+                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.Id" asp-route-userId="@User.GetId()">Add to Cart</a> |
+                    <a asp-action="All">Back to Shop</a>
+                </div>
+            }
+            else
+            {
                 <a asp-action="All">Back to Shop</a>
-            </div>
+            }
         </div>
     </div>
 </div>

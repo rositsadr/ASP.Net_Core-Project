@@ -13,15 +13,26 @@
         @foreach (var manufacturer in Model)
         {
             <div class="card col-lg-4 mb-5 col-md-6">
-                <partial name="_ManufacturerDetailsPartial" model="manufacturer" />             
-            </div>
-             @if (User.IsAdmin())
-             {
-                <div class="text-center mt-3">
-                    <a class="btn btn-warning" role="button" asp-area="" asp-controller="Services" asp-action="Edit" asp-route-id=@manufacturer.Id>Edit</a>
-                    <a class="btn btn-danger" role="button" asp-area="" asp-controller="Services" asp-action="Delete" asp-route-id=@manufacturer.Id>Delete</a>
-                </div>
-              }
+                <partial name="_ManufacturerDetailsPartial" model="manufacturer" />
+                @if (User.IsAdmin())
+                {
+                    <div class="text-center mb-3">
+                        @if (manufacturer.IsFunctional)
+                        {
+                            <p><span class="font-weight-bold">Is Functional: </span>Yes</p>
+                        }
+                        else
+                        {
+                            <p><span class="font-weight-bold">Is Functional: </span>No</p>
+                        }
+
+                    </div>
+                    <div class="text-center mb-3">
+                        <a class="btn btn-warning" role="button" asp-area="" asp-controller="Services" asp-action="Edit" asp-route-id=@manufacturer.Id>Edit</a>
+                        <a class="btn btn-danger" role="button" asp-area="" asp-controller="Services" asp-action="Delete" asp-route-id=@manufacturer.Id>Delete</a>
+                    </div>
+                }
+            </div>           
         }
     </div>
 </div>

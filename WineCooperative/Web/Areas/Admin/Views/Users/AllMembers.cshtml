@@ -2,25 +2,12 @@
 
 @{
     ViewData["Title"] = "Members List";
+    ViewBag.Member = true;
 }
 
 <h1 class="text-center">@ViewData["Title"]</h1>
 <hr />
 <table class="table table-striped">
-    <partial name="_TableHeadPartial" />
-    <tbody>
-        @foreach (var member in Model)
-        {
-            <tr>
-                <td scope="col">@member.Username</td>
-                <td scope="col">@member.Email</td>
-                <td scope="col">@member.FirstName</td>
-                <td scope="col">@member.LastName</td>
-                <td scope="col">@member.PhoneNumber</td>
-                <td scope="col" class="text-center">
-                    <a class="btn btn-danger ml-2" asp-controller="Users" asp-action="RemoveMember" asp-route-id=@member.Id>Remove Member</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+   <partial name="_TableHeadPartial" />
+   <partial name="_UserTableBodyPartial" />
 </table>

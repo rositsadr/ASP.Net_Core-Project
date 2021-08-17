@@ -1,0 +1,25 @@
+﻿@model List<UserInfoServiceModel>
+
+<tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td scope="col">@user.Username</td>
+            <td scope="col">@user.Email</td>
+            <td scope="col">@user.FirstName</td>
+            <td scope="col">@user.LastName</td>
+            <td scope="col">@user.PhoneNumber</td>
+            <td scope="col">
+                @if (ViewBag.Member)
+                {
+                    <a class="btn btn-danger ml-2" asp-controller="Users" asp-action="RemoveMember" asp-route-id=@user.Id>Remove Member</a>
+                }
+                else
+                {
+                    <a class="btn btn-success" asp-controller="Users" asp-action="ApproveMember" asp-route-id=@user.Id>Approve</a>
+                    <a class="btn btn-warning" asp-controller="Users" asp-action="DeclineMember" asp-route-id=@user.Id>Decline</a>
+                }
+            </td>
+        </tr>
+}
+</tbody>
