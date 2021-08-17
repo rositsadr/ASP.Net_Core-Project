@@ -43,7 +43,7 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<List<CartItemViewServiceModel>>()
-                .Passing(m => m.Count == count));
+                .Passing(m => Assert.Equal(m.Count,count)));
 
         [Fact]
         public void AddToCartActionRoute() =>
@@ -99,7 +99,7 @@ namespace Web.Tests.Controllers
             .Calling(c => c.Add(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
-                .WithSet<CartItem>(items => items.Find(count.ToString(), buyerId).Quantity == quantity + 1))
+                .WithSet<CartItem>(items => Assert.Equal(items.Find(count.ToString(), buyerId).Quantity, quantity + 1)))
             .AndAlso()
             .ShouldReturn()
             .RedirectToAction("MyCart");
@@ -127,7 +127,7 @@ namespace Web.Tests.Controllers
             .Calling(c => c.Remove(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
-                .WithSet<CartItem>(items => items.Find(count.ToString(), buyerId).Quantity == quantity - 1))
+                .WithSet<CartItem>(items => Assert.Equal(items.Find(count.ToString(), buyerId).Quantity, quantity - 1)))
             .AndAlso()
             .ShouldReturn()
             .RedirectToAction("MyCart");
@@ -144,7 +144,7 @@ namespace Web.Tests.Controllers
             .Calling(c => c.Remove(count.ToString(), buyerId))
             .ShouldHave()
             .Data(data => data
-                .WithSet<CartItem>(items => items.Find(count.ToString(), buyerId).Quantity == quantity))
+                .WithSet<CartItem>(items => Assert.Equal(items.Find(count.ToString(), buyerId).Quantity, quantity)))
             .AndAlso()
             .ShouldReturn()
             .RedirectToAction("MyCart");
@@ -171,8 +171,8 @@ namespace Web.Tests.Controllers
            .Calling(c => c.Delete(count.ToString(), buyerId))
            .ShouldHave()
            .Data(data => data
-               .WithSet<CartItem>(items => items.Find(count.ToString(), buyerId) == null)
-           .WithSet<CartItem>(items=>items.Count() == count-1))
+               .WithSet<CartItem>(items => Assert.Null(items.Find(count.ToString(), buyerId)))
+           .WithSet<CartItem>(items=> Assert.Equal(items.Count(), count-1)))
            .AndAlso()
            .ShouldReturn()
            .RedirectToAction("MyCart");

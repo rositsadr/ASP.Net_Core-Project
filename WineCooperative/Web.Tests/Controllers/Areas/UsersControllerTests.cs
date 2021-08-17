@@ -8,7 +8,6 @@ using Web.Data.Models;
 using System.Linq;
 using Web.Services.Users.Models;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
 
 namespace Web.Tests.Controllers.Areas
 {

@@ -16,6 +16,7 @@ using Web.Services.Orders;
 using Web.Services.Products;
 using Web.Services.Services;
 using Web.Services.Users;
+using Web.Services.WineAreas;
 
 namespace Web
 {
@@ -68,6 +69,7 @@ namespace Web
             services.AddTransient<IAddressService, AddressService>();
             services.AddTransient<ICartService, CartService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IWineAreasService, WineAreaService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,6 +1,6 @@
 ﻿using MyTested.AspNetCore.Mvc;
 using Web.Controllers;
-using Web.Models;
+using Web.ViewModels;
 using Xunit;
 
 namespace Web.Tests.Controllers

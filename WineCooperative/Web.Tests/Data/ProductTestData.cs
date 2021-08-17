@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Web.Data.Models;
-using Web.Models;
 using static Web.Tests.Data.ManufacturerTestData;
 
 

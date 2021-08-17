@@ -1,0 +1,15 @@
+﻿@model ManufacturerServiceModel
+
+
+    <div class="card-body">
+        <h5 class="card-title text-center">@Model.Name</h5>
+        <h6 class="card-subtitle mb-2 text-muted text-center"><span class="text-dark fw-bold">Phone number: </span>@Model.PhoneNumber</h6>
+        <h6 class="card-subtitle mb-2 text-muted text-center"><span class="text-dark fw-bold">E-mail: </span>@Model.Email</h6>
+        <p class="card-text text-center">@Model.Description</p>
+        <p class="card-text text-center"><span class="fw-bold">Address: </span>@Model.Address.Street , @Model.Address.TownName</p>
+        <p class="card-text text-center">@Model.Address.ZipCode Bulgaria</p>
+        <a asp-controller="Products" asp-action="All" asp-route-id="@Model.Id" class="card-link">Products</a>
+        <a asp-controller="Services" asp-action="All" asp-route-id="@Model.Id" class="card-link float-right">Services</a>
+    </div>
+
+

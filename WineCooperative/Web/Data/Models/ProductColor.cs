@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Web.Models
+namespace Web.Data.Models
 {
     public class ProductColor
     {

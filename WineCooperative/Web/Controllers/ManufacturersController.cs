@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Web.Infrastructures;
-using Web.Models.Manufacturers;
+using Web.ViewModels.Manufacturers;
 using Web.Services.Manufacturers;
 using Web.Services.Manufacturers.Models;
 using static Web.Services.Constants;
@@ -66,11 +66,8 @@ namespace Web.Controllers
 
                 manufacturerService.Create(manufacturer.Name, manufacturer.PhoneNumber, manufacturer.Email, manufacturer.Description,manufacturer.Address.Street, manufacturer.Address.ZipCode, manufacturer.Address.TownName, CountryOfManufacturing, User.GetId(), manufacturer.IsFunctional);
 
-                var manufacturers = cache.Get<List<ManufacturerServiceModel>>(manufacturersCacheKey);
-
                 cache.Set<List<ManufacturerServiceModel>>(manufacturersCacheKey, null);
 
-                manufacturers = cache.Get<List<ManufacturerServiceModel>>(manufacturersCacheKey);
                 this.TempData[SuccessMessageKey] = string.Format(SuccesssfulyAdded,"manufacturer");
                 return RedirectToAction("All");
             }
@@ -165,19 +162,18 @@ namespace Web.Controllers
             return RedirectToAction("All");
         }
 
-        //To be implemented when or if needed!!!
-        //public IActionResult Details(string id)
-        //{
-        //    var manufacturer = manufacturerService.Details(id);
+        public IActionResult Details(string id)
+        {
+            var manufacturer = manufacturerService.Details(id);
 
-        //    if (manufacturer == null)
-        //    {
-        //        this.TempData[ErrorMessageKey] = "The manufacturer you are trying to view is not in the list!";
-        //        return RedirectToAction("All");
-        //    }
+            if (manufacturer == null)
+            {
+                this.TempData[ErrorMessageKey] = "The manufacturer you are trying to view is not in the list!";
+                return RedirectToAction("All");
+            }
 
-        //    return View(manufacturer);
-        //}
+            return View(manufacturer);
+        }
 
         [Authorize]
         public IActionResult Delete(string id)

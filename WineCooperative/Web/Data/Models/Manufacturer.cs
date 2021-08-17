@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Web.Data.Models;
 using static Web.Data.DataConstants;
 
-namespace Web.Models
+namespace Web.Data.Models
 {
     public class Manufacturer
     {

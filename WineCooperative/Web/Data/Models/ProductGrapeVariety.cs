@@ -1,6 +1,4 @@
-﻿using Web.Models;
-
-namespace Web.Data.Models
+﻿namespace Web.Data.Models
 {
     public class ProductGrapeVariety
     {

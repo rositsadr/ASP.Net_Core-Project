@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-
-using Web.Models;
+using Web.ViewModels;
 
 namespace Web.Controllers
 {

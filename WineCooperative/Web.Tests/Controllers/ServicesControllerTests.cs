@@ -2,8 +2,8 @@
 using Xunit;
 using MyTested.AspNetCore.Mvc;
 using Web.Controllers;
-using Web.Models;
-using Web.Models.Services;
+using Web.Data.Models;
+using Web.ViewModels.Services;
 using Web.Services.Services.Models;
 using static Web.WebConstants;
 using static Web.Tests.Data.ManufacturerTestData;
@@ -189,7 +189,7 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<ServiceDetailsIdServiceModel>()
-                    .Passing(m => m.Id == count.ToString()));
+                    .Passing(m => Assert.Equal(m.Id,count.ToString())));
 
         [Theory]
         [InlineData("Winary", 3)]

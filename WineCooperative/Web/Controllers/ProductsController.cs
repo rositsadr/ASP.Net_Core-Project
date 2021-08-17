@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Infrastructures;
-using Web.Models.Products;
+using Web.ViewModels.Products;
 using Web.Services.Manufacturers;
 using Web.Services.Products;
 using Web.Services.Products.Models;

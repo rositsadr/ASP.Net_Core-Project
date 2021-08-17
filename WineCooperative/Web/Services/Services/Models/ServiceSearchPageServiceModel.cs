@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Web.Models.Services.Enums;
-using Web.Services.Services.Models;
+using Web.ViewModels.Services.Enums;
 
-namespace Web.Models.Services
+namespace Web.Services.Services.Models
 {
     public class ServiceSearchPageServiceModel
     {

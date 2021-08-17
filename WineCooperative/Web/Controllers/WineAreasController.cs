@@ -1,11 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Web.Services.WineAreas;
 
 namespace Web.Controllers
 {
     public class WineAreasController : Controller
     {
-        public IActionResult Map() => View();
+        private readonly IWineAreasService wineAreasService;
 
-        public IActionResult Details() => View();
+        public WineAreasController(IWineAreasService wineAreasService) => this.wineAreasService = wineAreasService;
+
+        public IActionResult Map()
+        {
+            var wineAreas = this.wineAreasService.AllWineAreasNames();
+
+            return View(wineAreas);
+        }
+
+        public IActionResult Details(int wineAreaId)
+        {
+            var areaDetails = wineAreasService.Details(wineAreaId);
+
+            return View(areaDetails);
+        }
     }
 }

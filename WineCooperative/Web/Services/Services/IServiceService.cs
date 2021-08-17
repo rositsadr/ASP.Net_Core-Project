@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using Web.Models.Services;
-using Web.Models.Services.Enums;
+using Web.ViewModels.Services.Enums;
 using Web.Services.Services.Models;
 
 namespace Web.Services.Services

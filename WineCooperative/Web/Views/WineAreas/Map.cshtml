@@ -1,0 +1,22 @@
+﻿@model List<WineAreaDisplayServiceModel>
+
+@{ 
+    ViewData["Title"] = "Bulgarian Wine Regions";
+}
+
+<div class="container  text-center">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+    <div>
+        <ul class="list-group list-group-horizontal text-center">
+            @foreach (var wineArea in Model)
+            {
+                <li class="list-group-item border-0 flex-fill mb-3">
+                    <a asp-controller="WineAreas" asp-action="Details" asp-route-wineAreaId="@wineArea.Id">@wineArea.Name</a> 
+                </li>
+            }
+        </ul>
+    </div>
+    <img src="~/Images/Wine-Region-Map-1024x731.png" class="img-fluid rounded-3" alt="Wine Areas Map">
+</div>
+

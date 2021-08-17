@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Web.Data;
 using Web.Data.Models;
-using Web.Models;
 using static Web.WebConstants;
 
 namespace Web.Infrastructures
@@ -45,7 +44,6 @@ namespace Web.Infrastructures
                 {
                 new WineArea {Name = "Black Sea Coast"},
                 new WineArea {Name = "Danube River Plains"},
-                new WineArea {Name = "Sofia"},
                 new WineArea {Name = "Struma Valley"},
                 new WineArea {Name = "Rose Valley"},
                 new WineArea {Name = "Thracian Valley"},

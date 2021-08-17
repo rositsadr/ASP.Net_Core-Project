@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using System.Linq;
 using Web.Data.Models;
-using Web.Models;
-using Web.Models.Manufacturers;
-using Web.Models.Products;
-using Web.Models.Services;
+using Web.ViewModels.Manufacturers;
+using Web.ViewModels.Products;
+using Web.ViewModels.Services;
 using Web.Services.Addresses;
 using Web.Services.Cart.Models;
 using Web.Services.Manufacturers.Models;
 using Web.Services.Products.Models;
 using Web.Services.Services.Models;
 using Web.Services.Users.Models;
+using Web.Services.WineAreas.Models;
 
 namespace Web.Infrastructures
 {
@@ -39,7 +39,6 @@ namespace Web.Infrastructures
             this.CreateMap<Manufacturer, ManufacturerServiceModel>();
             this.CreateMap<Manufacturer, ManufacturerNameServiceModel>();
             this.CreateMap<ManufacturerServiceModel, ManufacturerModel>();
-            this.CreateMap<ManufacturerAddressServiceModel, ManufacturerAddressViewModel>();
 
             this.CreateMap<Service, ServiceDetailsIdServiceModel>()
                 .ForMember(sd=>sd.UserId, s=>s.MapFrom(s=>s.Manufacturer.UserId));
@@ -59,6 +58,10 @@ namespace Web.Infrastructures
             this.CreateMap<UserAdditionalInformation, UserEditInfoServiceModel>()
                 .ForMember(ue => ue.UserId, u => u.MapFrom(u => u.UserId))
                 .ForMember(ue => ue.PhoneNumber, u => u.MapFrom(u => u.User.PhoneNumber));
+
+            this.CreateMap<Product, WineAreasProductsServiceModel>();
+            this.CreateMap<WineArea, WineAreaDisplayServiceModel>();
+            this.CreateMap<WineArea, WineAreaServiceModel>();
         }
     }
 }

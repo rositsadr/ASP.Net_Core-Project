@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Web.Data.Models;
-using Web.Models;
-using Web.Services.Products.Models;
-using Web.Services.Services.Models;
-using Web.Services.Manufacturers.Models;
 
 namespace Web.Data
 {

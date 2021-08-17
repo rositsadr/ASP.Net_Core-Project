@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Web.Data;
-using Web.Models;
+using Web.Data.Models;
 
 namespace Web.Services.Addresses
 {

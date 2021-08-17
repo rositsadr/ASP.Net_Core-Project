@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Web.Data;
-using Web.Models;
+using Web.ViewModels;
 using Web.Data.Models;
 using System.Collections.Generic;
 using Web.Services.Orders.Models;

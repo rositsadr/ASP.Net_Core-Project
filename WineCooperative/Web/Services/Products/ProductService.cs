@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
 using Web.Data.Models;
-using Web.Models;
-using Web.Models.Products.Enums;
+using Web.ViewModels.Products.Enums;
 using Web.Services.Products.Models;
 
 namespace Web.Services.Products

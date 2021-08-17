@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MyTested.AspNetCore.Mvc;
-using Web.Models;
+using Web.Data.Models;
 using Web.Controllers;
-using Web.Models.Products;
+using Web.ViewModels.Products;
 using Web.Services.Products.Models;
 using Xunit;
 using static Web.WebConstants;
@@ -201,7 +201,7 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<ProductDetailsServiceModel>()
-                    .Passing(m=>m.Id == count.ToString()));
+                    .Passing(m=> Assert.Equal(m.Id, count.ToString())));
 
         [Theory]
         [InlineData("Winary", 3,1,2,3)]

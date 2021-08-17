@@ -1,13 +1,14 @@
 ﻿using MyTested.AspNetCore.Mvc;
 using System.Linq;
+using Web.Data.Models;
 using Web.Controllers;
-using Web.Models;
 using Web.Services.Orders.Models;
 using Xunit;
 using static Web.WebConstants;
 using static Web.Tests.Data.ProductTestData;
 using static Web.Tests.Data.UserTestData;
 using static Web.Tests.Data.OrderTestData;
+
 
 namespace Web.Tests.Controllers
 {
@@ -42,7 +43,7 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<OrderServiceModel>()
-                .Passing(m => m.Products.Count == count));
+                .Passing(m => Assert.Equal(m.Products.Count,count)));
 
         [Fact]
         public void FinalizeOrderActionaRoute() =>

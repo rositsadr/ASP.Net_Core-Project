@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using Web.Data.Models;
 using Web.Controllers;
-using Web.Models;
-using Web.Models.Manufacturers;
+using Web.ViewModels.Manufacturers;
 using Web.Services.Manufacturers.Models;
 using MyTested.AspNetCore.Mvc;
 using Xunit;
@@ -10,7 +10,6 @@ using static Web.WebConstants;
 using static Web.Areas.AreaConstants;
 using static Web.Tests.Data.ManufacturerTestData;
 using static Web.Tests.Data.ProductTestData;
-
 
 namespace Web.Tests.Controllers
 {
@@ -60,7 +59,7 @@ namespace Web.Tests.Controllers
                 PhoneNumber = phoneNumber,
                 Email = email,
                 IsFunctional = isFunctional,
-                Address = new ManufacturerAddressViewModel
+                Address = new ManufacturerAddressServiceModel
                 {
                     Street = street,
                     ZipCode = zipCode,
@@ -79,7 +78,7 @@ namespace Web.Tests.Controllers
                 .RestrictingForAuthorizedRequests())
             .ValidModelState()           
             .Data(data => data
-                .WithSet<Manufacturer>(manufacturers => manufacturers
+                .WithSet<Manufacturer>(manufacturers =>  manufacturers
                     .Any(m => m.Name == name && m.UserId == TestUser.Identifier))
                 .WithSet<Manufacturer>(m=> Assert.Equal(1, m.Count())))           
             .AndAlso()
@@ -114,7 +113,7 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .View(view => view
                 .WithModelOfType<List<ManufacturerServiceModel>>()
-                    .Passing(m=>m.Count() == count));
+                    .Passing(m=> Assert.Equal(m.Count(), count)));
 
         [Fact]
         public void GetEditActionRouteWithRouteValue() =>
@@ -168,7 +167,7 @@ namespace Web.Tests.Controllers
                 PhoneNumber = phoneNumber,
                 Email = email,
                 IsFunctional = isFunctional,
-                Address = new ManufacturerAddressViewModel()
+                Address = new ManufacturerAddressServiceModel()
                 {
                     Street = street,
                     ZipCode = zipCode,
@@ -193,9 +192,24 @@ namespace Web.Tests.Controllers
             .ShouldReturn()
             .RedirectToAction("All");
 
+        [Theory]
+        [InlineData("TestManufacturerId","TestUserId")]
+        public void DetailActionRouteShouldMapAndShouldreturnViewWithCorrectData(string manufacturerId, string userId) =>
+            MyMvc
+            .Pipeline()
+            .ShouldMap(request => request
+                .WithPath($"/Manufacturers/Details/{manufacturerId}"))
+            .To<ManufacturersController>(c => c.Details(manufacturerId))
+            .Which(controller => controller
+                .WithData(ManufacturerWithFullData(userId,manufacturerId)))
+            .ShouldReturn()
+            .View(view => view
+                .WithModelOfType<ManufacturerServiceModel>()
+                .Passing(m=> Assert.Equal(m.Id,manufacturerId)));
+
         [Fact]
         public void DeleteActionRouteWithRouteValues() =>
-            MyPipeline
+            MyRouting
             .Configuration()
             .ShouldMap(request=>request
                 .WithPath($"/Manufacturers/Delete/{ManufacturerId}")
@@ -207,7 +221,7 @@ namespace Web.Tests.Controllers
              MyController<ManufacturersController>
             .Instance(controller => controller
                 .WithUser(TestUser.Identifier, TestUser.Username, MemberRole, AdministratorRole)
-                .WithData(new Manufacturer() { UserId = TestUser.Identifier, Id = ManufacturerId }, new Product() { Id = ProductId, ManufacturerId = ManufacturerId })                
+                .WithData(new Manufacturer() { UserId = TestUser.Identifier, Id = ManufacturerId }, new Product() { Id = ProductId, ManufacturerId = ManufacturerId })           
                 .WithMemoryCache(cache => cache
                     .WithEntry(entity => entity
                         .WithKey(membersCacheKey)
@@ -217,8 +231,8 @@ namespace Web.Tests.Controllers
             .ActionAttributes(attributes => attributes
                 .RestrictingForAuthorizedRequests())
             .Data(data => data
-                .WithSet<Product>(p => p.Count() == 0)
-                .WithSet<Manufacturer>(m => m.Count() == 0))
+                .WithSet<Product>(p => Assert.Empty(p))
+                .WithSet<Manufacturer>(m => Assert.Empty(m)))
             .AndAlso()
             .ShouldHave()
             .NoMemoryCache()

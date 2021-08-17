@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Web.Data;
-using Web.Models;
-using Web.Models.Services;
-using Web.Models.Services.Enums;
+using Web.ViewModels.Services.Enums;
 using Web.Services.Services.Models;
+using Web.Data.Models;
 
 namespace Web.Services.Services
 {

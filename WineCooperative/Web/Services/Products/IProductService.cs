@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Web.Models.Products.Enums;
+using Web.ViewModels.Products.Enums;
 using Web.Services.Products.Models;
 
 namespace Web.Services.Products

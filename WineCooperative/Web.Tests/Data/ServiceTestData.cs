@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Web.Models;
+using Web.Data.Models;
 
 namespace Web.Tests.Data
 {

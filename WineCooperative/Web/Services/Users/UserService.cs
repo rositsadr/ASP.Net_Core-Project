@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Web.Data;
 using Web.Data.Models;
-using Web.Models;
 using Web.Services.Addresses;
 using Web.Services.Users.Models;
 

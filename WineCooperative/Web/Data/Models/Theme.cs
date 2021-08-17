@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using static Web.Data.DataConstants;
 
-namespace Web.Models
+namespace Web.Data.Models
 {
     public class Theme
     {

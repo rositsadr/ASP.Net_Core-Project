@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Web.Infrastructures;
-using Web.Models.Services;
+using Web.ViewModels.Services;
 using Web.Services.Manufacturers;
 using Web.Services.Services;
+using Web.Services.Services.Models;
 using static Web.WebConstants;
+
 
 namespace Web.Controllers
 {

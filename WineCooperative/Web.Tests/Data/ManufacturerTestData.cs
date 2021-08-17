@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Web.Data.Models;
-using Web.Models;
 
 
 namespace Web.Tests.Data
@@ -50,5 +49,26 @@ namespace Web.Tests.Data
             UserId = userMemberId,
             IsFunctional = true,
         };
+
+        public static Manufacturer ManufacturerWithFullData(string userId, string manufacturerId)
+        {
+            Manufacturer manufacturer = ManufacturerWithUser(userId, manufacturerId);
+
+            manufacturer.Email = "TestEmail";
+            manufacturer.PhoneNumber = "TestPhoneNumber";
+            manufacturer.Description = "TestDescription";
+            manufacturer.Address = new Address
+            {
+                Street = "test",
+                ZipCode = "test",                 
+                Town = new Town
+                {
+                    Name = "test",
+                    Id = 1
+                },
+            };
+
+            return manufacturer;
+        }
     }
 }

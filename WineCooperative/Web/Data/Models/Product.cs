@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Web.Data.Models;
 using static Web.Data.DataConstants;
 
-namespace Web.Models
+namespace Web.Data.Models
 {
     public class Product
     {

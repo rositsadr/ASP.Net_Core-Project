@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
-using Web.Models;
 
 namespace Web.Data.Models
 {

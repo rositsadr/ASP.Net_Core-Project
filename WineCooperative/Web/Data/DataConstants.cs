@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Web.Data
+﻿namespace Web.Data
 {
     public class DataConstants
     {
