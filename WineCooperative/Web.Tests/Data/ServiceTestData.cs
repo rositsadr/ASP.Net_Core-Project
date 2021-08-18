@@ -36,5 +36,13 @@ namespace Web.Tests.Data
 
         public static string ServiceId =>
                 new Guid().ToString();
+
+        public static Service GetServiceWithManufacturer(string serviceId, string manufacturerId) =>
+            new Service
+            {
+                Id = serviceId,
+                ManufacturerId = manufacturerId,
+                Available = true,
+            };
     }
 }

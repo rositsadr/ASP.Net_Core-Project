@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Web.Data.Models;
 using Web.Services.Users;
 using Web.Services.Users.Models;
+using Web.Services.Manufacturers.Models;
 using static Web.WebConstants;
 using static Web.Areas.AreaConstants;
-using Web.Services.Manufacturers.Models;
 
 namespace Web.Areas.Admin.Controllers
 {

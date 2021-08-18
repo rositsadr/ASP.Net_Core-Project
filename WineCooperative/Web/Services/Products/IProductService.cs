@@ -8,7 +8,7 @@ namespace Web.Services.Products
     {
         public string CreateProduct(string name, decimal price, string imageUrl, int manufactureYear, string description, bool inStock, int wineAreaId, string manufacturerId, int tasteId, int colorId, IEnumerable<int> grapeVarieties);
 
-        public ProductSearchPageServiceModel AllInStock(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage);
+        public ProductSearchPageServiceModel AllInStock(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage, string manufacturerId =null);
 
         public ProductSearchPageServiceModel All(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage);
 

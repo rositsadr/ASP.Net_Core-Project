@@ -51,7 +51,7 @@ namespace Web.Tests.Controllers
             MyController<ProductsController>
             .Instance(controller => controller
                 .WithUser(userId, "testUser", MemberRole)
-                .WithData(CustomeTestUser(userId), ManufacturerWithUser(userId, manufacturerId), TestTaste(tasteId), TestColor(colorId), TestGrape(grapeId), TestWineArea(wineAreaId)))
+                .WithData(CustomeTestUser(userId), GetManufacturerWithUser(userId, manufacturerId), TestTaste(tasteId), TestColor(colorId), TestGrape(grapeId), TestWineArea(wineAreaId)))
             .Calling(c => c.Add(new ProductModel
             {
                 Name = productName,

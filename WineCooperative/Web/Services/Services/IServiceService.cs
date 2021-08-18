@@ -8,7 +8,7 @@ namespace Web.Services.Services
     {
         public void Create(string name, decimal price, string imageUrl, string description, string manufacturerId, bool available);
 
-        public ServiceSearchPageServiceModel AllAvailable(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
+        public ServiceSearchPageServiceModel AllAvailable(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting, string manufacturerId = null);
 
         public ServiceSearchPageServiceModel All(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting);
         public ServiceDetailsIdServiceModel Edit(string serviceId);

@@ -39,7 +39,7 @@ namespace Web.Tests.Data
 
         public static List<Product> GetProducts(string manufacturerId, string userId, int count, int tasteId, int wineAreaId, int colorId, bool inStock = true)
         {
-            var manufacturer = ManufacturerWithUser(userId, manufacturerId);
+            var manufacturer = GetManufacturerWithUser(userId, manufacturerId);
             var taste = TestTaste(tasteId);
             var color = TestColor(colorId);
             var wineArea = TestWineArea(wineAreaId);
@@ -92,5 +92,14 @@ namespace Web.Tests.Data
 
         public static string ProductId =>
                 new Guid().ToString();
+
+        public static Product GetProductWithManufacturer(string productId, string manufacturerId) =>
+            new Product
+            {
+                Id = productId,
+                ManufacturerId = manufacturerId,
+                InStock = true,
+            };
+
     }
 }

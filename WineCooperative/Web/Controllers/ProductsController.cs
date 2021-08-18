@@ -125,19 +125,12 @@ namespace Web.Controllers
             }
             else
             {
-                productsResult = this.productService.AllInStock(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage);
+                productsResult = this.productService.AllInStock(query.Color, query.SearchTerm, query.Sorting, query.CurrantPage, ProductSearchPageModel.productsPerPage,id);
             }
 
             if(productsResult == null)
             {
                 return BadRequest();
-            }
-
-            if(id!=null)
-            {
-                productsResult.Products = productsResult.Products
-                    .Where(p => p.ManufacturerId == id)
-                    .ToList();
             }
 
             var colors = this.productService.GetAllColorsName();

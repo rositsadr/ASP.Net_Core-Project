@@ -42,7 +42,7 @@ namespace Web.Tests.Data
         public static string ManufacturerId =>
             new Guid().ToString();
 
-        public static Manufacturer ManufacturerWithUser(string userMemberId, string manufacturerId) => new Manufacturer
+        public static Manufacturer GetManufacturerWithUser(string userMemberId, string manufacturerId) => new Manufacturer
         {
             Id = manufacturerId,
             Name = "TestManufacturer",
@@ -52,7 +52,7 @@ namespace Web.Tests.Data
 
         public static Manufacturer ManufacturerWithFullData(string userId, string manufacturerId)
         {
-            Manufacturer manufacturer = ManufacturerWithUser(userId, manufacturerId);
+            Manufacturer manufacturer = GetManufacturerWithUser(userId, manufacturerId);
 
             manufacturer.Email = "TestEmail";
             manufacturer.PhoneNumber = "TestPhoneNumber";

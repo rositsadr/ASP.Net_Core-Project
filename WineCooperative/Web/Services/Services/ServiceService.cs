@@ -39,11 +39,18 @@ namespace Web.Services.Services
             data.SaveChanges();
         }
 
-        public ServiceSearchPageServiceModel AllAvailable(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting)
+        public ServiceSearchPageServiceModel AllAvailable(int servicesPerRage, int currantPage, string searchTerm, ServiceSort sorting, string manufacturerId=null)
         {
             var servicesQuery = data.Services
                 .Where(s=>s.Available)
                 .AsQueryable();
+
+            if (manufacturerId != null)
+            {
+                servicesQuery = servicesQuery
+                    .Where(s => s.ManufacturerId == manufacturerId)
+                    .AsQueryable();
+            }
 
             return this.SearchPage(servicesQuery, servicesPerRage, currantPage, searchTerm, sorting);
         }

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Web.Data.Models;
 using static Web.WebConstants;
 
@@ -33,5 +31,16 @@ namespace Web.Tests.Data
                 UserName = $"TestUser {i}",
                 Applyed = true
             });
+
+        public static IdentityRole GetMemberRole(string id) => new IdentityRole()
+        {
+            Id = id,
+            Name = MemberRole,
+            NormalizedName = MemberRole.ToUpper()
+        };
+
+        public static IdentityUserRole<string> GetUserRole(string userId, string roleId)
+            => new IdentityUserRole<string> { RoleId = roleId, UserId = userId };
+
     }
 }

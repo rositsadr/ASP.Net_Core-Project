@@ -49,7 +49,7 @@ namespace Web.Tests.Controllers
            MyController<ServicesController>
            .Instance(controller => controller
                .WithUser(TestUser.Identifier, TestUser.Username, MemberRole)
-               .WithData(ManufacturerWithUser(TestUser.Identifier,manufacturerId)))
+               .WithData(GetManufacturerWithUser(TestUser.Identifier,manufacturerId)))
            .Calling(c => c.Add(new ServiceModel
            {
               Name = serviceName,

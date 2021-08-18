@@ -94,20 +94,13 @@ namespace Web.Controllers
             }
             else
             {
-                servicesResult = this.serviceService.AllAvailable(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting);
+                servicesResult = this.serviceService.AllAvailable(ServiceSearchPageModel.servicesPerPage, query.CurrantPage, query.SearchTerm, query.Sorting, id);
             }
 
             if (servicesResult == null)
             {
                 return BadRequest();
-            }
-
-            if (id != null)
-            {
-                servicesResult.Services = servicesResult.Services
-                    .Where(s => s.ManufacturerId == id)
-                    .ToList();
-            }
+            }           
 
             query.TotalServices = servicesResult.TotalServices;
             query.Services = servicesResult.Services;

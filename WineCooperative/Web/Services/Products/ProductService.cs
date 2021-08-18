@@ -53,11 +53,18 @@ namespace Web.Services.Products
             return productToImport.Id;
         }
 
-        public ProductSearchPageServiceModel AllInStock(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage )
+        public ProductSearchPageServiceModel AllInStock(string color, string searchTerm, ProductsSort sorting, int currantPage, int productsPerRage, string manufacturerId=null )
         {
             var productsQuery = data.Products
                 .Where(p=>p.InStock)
                 .AsQueryable();
+
+            if(manufacturerId!= null)
+            {
+                productsQuery = productsQuery
+                    .Where(p => p.ManufacturerId == manufacturerId)
+                    .AsQueryable();
+            }
 
             return this.SearchPage(productsQuery, color, searchTerm, sorting, currantPage, productsPerRage);
         }
